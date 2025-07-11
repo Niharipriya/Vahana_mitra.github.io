@@ -1,0 +1,161 @@
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(circle, #fff 1px, #fff0 1px) 10px 10px/ 10px
+    10px;
+  transform: rotateY(-12deg);
+  pointer-events: none;
+  opacity: 0.18;
+  mix-blend-mode: overlay;
+}
+
+nav {
+  display: flex;
+  gap: 1rem;
+  padding: 1rem 2rem;
+  transform: rotateY(-12deg);
+  perspective: 90vw;
+  background: #1b1b1b;
+
+  a {
+    --w: 3px;
+    position: relative;
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    grid-template-rows: auto;
+    text-decoration: none;
+    color: #fff;
+
+    &:before {
+      content: "";
+      display: block;
+      position: absolute;
+      inset: 0 -50%;
+      background: #014d89;
+      pointer-events: none;
+      opacity: 0;
+    }
+
+    span {
+      grid-row: 1;
+    }
+
+    span.l {
+      grid-column: 1 / 1;
+      z-index: 1;
+    }
+
+    span.r {
+      grid-column: 2 / 2;
+      z-index: 1;
+    }
+    
+    span:where(.l, .r) {
+      &:hover {
+        grid-column: -1 / 1;
+        z-index: 2;
+      }
+    }
+
+    span.content {
+      display: block;
+      padding: 1em 2em;
+      grid-column: -1 / 1;
+      z-index: 1;
+    }
+
+    &:after {
+      content: "";
+      display: block;
+      grid-column: -1 / 1;
+      grid-row: 1;
+      inset: 0;
+      z-index: 0;
+      background: linear-gradient(
+            #fff var(--w),
+            #fff0 var(--w),
+            #fff0 calc(100% - var(--w)),
+            #fff calc(100% - var(--w))
+          )
+          calc(var(--w) * -1) 0 / calc(var(--w) * 2.5) no-repeat,
+        linear-gradient(
+            #fff var(--w),
+            #fff0 var(--w),
+            #fff0 calc(100% - var(--w)),
+            #fff calc(100% - var(--w))
+          )
+          calc(var(--w) + 100%) 0 / calc(var(--w) * 2.5) no-repeat;
+    }
+
+    &:has(span.l:hover):before {
+      animation: enter-hover-left 160ms forwards steps(2),
+        blink 1200ms ease-in 114ms infinite;
+    }
+
+    &:has(span.r:hover):before {
+      animation: enter-hover-right 160ms forwards steps(2),
+        blink 1200ms ease-in 114ms infinite;
+    }
+  }
+}
+
+@keyframes enter-hover-left {
+
+    from {
+        opacity: 0.5;
+        clip-path: polygon(0 0, 25% 0, 25% 100%, 0 100%);
+    }
+
+  25% {
+    clip-path: polygon(0 0, 75% 0, 25% 100%, 0 100%);
+  }
+
+  50% {
+    clip-path: polygon(0 0, 75% 0, 75% 100%, 0 100%);
+  }
+
+  75% {
+    clip-path: polygon(0 0, 75% 0, 75% 100%, 25% 100%);
+  }
+
+  to {
+    opacity: 1;
+    clip-path: polygon(25% 0, 75% 0, 75% 100%, 25% 100%);
+  }
+}
+
+@keyframes enter-hover-right {
+  from {
+    opacity: 0.5;
+    clip-path: polygon(75% 0, 100% 0, 100% 100%, 75% 100%);
+  }
+
+  25% {
+    clip-path: polygon(25% 0, 100% 0, 100% 100%, 75% 100%);
+  }
+
+  50% {
+    clip-path: polygon(25% 0, 75% 0, 100% 100%, 75% 100%);
+  }
+
+  75% {
+    clip-path: polygon(25% 0, 75% 0, 75% 100%, 75% 100%);
+  }
+
+  to {
+    opacity: 1;
+    clip-path: polygon(25% 0, 75% 0, 75% 100%, 25% 100%);
+  }
+}
+
+@keyframes blink {
+  from {
+    filter: brightness(1.5);
+  }
+
+  80%,
+  to {
+    filter: brightness(1);
+  }
+}

@@ -1,95 +1,85 @@
-from flask import Flask, render_template, url_for, request
-from datetime import datetime
-from flask_sqlalchemy import SQLAlchemy
+from models import *
+from form import SignupForm, LoginForm
+
+from flask import Flask, render_template, url_for, request, flash, redirect
+from flask_bcrypt import Bcrypt
+from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 
 app = Flask(__name__)
-db = SQLAlchemy(app)
+app.config['SECRET_KEY'] = 'TempSecretkey'
+app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///project.db'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
-class User(db.Model):
-    __tablename__ = 'USER'
+db.init_app(app)
+bcrypt = Bcrypt(app)
+login_manager = LoginManager(app)
+login_manager.login_view = 'login'
 
-    user_id = db.Column(db.Integer, primary_key=True)
-    fullname = db.Column(db.String(80), nullable=False)
-    password_hash = db.Column(db.String(128), nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=True)
-    phone = db.Column(db.String(20), unique=True, nullable=True)
-
-    creation_time = db.Column(db.DateTime, default=datetime.utcnow)
-    update_time = db.Column(db.DateTime, default=datetime.utcnow, update=datetime.utcnow)
-
-    truck = db.relationship('Truck', backref='owner', lazy=True, cascade='all, delete-orphan')
-    load = db.relationship('Load', backref='shipper', lazy=True, cascade='all, delete-orphan')
-
-class Truck(db.Model):
-    __tablename__ = 'TRUCK'
-
-    truck_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('USER.user_id'), unique=True)
-
-    ''' Can also add the following data/ Can also given to call center to handle the process 
-        Truck Details
-        truck_number, truck_type, brand, model, year, capacity_kg 
-
-        Location and availability
-        current_location, current_city, current_state
-
-        Documents and verification
-        registration_certificate, insurance_document, driver_license, truck_images
-
-        Status and ratings
-        is_verified average_rating total_trips
-    '''
-    truck_details = db.Column(db.Text, nullable=False)           #Keeping simple for demo
-    availability = db.Column(db.Boolean, default=True)
-
-class Load(db.Model):
-    __tablename__ = 'LOAD'
-
-    load_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('USER.user_id'), unique=True)
-
-    ''' Can also add the following data/ Can also given to call center to handle the process 
-        Weight and dimensions
-        weight_kg length_meters width_meters height_meters quantity
-        
-        # Pickup Details
-        pickup_address pickup_city pickup_state pickup_pincode pickup_contact_person pickup_contact_phone
-        preferred_pickup_date pickup_time_flexibility 
-        
-        # Drop Details
-        drop_address drop_city drop_state drop_pincode drop_contact_person = db.Column(db.String(100))
-        drop_contact_phone preferred_delivery_date 
-
-        # Pricing and payment
-        budget_min budget_max payment_terms  # 'advance', 'on_delivery', 'net_30'
-        
-        load_images special_instructions is_active is_urgent = db.Column(db.Boolean, default=False)
-        estimated_distance_km 
-    '''
-    load_details = db.Column(db.Text, nullable=False)           #Keeping simple for demo
-    pickup_address = db.Column(db.Text, nullable=False)
-    drop_address = db.Column(db.Text, nullable=False)
-
-class Booking(db.Model):
-    __tablename__ = 'BOOKING'
-
-    booking_id = db.Column(db.Integer, primary_key=True)
-    truck_id = db.Column(db.Integer, db.ForeignKey('TRUCK.truck_id'), unique=True)
-    load_id = db.Column(db.Integer, db.ForeignKey('LOAD.load_id'), unique=True)
-
-    status = db.Column(db.String(50), default='Pending')
-
-    truck = db.relationship('Truck', backref='booking', lazy=True)
-    load = db.relationship('Load', backref='booking', lazy=True)
+@login_manager.user_loader
+def load_user(user_id):
+    return User.query.get(int(user_id))
 
 @app.route("/")
 @app.route("/home")
 def base_page():
+    flash('Account created successfully. You can login now', 'success')
     return render_template("home_page.html")
 
-@app.route("/signin", methods=['POST', 'GET'])
+@app.route("/signup_login", methods=['POST', 'GET'])
 def profile():
-    return render_template("signup_login.html")
+    form_type = request.args.get('form', 'signup')
+    signup_form = SignupForm()
+    login_form = LoginForm()
+
+    if form_type == 'signup':
+        if signup_form.validate_on_submit():
+            hashed_password = bcrypt.generate_password_hash(signup_form.password.data).decode('utf-8')
+            user = User(
+                fullname = signup_form.fullname.data,
+                password_hash = hashed_password,
+                email = signup_form.email.data,
+                phone = signup_form.phone.data,
+            )
+            db.session.add(user)
+            db.session.commit()
+            flash('Account created successfully. You can login now', 'success')
+            redirect(url_for('profile'), form= 'login')
+
+    elif form_type == 'login':
+        if login_form.validate_on_submit():
+            _user: User = User.query.filter_by(email = login_form.email.data).first()
+            if _user and _user.check_password(login_form.password.data, bcrypt):
+                login_user(_user)
+                flash('Login Successfully', 'success')
+                return redirect(url_for('dashboard'))
+            else:
+                flash('Login failed. Check your email or password.', 'danger')
+
+    return render_template("signup_login.html", form_type=form_type, signup_form=signup_form, login_form=login_form)
+
+@app.route('/dashboard')
+@login_required
+def dashboard():
+    return f"Welcome, {current_user.fullname}\n Email:{current_user.email}"
+
+@app.route('/logout')
+@login_required
+def logout():
+    logout_user()
+    flash('Logged out successfully.', 'info')
+    return redirect(url_for('profile'))
+
+@app.route("/admin")
+@login_required
+def admin():
+    if current_user.email != 'admin@gmail.com':
+        flash('Access denied please login as admin', 'danger')
+        return redirect(url_for('profile'), form= 'login')
+
+    user = User.query.all()
+    return render_template('admin.html', users=user)
 
 if __name__ == "__main__":
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)

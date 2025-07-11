@@ -43,7 +43,17 @@
         </a>
         <div class="overlay"></div>
     </nav> -->
-    <!-- <h1>This is a BASE PAGE, DON'T USE THIS. Use this to build other pages</h1> -->
+    {% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        <ul>
+            {% for category, message in messages %}
+            <li class="{{ category }}">{{ message }}</li>
+            {% endfor %}
+        </ul>
+    {% endif %}
+    {% endwith %}
+<!-- <h1>This is a BASE PAGE, DON'T USE THIS. Use this to build other pages</h1> -->
+    
     {% block body %}
         
     {% endblock body %}

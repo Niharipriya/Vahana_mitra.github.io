@@ -1,0 +1,54 @@
+{% extends 'base_page.html' %}
+{% block body %}
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+
+        <!-- Toggle Buttons -->
+            <div class="text-center mb-4">
+                <button class="btn btn-outline-light me-2" onclick="location.href='/signup_login?form=login'">Log In</button>
+                <button class="btn btn-outline-light " onclick="location.href='/signup_login?form=signup'">Sign Up</button>
+            </div>
+
+        {% if form_type == 'login' %}
+            <!-- Login Form -->
+            <form method="post" class="bg-white p-4 rounded shadow">
+                <h4 class="text-center mb-3">Login</h4>
+                {{ login_form.hidden_tag() }}
+                <div class="mb-3">
+                    {{ login_form.email(class_="form-control", placeholder="Email") }}
+                </div>
+                <div class="mb-3">
+                    {{ login_form.password(class_="form-control", placeholder="Password") }}
+                </div>
+                <div class="d-grid">
+                    {{ login_form.submit(class_="btn btn-primary") }}
+                </div>
+            </form>
+        {% elif form_type == 'signup' %}
+            <!-- Signup Form -->
+            <form method="post" class="bg-white p-4 rounded shadow">
+                <h4 class="text-center mb-3">Sign Up</h4>
+                {{ signup_form.hidden_tag() }}
+                <div class="mb-3">
+                    {{ signup_form.fullname(class_="form-control", placeholder="Full Name") }}
+                </div>
+                <div class="mb-3">
+                    {{ signup_form.email(class_="form-control", placeholder="Email") }}
+                </div>
+                <div class="mb-3">
+                    {{ signup_form.phone(class_="form-control", placeholder="Phone Number") }}
+                </div>
+                <div class="mb-3">
+                    {{ signup_form.password(class_="form-control", placeholder="Password") }}
+                </div>
+                <div class="d-grid">
+                    {{ signup_form.submit(class_="btn btn-primary") }}
+                </div>
+            </form>
+        {% endif %}
+        </div>
+
+    </div>
+</div>
+{% endblock body %}
