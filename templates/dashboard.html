@@ -1,0 +1,71 @@
+{% extends 'base_page.html' %}
+
+{% block body %}
+    <h2>Welcome, {{current_user.fullname}} Email:{{current_user.email}}</h2>
+    <div class="container py-5">
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+
+                <div class="text-center mb-4">
+                    <button class="btn btn-outline-light me-2" onclick="location.href='/dashboard?adding=truck'">Register Truck</button>
+                    <button class="btn btn-outline-light" onclick="location.href='/dashboard?adding=material'">Schedule Material</button>
+                </div>
+
+            {% if adding_type == 'truck' %}
+                <form method="post" class="bg-white p-4 rounded shadow">
+                    <h4 class="text-center mb-3">Register Your Truck</h4>
+                    {{ truck_form.hidden_tag() }}
+                    <div class="mb-3">
+                        {{ truck_form.truck_name(class_="form-control", placeholder="Truck Owner Name") }}
+                    </div>
+                    <div class="mb-3">
+                        {{ truck_form.truck_registration_number(class_="form-control", placeholder="XX88 XY8888") }}
+                    </div>
+                    <div class="mb-3 form-check">
+                        {{ truck_form.availability(class_="form-check-input") }}
+                        <label for="{{ truck_form.availability.id }}" class="form-check-label">Currently Available</label>
+                    </div>
+                    <div class="d-grid">
+                        {{ truck_form.submit(class_="btn btn-primary") }}
+                    </div>
+                </form>
+                
+            {% elif adding_type == 'material' %}
+                <form method="post" class="bg-white p-4 rounded shadow">
+                    <h4 class="text-center mb-3">Schedule Your Material</h4>
+                    <!-- {{ login_form.hidden_tag() }} -->
+                    <div class="mb-3">
+                        <!-- {{ login_form.email(class_="form-control", placeholder="Email") }} -->
+                    </div>
+                    <div class="mb-3">
+                        <!-- {{ login_form.password(class_="form-control", placeholder="Password") }} -->
+                    </div>
+                    <div class="d-grid">
+                        <!-- {{ login_form.submit(class_="btn btn-primary") }} -->
+                    </div>
+                </form>
+                
+            {% endif %}
+            </div>
+        </div>
+        <h2>Trucks</h2>
+        <table class="table table-dark table-hover table-striped">
+            <thead>
+                <tr>
+                    <!-- <th scope="col">Owner</th> -->
+                    <th scope="col">RTO Number</th>
+                    <th scope="col">Availability</th>
+                </tr>
+            </thead>
+            <tbody class="table-group-divider">
+                {% for truck in trucks %}
+                <tr>
+                    <td>{{ truck.truck_details }}</td>
+                    <!-- <td>{{ truck.truck_registration_number }}</td> -->
+                    <td>{{ truck.availability }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock body %}

@@ -1,5 +1,5 @@
 from models import *
-from form import SignupForm, LoginForm
+from form import SignupForm, LoginForm, TruckRegistrationForm
 
 from flask import Flask, render_template, url_for, request, flash, redirect
 from flask_bcrypt import Bcrypt
@@ -9,11 +9,12 @@ app = Flask(__name__)
 app.config['SECRET_KEY'] = 'TempSecretkey'
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///project.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+ADMIN = 'admin@gmail.com'
 
 db.init_app(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
-login_manager.login_view = 'login'
+login_manager.login_view = 'profile'
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -23,7 +24,7 @@ def load_user(user_id):
 @app.route("/home")
 def base_page():
     flash('Account created successfully. You can login now', 'success')
-    return render_template("home_page.html")
+    return render_template("home_page.html", current_user=current_user)
 
 @app.route("/signup_login", methods=['POST', 'GET'])
 def profile():
@@ -51,16 +52,36 @@ def profile():
             if _user and _user.check_password(login_form.password.data, bcrypt):
                 login_user(_user)
                 flash('Login Successfully', 'success')
-                return redirect(url_for('dashboard'))
+                return redirect(url_for('admin')) if _user.email == ADMIN else redirect(url_for('dashboard'))
             else:
                 flash('Login failed. Check your email or password.', 'danger')
 
     return render_template("signup_login.html", form_type=form_type, signup_form=signup_form, login_form=login_form)
 
-@app.route('/dashboard')
+@app.route('/dashboard', methods=['POST', 'GET'])
 @login_required
 def dashboard():
-    return f"Welcome, {current_user.fullname}\n Email:{current_user.email}"
+    if current_user.email == ADMIN:
+        return redirect(url_for('admin'))
+
+    adding_type = request.args.get('adding', 'truck')
+    truck_form = TruckRegistrationForm()
+    trucks = Truck.query.filter_by(user_id=current_user.user_id).all()
+
+    if adding_type == 'truck':
+        if truck_form.validate_on_submit():
+            truck = Truck(
+                user_id = current_user.user_id,
+                truck_details = truck_form.truck_registration_number.data,
+                availability = truck_form.availability.data,
+            )
+            db.session.add(truck)
+            db.session.commit()
+            flash(f"{truck_form.truck_name.data} added successfully to your {current_user.fullname}", 'success')
+            return redirect(url_for('dashboard'))
+        if request.method == 'POST':
+            print(truck_form.errors)
+    return render_template('dashboard.html', current_user=current_user, adding_type=adding_type, truck_form=truck_form, trucks=trucks)
 
 @app.route('/logout')
 @login_required
@@ -72,7 +93,7 @@ def logout():
 @app.route("/admin")
 @login_required
 def admin():
-    if current_user.email != 'admin@gmail.com':
+    if current_user.email != ADMIN:
         flash('Access denied please login as admin', 'danger')
         return redirect(url_for('profile'), form= 'login')
 

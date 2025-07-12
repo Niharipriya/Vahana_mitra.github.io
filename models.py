@@ -30,7 +30,7 @@ class Truck(db.Model):
     __tablename__ = 'TRUCK'
 
     truck_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('USER.user_id'), unique=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('USER.user_id'), nullable=False)
 
     ''' Can also add the following data/ Can also given to call center to handle the process 
         Truck Details
