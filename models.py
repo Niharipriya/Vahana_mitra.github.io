@@ -45,6 +45,7 @@ class Truck(db.Model):
         Status and ratings
         is_verified average_rating total_trips
     '''
+    truck_name = db.Column(db.String(80), nullable=False)
     truck_details = db.Column(db.Text, nullable=False)           #Keeping simple for demo
     availability = db.Column(db.Boolean, default=True)
 
