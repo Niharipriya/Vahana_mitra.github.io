@@ -1,21 +1,14 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends 'base_page.html' %}
+
+{% block head %}
     <title>Vahana Mitra - Simplifying Transport</title>
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        html, body {
-            height: 100%;
-            margin: 0;
-            padding: 0;
-            overflow-x: hidden;
-        }
-    </style>
-</head>
-<body style="overflow-y: auto;">
-    <!-- Hero Section -->
+{% endblock head %}
+
+{% block body %}
+    <section>
+        <h1>Landing Page Content</h1>
+    </section>
+    
     <section class="bg-primary text-white text-center py-5">
         <div class="container">
             <h1 class="display-4">Simplifying Transport Logistics Across India</h1>
@@ -25,88 +18,110 @@
         </div>
     </section>
 
-    <!-- Book a Lorry Section -->
+
     <section id="book-lorry" class="py-5 bg-light">
         <div class="container">
             <h2 class="mb-3"> 🚛 Book a Lorry</h2>
             <p>Enter your trip and lorry requirements. We'll match you with available lorries nearby.</p>
-            <form>
-                <div class="row g-3">
+            <form method="post" class="p-4 bg-light rounded shadow">
+                {{ material_request_form.hidden_tag() }}
+                <div class="row g-3 align-items-center">
                     <div class="col-md-6">
                         <label class="form-label">Pickup Location</label>
-                        <input type="text" class="form-control" placeholder="Vijayawada, Andhra Pradesh">
+                        <!-- <input type="text" class="form-control" placeholder="Vijayawada, Andhra Pradesh"> -->
+                        {{ material_request_form.pickup_location(class_="form-control", placeholder="Vijayawada, Andhra Pradesh")}}
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Drop Location</label>
-                        <input type="text" class="form-control" placeholder="Hyderabad, Telangana">
+                        <!-- <input type="text" class="form-control" placeholder="Hyderabad, Telangana"> -->
+                        {{ material_request_form.drop_location(class_="form-control", placeholder="Hyderabad, Telangana") }}
                     </div>
-                    <div class="col-md-6">
-                        <label class="form-label">Date of Transport</label>
-                        <input type="date" class="form-control">
+                    <div class="col-md-3">
+                        <label class="form-label">Material Pick up Date</label>
+                        <!-- <input type="date" class="form-control"> -->
+                        {{ material_request_form.pickup_date(class_="form-control")}}
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">{{ material_request_form.pickup_time.label }}</label>
+                        <!-- <input type="date" class="form-control"> -->
+                        {{ material_request_form.pickup_time(class_="form-control")}}
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Type of Material</label>
-                        <input type="text" class="form-control" placeholder="Cement, Grains, Steel, etc.">
+                        <!-- <input type="text" class="form-control" placeholder="Cement, Grains, Steel, etc."> -->
+                        {{ material_request_form.material_type(class_="form-control", placeholder="Cement, Grains, Steel, etc.") }}
                     </div>
                     <div class="col-md-4">
-                        <label class="form-label">Estimated Weight (tons)</label>
-                        <input type="number" class="form-control" placeholder="5">
+                        <div class="col-auto"><label class="col-form-label">Estimated Weight</label></div>
+                        <div class="row g-4 align-items-center">
+                            <div class="col-auto">{{ material_request_form.estimated_weight(class_="form-control", placeholder="5")}}</div>
+                            <div class="col-auto"><span id="weightHelpInline" class="form-text">Tons</span></div>
+                        </div>
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Lorry Type Needed</label>
-                        <select class="form-select">
+                        <!-- <select class="form-select">
                             <option>Open</option>
                             <option>Closed</option>
                             <option>Container</option>
                             <option>Tanker</option>
-                        </select>
+                        </select> -->
+                        {{ material_request_form.truck_type(class_="form-select") }}
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Contact Number</label>
-                        <input type="tel" class="form-control" placeholder="+91-XXXXXXXXXX">
+                        <!-- <input type="tel" class="form-control" placeholder="+91-XXXXXXXXXX"> -->
+                        {{ material_request_form.contact_number(class_="form-control", placeholder="+91-XXXXXXXXXX") }} 
                     </div>
                     <div class="col-12">
-                        <button type="submit" class="btn btn-primary">Request Lorry</button>
+                        <!-- <button type="submit" class="btn btn-primary">Request Lorry</button> -->
+                        {{ material_request_form.submit(class_="btn btn-primary")}}
                     </div>
                 </div>
             </form>
         </div>
     </section>
 
-    <!-- Book a Material Section -->
     <section id="book-material" class="py-5">
         <div class="container">
             <h2 class="mb-3">📦 Book a Material to Transport</h2>
             <p>Got an empty lorry? Register here to find matching loads for your route.</p>
-            <form>
+            <form method="post" class="p-4 bg-light rounded shadow ">
+                {{ truck_request_form.hidden_tag() }}
                 <div class="row g-3">
                     <div class="col-md-4">
                         <label class="form-label">Lorry Registration Number</label>
-                        <input type="text" class="form-control" placeholder="AP16AB1234">
+                        <!-- <input type="text" class="form-control" placeholder="AP16AB1234"> -->
+                        {{ truck_request_form.truck_number(class="form-control", placeholder="AP16AB1234") }}
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Available From Location</label>
-                        <input type="text" class="form-control" placeholder="Guntur, Andhra Pradesh">
+                        <!-- <input type="text" class="form-control" placeholder="Guntur, Andhra Pradesh"> -->
+                        {{ truck_request_form.current_location(class="form-control", placeholder="Guntur, Andhra Pradesh") }}
                     </div>
                     <div class="col-md-4">
                         <label class="form-label">Destination Preference</label>
-                        <input type="text" class="form-control" placeholder="Chennai, Tamil Nadu">
+                        <!-- <input type="text" class="form-control" placeholder="Chennai, Tamil Nadu"> -->
+                        {{truck_request_form.destination_location(class="form-control", placeholder="Chennai, Tamil Nadu")}}
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Date Available</label>
-                        <input type="date" class="form-control">
+                        <!-- <input type="date" class="form-control"> -->
+                        {{ truck_request_form.available_date(class="form-control")}}
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Type of Lorry</label>
-                        <select class="form-select">
+                        <!-- <select class="form-select">
                             <option>Open</option>
                             <option>Container</option>
                             <option>Tanker</option>
-                        </select>
+                        </select> -->
+                        {{truck_request_form.truck_type(class="form-select")}}
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Max Load Capacity (tons)</label>
-                        <input type="number" class="form-control" placeholder="8">
+                        <!-- <input type="number" class="form-control" placeholder="8"> -->
+                        
                     </div>
                     <div class="col-md-6">
                         <label class="form-label">Contact Number</label>
@@ -120,6 +135,4 @@
         </div>
     </section>
 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-</body>
-</html>
+{% endblock body %}

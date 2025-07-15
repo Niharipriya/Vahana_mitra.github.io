@@ -36,10 +36,18 @@ def load_user(user_id):
     return User.query.get(int(user_id))
 
 @app.route("/")
-@app.route("/home")
-def base_page():
-    flash('Account created successfully. You can login now', 'success')
-    return render_template("home_page.html", current_user=current_user)
+@app.route("/landing", methods=['POST', 'GET'])
+def landing():
+    material_request_form = MaterialRegistrationForm()
+    truck_request_form = TruckRegistrationForm()
+
+    if material_request_form.validate_on_submit():
+        flash("Request successfully accepted", 'success')
+        redirect(url_for('landing'))
+    elif truck_request_form.validate_on_submit():
+        flash("Request successfully accepted", 'success')
+        redirect(url_for('landing'))
+    return render_template("landing.html", material_request_form = material_request_form, truck_request_form=truck_request_form)
 
 @app.route("/signup_login", methods=['POST', 'GET'])
 def profile():
