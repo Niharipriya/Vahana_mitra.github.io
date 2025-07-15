@@ -32,21 +32,12 @@ class Truck(db.Model):
     truck_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('USER.user_id'), nullable=False)
 
-    ''' Can also add the following data/ Can also given to call center to handle the process 
-        Truck Details
-        truck_number, truck_type, brand, model, year, capacity_kg 
-
-        Location and availability
-        current_location, current_city, current_state
-
-        Documents and verification
-        registration_certificate, insurance_document, driver_license, truck_images
-
-        Status and ratings
-        is_verified average_rating total_trips
-    '''
-    truck_name = db.Column(db.String(80), nullable=False)
-    truck_details = db.Column(db.Text, nullable=False)           #Keeping simple for demo
+    truck_owner_name = db.Column(db.String(100), nullable=False)
+    truck_RTO_number = db.Column(db.String(10), nullable=False, unique=True)
+    truck_type = db.Column(db.String(80))
+    capacity = db.Column(db.Float)
+    current_location = db.Column(db.Text)
+    is_verified = db.Column(db.Boolean, default=False)
     availability = db.Column(db.Boolean, default=True)
 
 class Load(db.Model):
@@ -55,27 +46,18 @@ class Load(db.Model):
     load_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('USER.user_id'), unique=True)
 
-    ''' Can also add the following data/ Can also given to call center to handle the process 
-        Weight and dimensions
-        weight_kg length_meters width_meters height_meters quantity
-        
-        # Pickup Details
-        pickup_address pickup_city pickup_state pickup_pincode pickup_contact_person pickup_contact_phone
-        preferred_pickup_date pickup_time_flexibility 
-        
-        # Drop Details
-        drop_address drop_city drop_state drop_pincode drop_contact_person = db.Column(db.String(100))
-        drop_contact_phone preferred_delivery_date 
-
-        # Pricing and payment
-        budget_min budget_max payment_terms  # 'advance', 'on_delivery', 'net_30'
-        
-        load_images special_instructions is_active is_urgent = db.Column(db.Boolean, default=False)
-        estimated_distance_km 
-    '''
-    load_details = db.Column(db.Text, nullable=False)           #Keeping simple for demo
+    load_type = db.Column(db.String(100), nullable=False)
+    load_details = db.Column(db.Text, nullable=False) 
+    load_weight = db.Column(db.Float, nullable=False)
     pickup_address = db.Column(db.Text, nullable=False)
+    pickup_contact = db.Column(db.Text, nullable=False)
+    pickup_date = db.Column(db.DateTime, nullable=False)
     drop_address = db.Column(db.Text, nullable=False)
+    drop_contact = db.Column(db.Text, nullable=False)
+    drop_date = db.Column(db.DateTime, nullable=False)
+    cost = db.Column(db.Float)
+    is_active = db.Column(db.Boolean, default=True)
+    in_progress = db.Column(db.Boolean, default=False)
 
 class Booking(db.Model):
     __tablename__ = 'BOOKING'
