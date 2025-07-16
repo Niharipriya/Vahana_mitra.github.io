@@ -1,0 +1,90 @@
+{% extends 'base_page.html' %}
+{% block body %}
+<div class="container mt-5">
+    <h2 class="text-center my-4">📊 Live Truck & Load Status</h2>
+    <p class="text-muted text-center">This public view shows all currently registered trucks and active load requests.</p>
+
+    <ul class="nav nav-tabs" id="tabMenu" role="tablist">
+        <li class="nav-item">
+            <button class="nav-link active" id="truck-tab" data-bs-toggle="tab" data-bs-target="#truck" type="button" role="tab">🚚 Trucks</button>
+        </li>
+        <li class="nav-item">
+            <button class="nav-link" id="load-tab" data-bs-toggle="tab" data-bs-target="#load" type="button" role="tab">📦 Loads</button>
+        </li>
+    </ul>
+
+    <div class="tab-content mt-3" id="tabContent">
+        <!-- Truck Tab -->
+        <div class="tab-pane fade show active" id="truck" role="tabpanel">
+            <h4>All Trucks</h4>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Truck RTO Number</th>
+                        <th>Truck Type</th>
+                        <th>Capacity</th>
+                        <th>Current Location</th>
+                        <th>Is Verified</th>
+                        <th>Availability</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if trucks %}
+                        {% for truck in trucks %}
+                        <tr>
+                            <td>{{ truck.truck_RTO_number }}</td>
+                            <td>{{ truck.truck_type }}</td>
+                            <td>{{ truck.capacity }}</td>
+                            <td>{{ truck.current_location }}</td>
+                            <td>{{ 'Yes' if truck.is_verified else 'No' }}</td>
+                            <td>{{ 'Available' if truck.availability else 'Not Available' }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center">No truck data available.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Load Tab -->
+        <div class="tab-pane fade" id="load" role="tabpanel">
+            <h4>All Loads</h4>
+            <table class="table table-bordered">
+                <thead>
+                    <tr>
+                        <th>Load Type</th>
+                        <th>Details</th>
+                        <th>Weight (tons)</th>
+                        <th>Pickup</th>
+                        <th>Drop</th>
+                        <th>In Progress</th>
+                        <th>Is Active</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% if loads %}
+                        {% for load in loads %}
+                        <tr>
+                            <td>{{ load.load_type }}</td>
+                            <td>{{ load.load_details }}</td>
+                            <td>{{ load.load_weight }}</td>
+                            <td>{{ load.pickup_address }} ({{ load.pickup_contact }}) on {{ load.pickup_date.strftime('%Y-%m-%d') if load.pickup_date else '' }}</td>
+                            <td>{{ load.drop_address }} ({{ load.drop_contact }}) on {{ load.drop_date.strftime('%Y-%m-%d') if load.drop_date else '' }}</td>
+                            <td>{{ 'Yes' if load.in_progress else 'No' }}</td>
+                            <td>{{ 'Yes' if load.is_active else 'No' }}</td>
+                        </tr>
+                        {% endfor %}
+                    {% else %}
+                        <tr>
+                            <td colspan="7" class="text-center">No load data available.</td>
+                        </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}
