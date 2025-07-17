@@ -50,7 +50,12 @@
                 <div class="mb-3">
                     <input type="tel" id="phone" name="phone" class="form-control" placeholder="Phone Number">
                     <input type="hidden" name="full_phone" id="full_phone">
-
+                    <input type="hidden" name="country_code" id="country_code">
+                    {% if signup_form.phone.errors %}
+        <div class="text-danger small mt-1">
+            {{ signup_form.phone.errors[0] }}
+        </div>
+    {% endif %} 
                 </div>
                 <div class="mb-3">
                     {{ signup_form.password(class_="form-control", placeholder="Password") }}
@@ -77,7 +82,7 @@
     const input = document.querySelector("#phone");
     const phoneInput = document.querySelector("#phone");
     const fullPhone = document.querySelector("#full_phone");
-
+    const countryCode = document.querySelector("#country_code");
     const iti = window.intlTelInput(phoneInput, {
         preferredCountries: ["in", "us", "gb"],
         separateDialCode: true,
@@ -87,6 +92,7 @@
 
     document.querySelector("#signup-form").addEventListener("submit", function (e) {
         fullPhone.value = iti.getNumber(); // E.164 format
+        countryCode.value = iti.getSelectedCountryData().dialCode; // Only the dial code
     });
 </script>
 {% endblock body %}

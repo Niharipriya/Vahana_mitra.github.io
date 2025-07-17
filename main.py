@@ -56,7 +56,13 @@ def profile():
     login_form = LoginForm()
 
     if form_type == 'signup':
+        print("Form submitted:", request.method == 'POST')
+        print("Form validation status:", signup_form.validate_on_submit())
+        print("Form errors:", signup_form.errors)
+
         if signup_form.validate_on_submit():
+            # Set phone data from hidden field
+            signup_form.phone.data = request.form.get('full_phone')
             hashed_password = bcrypt.generate_password_hash(signup_form.password.data).decode('utf-8')
             user = User(
                 fullname = signup_form.fullname.data,
@@ -68,7 +74,7 @@ def profile():
             db.session.add(user)
             db.session.commit()
             flash('Account created successfully. You can login now', 'success')
-            redirect(url_for('profile', form='login'))
+            return redirect(url_for('profile', form='login'))
 
     elif form_type == 'login':
         if login_form.validate_on_submit():

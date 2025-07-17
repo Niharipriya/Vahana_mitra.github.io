@@ -42,10 +42,17 @@
                         {{ material_request_form.pickup_date(class_="form-control")}}
                     </div>
                     <div class="col-md-3">
-                        <label class="form-label">{{ material_request_form.pickup_time.label }}</label>
-                        <!-- <input type="date" class="form-control"> -->
-                        {{ material_request_form.pickup_time(class_="form-control")}}
-                    </div>
+                        <label class="form-label">Pickup Time</label>
+                        <div class="d-flex align-items-center gap-2">
+                          {{ material_request_form.pickup_hour(class_="form-select form-select-sm", style="width: 80px;") }}
+                          {{ material_request_form.pickup_minute(class_="form-select form-select-sm", style="width: 80px;") }}
+                        </div>
+                        {{ material_request_form.pickup_time }}
+                      </div>
+                      
+                    
+                    <!-- Hidden input to hold the combined value -->
+                    {{ material_request_form.pickup_time }}
                     <div class="col-md-6">
                         <label class="form-label">Type of Material</label>
                         <!-- <input type="text" class="form-control" placeholder="Cement, Grains, Steel, etc."> -->
@@ -104,10 +111,10 @@
                         <!-- <input type="text" class="form-control" placeholder="Chennai, Tamil Nadu"> -->
                         {{truck_request_form.destination_location(class="form-control", placeholder="Chennai, Tamil Nadu")}}
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-2">
                         <label class="form-label">Date Available</label>
                         <!-- <input type="date" class="form-control"> -->
-                        {{ truck_request_form.available_date(class="form-control")}}
+                        {{ truck_request_form.available_date(class="form-control", style="width:180px;")}}
                     </div>
                     <div class="col-md-3">
                         <label class="form-label">Type of Lorry</label>
@@ -121,9 +128,12 @@
                     <div class="col-md-3">
                         <label class="form-label">Max Load Capacity (tons)</label>
                         <!-- <input type="number" class="form-control" placeholder="8"> -->
-                        
+                        <div class="row g-4 align-items-center">
+                            <div class="col-auto">{{ truck_request_form.capacity(class_="form-control", style="width: 80px;",placeholder="5")}}</div>
+                            <div class="col-auto"><span id="weightHelpInline" class="form-text">Tons</span></div>
+                        </div>
                     </div>
-                    <div class="col-md-6">
+                    <div class="col-md-3">
                         <label class="form-label">Contact Number</label>
                         <input type="tel" class="form-control" placeholder="+91-XXXXXXXXXX">
                     </div>
@@ -158,6 +168,24 @@
             materialbutton.style.color='Black';
           }
         }
+
+    const hourSelect = document.querySelector('[name="pickup_hour"]');
+    const minuteSelect = document.querySelector('[name="pickup_minute"]');
+    const hiddenTimeInput = document.querySelector('[name="pickup_time"]');
+
+    function updatePickupTime() {
+        const hour = hourSelect.value;
+        const minute = minuteSelect.value;
+        hiddenTimeInput.value = `${hour}:${minute}`;
+    }
+
+    hourSelect.addEventListener('change', updatePickupTime);
+    minuteSelect.addEventListener('change', updatePickupTime);
+
+    // Set default value on page load
+    updatePickupTime();
+
+
       </script>
 
 {% endblock body %}
