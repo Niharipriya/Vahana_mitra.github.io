@@ -1,0 +1,31 @@
+{% extends 'base_page.html' %}
+
+{% block body %}
+    <div class="container py-6 table-responsive">
+        <h2>Truck</h2>
+        <table class="table table-light table-hover table-striped">
+            <thead>
+                <tr>
+                    <th>Truck RTO Number</th>
+                    <th>Truck Type</th>
+                    <th>Capacity</th>
+                    <th>Current Location</th>
+                    <th>Is Verified</th>
+                    <th>Availability</th>
+                </tr>
+            </thead>
+            <tbody class="table-group-divider">
+                {% for truck in list_compatible %}
+                <tr>
+                    <td>{{ truck.registration_number }}</td>
+                    <td>{{ truck.type }}</td>
+                    <td>{{ truck.capacity }}</td>
+                    <td>{{ truck.current_location }}</td>
+                    <td>{{ 'Yes' if truck.is_verified else 'No' }}</td>
+                    <td>{{ 'Available' if truck.is_available else 'Not Available' }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+{% endblock body %}

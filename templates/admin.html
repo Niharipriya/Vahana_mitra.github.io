@@ -1,12 +1,3 @@
-<!-- should show 2 tabs one for Truck one for Load
-Truck tab 
- - user_id | truck details refer model to make the table | is available
-Load tab
- - user_id | load details | is in progress | is active 
-all the details respective to there tab  -->
-
-
-
 {% extends 'base_page.html' %}
 
 {% block body %}
@@ -30,6 +21,11 @@ all the details respective to there tab  -->
                     <td>{{ user.email }}</td>
                     <td>{{ user.phone or '—' }}</td>
                     <td>{{ user.creation_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
+                </tr>
+                <tr class="collapse" id="details-{{current_user.user_id}}">
+                    <td colspan="6" class="p-0">
+                        <div class="card card-body bg-secondary text-light border-0 rounded">{% block details %} {% endblock details %}</div>
+                    </td>
                 </tr>
                 {% endfor %}
             </tbody>

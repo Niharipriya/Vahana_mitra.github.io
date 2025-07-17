@@ -1,4 +1,5 @@
 {% extends 'base_page.html' %}
+
 {% block body %}
 <div class="container mt-5">
     <h2 class="text-center my-4">📊 Live Truck & Load Status</h2>
@@ -32,12 +33,12 @@
                     {% if trucks %}
                         {% for truck in trucks %}
                         <tr>
-                            <td>{{ truck.truck_RTO_number }}</td>
-                            <td>{{ truck.truck_type }}</td>
+                            <td>{{ truck.registration_number }}</td>
+                            <td>{{ truck.type }}</td>
                             <td>{{ truck.capacity }}</td>
                             <td>{{ truck.current_location }}</td>
                             <td>{{ 'Yes' if truck.is_verified else 'No' }}</td>
-                            <td>{{ 'Available' if truck.availability else 'Not Available' }}</td>
+                            <td>{{ 'Available' if truck.is_available else 'Not Available' }}</td>
                         </tr>
                         {% endfor %}
                     {% else %}
@@ -68,11 +69,11 @@
                     {% if loads %}
                         {% for load in loads %}
                         <tr>
-                            <td>{{ load.load_type }}</td>
-                            <td>{{ load.load_details }}</td>
-                            <td>{{ load.load_weight }}</td>
-                            <td>{{ load.pickup_address }} ({{ load.pickup_contact }}) on {{ load.pickup_date.strftime('%Y-%m-%d') if load.pickup_date else '' }}</td>
-                            <td>{{ load.drop_address }} ({{ load.drop_contact }}) on {{ load.drop_date.strftime('%Y-%m-%d') if load.drop_date else '' }}</td>
+                            <td>{{ load.type }}</td>
+                            <td>{{ load.details }}</td>
+                            <td>{{ load.weight }}</td>
+                            <td>{{ load.pickup_address }} ({{ load.pickup_contact_name }}) on {{ load.pickup_date.strftime('%Y-%m-%d') if load.pickup_date else '' }}</td>
+                            <td>{{ load.drop_address }} ({{ load.drop_contact_name }}) on {{ load.drop_date.strftime('%Y-%m-%d') if load.drop_date else '' }}</td>
                             <td>{{ 'Yes' if load.in_progress else 'No' }}</td>
                             <td>{{ 'Yes' if load.is_active else 'No' }}</td>
                         </tr>
@@ -87,4 +88,4 @@
         </div>
     </div>
 </div>
-{% endblock %}
+{% endblock body %}
