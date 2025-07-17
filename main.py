@@ -62,7 +62,8 @@ def profile():
                 fullname = signup_form.fullname.data,
                 password_hash = hashed_password,
                 email = signup_form.email.data,
-                phone = signup_form.phone.data,
+                phone = request.form.get('full_phone')
+,
             )
             db.session.add(user)
             db.session.commit()
@@ -130,6 +131,13 @@ def logout():
     flash('Logged out successfully.', 'info')
     return redirect(url_for('profile'))
 
+@app.route("/tabs")
+def view_tabs():
+    trucks = Truck.query.all()
+    loads = Load.query.all()
+    return render_template("tabs.html", trucks=trucks, loads=loads)
+
+
 @app.route("/admin")
 @login_required
 def admin():
@@ -139,8 +147,9 @@ def admin():
 
     user = User.query.all()
     return render_template('admin.html', users=user)
-
+ 
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()
     app.run(debug=True)
+
