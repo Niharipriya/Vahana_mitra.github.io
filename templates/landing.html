@@ -4,14 +4,17 @@
     <title>Vahana Mitra - Simplifying Transport</title>
 {% endblock head %}
 
-{% block body %} 
-
+{% block body %}
+    <section>
+        <!-- <h1>Landing Page Content</h1> -->
+    </section>
+    
     <section class="bg-primary text-white text-center py-5">
         <div class="container">
             <h1 class="display-4">Simplifying Transport Logistics Across India</h1>
             <p class="lead mt-3">A lightweight, easy-to-use platform connecting lorry owners, brokers, and businesses to move goods efficiently across cities and states.</p>
-            <a href="#book-lorry" class="btn btn-light btn-lg mt-4"> 🚚Book a Lorry</a>
-            <a href="#book-material" class="btn btn-outline-light btn-lg mt-4 ms-2">📦Book a Material</a>
+            <button id="lorrybutton" class="btn btn-outline-light btn-lg mt-4" onclick="showSection('lorry')">🚚 Book a Lorry</button>
+            <button id="materialbutton" class="btn btn-outline-light btn-lg mt-4 ms-2" onclick="showSection('material')">📦 Book a Material</button>
         </div>
     </section>
 
@@ -50,7 +53,7 @@
         </div>
     </section>
 
-    <section id="book-material" class="py-5">
+    <section id="book-material" class="py-5" style="display: none;" >
         <div class="container">
             <h2 class="mb-3">📦 Book a Material to Transport</h2>
             <p>Got an empty lorry? Register here to find matching loads for your route.</p>
@@ -79,6 +82,49 @@
                 </div>
             </form>
         </div>
+
+          
     </section>
+    <script>
+        function showSection(type) {
+          const lorryForm = document.getElementById("book-lorry");
+          const materialForm = document.getElementById("book-material");
+          const lorrybutton = document.getElementById("lorrybutton");
+          const materialbutton = document.getElementById("materialbutton");
+          if (type === 'lorry') {
+            lorryForm.style.display = 'block';
+            materialForm.style.display = 'none';
+            lorrybutton.style.backgroundColor = 'white';
+            lorrybutton.style.color='Black';
+            materialbutton.style.backgroundColor = 'transparent';
+            materialbutton.style.color='white';
+          } else if (type === 'material') {
+            lorryForm.style.display = 'none';
+            materialForm.style.display = 'block';
+            lorrybutton.style.backgroundColor = 'transparent';
+            lorrybutton.style.color='white';
+            materialbutton.style.backgroundColor = 'white';
+            materialbutton.style.color='Black';
+          }
+        }
+
+    const hourSelect = document.querySelector('[name="pickup_hour"]');
+    const minuteSelect = document.querySelector('[name="pickup_minute"]');
+    const hiddenTimeInput = document.querySelector('[name="pickup_time"]');
+
+    function updatePickupTime() {
+        const hour = hourSelect.value;
+        const minute = minuteSelect.value;
+        hiddenTimeInput.value = `${hour}:${minute}`;
+    }
+
+    hourSelect.addEventListener('change', updatePickupTime);
+    minuteSelect.addEventListener('change', updatePickupTime);
+
+    // Set default value on page load
+    updatePickupTime();
+
+
+      </script>
 
 {% endblock body %}

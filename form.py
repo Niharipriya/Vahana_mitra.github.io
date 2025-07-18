@@ -1,10 +1,26 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, EmailField, TelField, SubmitField, PasswordField, BooleanField, DateField, SelectField, IntegerField, DateTimeField
+from wtforms import StringField, EmailField, TelField, SubmitField, PasswordField, BooleanField, DateField, SelectField, IntegerField
+from wtforms import HiddenField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, Regexp
+
+pickup_hour = SelectField(
+    'Pickup Hour',
+    choices=[(f"{h:02}", f"{h:02}") for h in range(0, 24)],
+    validators=[DataRequired()]
+)
+
+pickup_minute = SelectField(
+    'Pickup Minute',
+    choices=[("00", "00"), ("30", "30")],
+    validators=[DataRequired()]
+)
+
+pickup_time = HiddenField('Pickup Time', validators=[DataRequired()])
 
 class SignupForm(FlaskForm):
     fullname = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=80)])
     phone = TelField('Phone Number', validators=[DataRequired(), Length(min=10)])
+    country_code = StringField('Country Code', validators=[DataRequired()]) # NEW
     email = EmailField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     submit = SubmitField('Signup')
@@ -48,7 +64,21 @@ class MaterialRequestForm(FlaskForm):
 class MaterialRegistrationForm(FlaskForm):
     pickup_location = StringField('Pickup Location', validators=[DataRequired()])
     pickup_date = DateField('Pickup date', validators=[DataRequired()])
-    pickup_time = SelectField('Pickup time', choices=[('1-12', '01:00 - 12:00'), ('12-00', '12:00 - 00:00')], validators=[DataRequired()])
+
+    pickup_hour = SelectField(
+        'Pickup Hour',
+        choices=[(f"{h:02}", f"{h:02}") for h in range(0, 24)],
+        validators=[DataRequired()]
+    )
+
+    pickup_minute = SelectField(
+        'Pickup Minute',
+        choices=[(f"{h:02}", f"{h:02}") for h in range(0, 60)],
+        validators=[DataRequired()]
+    )
+
+    pickup_time = HiddenField('Pickup Time', validators=[DataRequired()])  # This will be filled with "HH:MM" from JS
+
     drop_location = StringField('Drop Location', validators=[DataRequired()])
     drop_date = DateField('Drop date', validators=[DataRequired()])
     drop_time = SelectField('Drop time', choices=[('1-12', '01:00 - 12:00'), ('12-00', '12:00 - 00:00')], validators=[DataRequired()])

@@ -31,6 +31,7 @@ class Truck(db.Model):
 
     truck_id = db.Column(db.Integer, primary_key=True)
     user_id = db.Column(db.Integer, db.ForeignKey('USER.user_id'), nullable=False)
+    
 
     registration_number = db.Column(db.String(10), nullable=False, unique=True)
     model_name = db.Column(db.Text, nullable=False)
