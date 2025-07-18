@@ -10,44 +10,23 @@
                 <button class="btn btn-outline-light" onclick="location.href='/dashboard?adding=material'">Schedule Material</button>
             </div>
 
-        {% if adding_type == 'truck' %}
             <form method="post" class="bg-white p-4 rounded shadow">
                 <h4 class="text-center mb-3">Register Your Truck</h4>
-                {{ truck_form.hidden_tag() }}
-                <div class="mb-3">
-                    {{ truck_form.truck_name(class_="form-control", placeholder="Truck Owner Name") }}
-                </div>
-                <div class="mb-3">
-                    {{ truck_form.truck_registration_number(class_="form-control", placeholder="XX88 XY8888") }}
-                </div>
-                <div class="mb-3 form-check">
-                    {{ truck_form.availability(class_="form-check-input") }}
-                    <label for="{{ truck_form.availability.id }}" class="form-check-label">Currently Available</label>
-                </div>
-                <div class="d-grid">
-                    {{ truck_form.submit(class_="btn btn-primary") }}
-                </div>
+                {{ form.hidden_tag() }}
+                {% for form_item in form %}
+                    <div class="mb-3">
+                        {{ form_item.label(class="form-label") }}
+                        {{ form_item(class="form-control") }}
+                        {% if form_item.errors %}
+                            <div class="text-danger">
+                                {% for error in form_item.errors %}
+                                    <small>{{ error }}</small>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                {% endfor %}
             </form>
-
-        {% elif adding_type == 'material' %}
-            <form method="post" class="bg-white p-4 rounded shadow">
-                <h4 class="text-center mb-3">Schedule Your Material</h4>
-                {{ material_form.hidden_tag() }}
-                <div class="mb-3">
-                    {{ material_form.load_name(class_="form-control", placeholder="Material Owner Name") }}
-                </div>
-                <div class="mb-3">
-                    {{ material_form.pickup_address(class_="form-control", placeholder="Material Pickup Address", id="pickup") }}
-                </div>
-                <div class="mb-3">
-                    {{ material_form.drop_address(class_="form-control", placeholder="Material Drop off Address", id="drop") }}
-                </div>
-                <div class="d-grid">
-                    {{ material_form.submit(class_="btn btn-primary") }}
-                </div>
-            </form>
-            
-        {% endif %}
         </div>
     </div>
 {% endblock body %}

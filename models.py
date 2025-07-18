@@ -33,6 +33,7 @@ class Truck(db.Model):
     user_id = db.Column(db.Integer, db.ForeignKey('USER.user_id'), nullable=False)
 
     registration_number = db.Column(db.String(10), nullable=False, unique=True)
+    model_name = db.Column(db.Text, nullable=False)
     type = db.Column(db.String(80), nullable=False)
     capacity = db.Column(db.Float, nullable=False)
     current_location = db.Column(db.Text, nullable=False)

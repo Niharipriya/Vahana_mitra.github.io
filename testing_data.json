@@ -14,7 +14,8 @@
       "owner_pan": "ABCDE1234F",
       "is_verified": true,
       "is_available": true,
-      "availability": 5
+      "availability": 5,
+      "model_name": "Tata LPT 3118"
     },
     {
       "user_id": 2,
@@ -30,7 +31,8 @@
       "owner_pan": "FGHIJ5678K",
       "is_verified": true,
       "is_available": false,
-      "availability": 0
+      "availability": 0,
+      "model_name": "Ashok Leyland Ecomet 1615"
     },
     {
       "user_id": 3,
@@ -46,7 +48,8 @@
       "owner_pan": "KLMNO9012P",
       "is_verified": false,
       "is_available": true,
-      "availability": 3
+      "availability": 3,
+      "model_name": "Eicher Pro 2110XP"
     },
     {
       "user_id": 4,
@@ -62,7 +65,8 @@
       "owner_pan": "PQRST3456U",
       "is_verified": true,
       "is_available": true,
-      "availability": 7
+      "availability": 7,
+      "model_name": "BharatBenz 2823C"
     },
     {
       "user_id": 5,
@@ -78,7 +82,8 @@
       "owner_pan": "UVWXY7890Z",
       "is_verified": true,
       "is_available": true,
-      "availability": 2
+      "availability": 2,
+      "model_name": "Mahindra Blazo X 28"
     }
   ],
   "loads": [

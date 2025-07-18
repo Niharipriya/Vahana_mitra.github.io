@@ -1,5 +1,6 @@
 from models import *
 from form import SignupForm, LoginForm, TruckRegistrationForm, MaterialRegistrationForm, TruckRequestForm, MaterialRequestForm
+from config import DevelopmentConfig
 
 import json
 from flask import Flask, render_template, url_for, request, flash, redirect, session
@@ -13,9 +14,7 @@ truck_testing_data = testing_data["trucks"]
 load_testing_data = testing_data["loads"]
 
 app = Flask(__name__)
-app.config['SECRET_KEY'] = 'TempSecretkey'
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///project.db'
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
+app.config.from_object(DevelopmentConfig)
 ADMIN = 'admin@gmail.com'
 
 db.init_app(app)
@@ -58,7 +57,10 @@ def _():
 @app.route("/landing", methods=['POST', 'GET'])
 def landing():
 
-    def not_profile_redirect(form_type, form):
+    truck_request_form = TruckRequestForm()
+    material_request_form = MaterialRequestForm()
+
+    def not_profile_redirect(form_type, form) -> bool:
         if not current_user.is_authenticated:
             session['pending_form_data'] = {
                 'form_type': form_type,
@@ -66,10 +68,8 @@ def landing():
                 'timestamp': datetime.now().isoformat()
             }
             flash("Please Login or SignUp to continue your booking process", "danger")
-            return redirect(url_for('profile'))
-
-    truck_request_form = TruckRequestForm()
-    material_request_form = MaterialRequestForm()
+            return False
+        return True
 
     if material_request_form.validate_on_submit():
         list_compatible_loads = Load.find_available_materials(
@@ -77,12 +77,13 @@ def landing():
             current_location= material_request_form.current_location.data
         )
 
-        not_profile_redirect('load_request_form', material_request_form)
         load_ids = [load.load_id for load in list_compatible_loads]
         session['compatible_load_ids'] = load_ids
+        if not_profile_redirect('material_request_form', material_request_form):
+            return redirect(url_for('booking'))
+        else:
+            return redirect(url_for('profile'))
 
-        flash("Request successfully accepted", 'success')
-        return redirect(url_for('booking'))
     elif truck_request_form.validate_on_submit():
         list_compatible_truck = Truck.find_available_truck(
             location= truck_request_form.pickup_location.data,
@@ -90,12 +91,13 @@ def landing():
             # truck_type= truck_request_form.truck_type.data,
         )
 
-        not_profile_redirect('truck_request_form', truck_request_form)
         truck_ids = [truck.truck_id for truck in list_compatible_truck]
         session['compatible_truck_ids'] = truck_ids
+        if not_profile_redirect('truck_request_form', truck_request_form):
+            return redirect(url_for('booking'))
+        else:
+            return redirect(url_for('profile'))
 
-        flash("Request successfully accepted", 'success')
-        return redirect(url_for('booking'))
     if request.method == 'POST':
         print(truck_request_form.errors)
 
@@ -104,17 +106,18 @@ def landing():
 @app.route("/booking", methods=['POST', 'GET'])
 def booking():
     list_compatible = []
+    booking_type = ""
 
     if session.get('compatible_truck_ids'):
         truck_ids = session.pop('compatible_truck_ids', [])
         list_compatible = Truck.query.filter(Truck.truck_id.in_(truck_ids)).all()
+        booking_type = "truck"
     elif session.get('compatible_load_ids'):
         load_ids = session.pop('compatible_load_ids', [])
         list_compatible = Load.query.filter(Load.load_id.in_(load_ids)).all()
+        booking_type = "load"
 
-    return render_template("booking.html", list_compatible=list_compatible)
-
-
+    return render_template("booking.html", list_compatible=list_compatible, booking_type=booking_type)
 
 @app.route("/signup_login", methods=['POST', 'GET'])
 def profile():
@@ -134,7 +137,7 @@ def profile():
             db.session.add(user)
             db.session.commit()
             flash('Account created successfully. You can login now', 'success')
-            redirect(url_for('profile', form='login'))
+            return redirect(url_for('profile', form='login'))
 
     elif form_type == 'login':
         if login_form.validate_on_submit():
@@ -144,8 +147,8 @@ def profile():
                 flash('Login Successfully', 'success')
                 if _user.email == ADMIN:
                     return redirect(url_for('admin'))
-                elif session['pending_form_data']:
-                    return redirect(url_for('register'))
+                elif session.get('compatible_truck_ids') or session.get('compatible_load_ids'):
+                    return redirect(url_for('booking'))
                 else:
                     return redirect(url_for('dashboard'))
             else:
@@ -153,11 +156,10 @@ def profile():
 
     return render_template("signup_login.html", form_type=form_type, signup_form=signup_form, login_form=login_form)
 
-@app.route("/register", methods=['POST', 'GET'])
-def register():
-    truck_registration_form = TruckRegistrationForm()
-    material_registration_form = MaterialRegistrationForm()
-    return render_template("register.html", truck_registration_form=truck_registration_form, material_registration_form=material_registration_form)
+@app.route("/register/<string:booking_type>/<int:id>", methods=['POST', 'GET'])
+def register(booking_type, id):
+    form = TruckRegistrationForm() if booking_type == 'truck' else MaterialRegistrationForm()
+    return render_template("register.html", form=form )
 
 @app.route('/dashboard', methods=['POST', 'GET'])
 @login_required

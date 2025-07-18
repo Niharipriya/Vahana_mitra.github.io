@@ -1,8 +1,33 @@
 {% extends 'base_page.html' %}
 
+{% block head %}
+    <style>
+        .truck-card{
+            border-radius: 15px;
+            transition: transform 0.2s ease-in-out;
+        }
+        .truck-card:hover{
+            transform: scale(1.02);
+        }
+    </style>
+{% endblock head %}
+
 {% block body %}
     <div class="container py-6 table-responsive">
-        <h2>Truck</h2>
+        <div class="container py-5">
+            {% if booking_type == 'truck' %}
+                <h2 class="mb-4 text-center">Available Trucks for booking</h2>
+                <div class="row row-cols-1 row-cols-md-3 g-4">
+                    {% for item in list_compatible %}
+                        {% set truck = item %}
+                        {% include 'truck_capsule.html' %}
+                    {% endfor %}
+            </div>
+            {% else %}
+                <h2 class="mb-4 text-center">Available Trucks for booking</h2>
+            {% endif %}
+        </div>
+
         <table class="table table-light table-hover table-striped">
             <thead>
                 <tr>
