@@ -16,14 +16,12 @@
             <form method="post" class="bg-white p-4 rounded shadow">
                 <h4 class="text-center mb-3">Register Your Truck</h4>
                 {{ truck_form.hidden_tag() }}
+                
                 <div class="mb-3">
-                    {{ truck_form.truck_name(class_="form-control", placeholder="Truck Owner Name") }}
-                </div>
-                <div class="mb-3">
-                    {{ truck_form.truck_registration_number(class_="form-control", placeholder="XX88 XY8888") }}
+                    {{ truck_form.registration_number(class_="form-control", placeholder="XX88 XY8888") }}
                 </div>
                 <div class="form-check mb-3">
-                    {{ truck_form.availability(class_="form-check-input", id="availability") }}
+                    {{ truck_form.available_date(class_="form-check-input", id="availability") }}
                     <label class="form-check-label" for="availability">Currently Available</label>
                 </div>
                 <div class="d-grid">
@@ -35,14 +33,12 @@
             <form method="post" class="bg-white p-4 rounded shadow">
                 <h4 class="text-center mb-3">Schedule Your Material</h4>
                 {{ material_form.hidden_tag() }}
+                
                 <div class="mb-3">
-                    {{ material_form.load_name(class_="form-control", placeholder="Material Owner Name") }}
+                    {{ material_form.pickup_location(class_="form-control", placeholder="Pickup Address", id="pickup") }}
                 </div>
                 <div class="mb-3">
-                    {{ material_form.pickup_address(class_="form-control", placeholder="Pickup Address", id="pickup") }}
-                </div>
-                <div class="mb-3">
-                    {{ material_form.drop_address(class_="form-control", placeholder="Dropoff Address", id="drop") }}
+                    {{ material_form.drop_location(class_="form-control", placeholder="Dropoff Address", id="drop") }}
                 </div>
                 <div class="d-grid">
                     {{ material_form.submit(class_="btn btn-success") }}
