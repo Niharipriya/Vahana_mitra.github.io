@@ -40,11 +40,6 @@ def create_table():
         db.session.add(user)
         db.session.commit()
 
-@app.route("/tabs")
-def view_tabs():
-    truck = Truck.query.all()
-    load = Load.query.all()
-    return render_template("tabs.html", trucks=truck, loads=load)
 
 @login_manager.user_loader
 def load_user(user_id):
