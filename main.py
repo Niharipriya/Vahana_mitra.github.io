@@ -40,11 +40,11 @@ def create_table():
         db.session.add(user)
         db.session.commit()
 
-@app.route("/tabs")
-def view_tabs():
-    truck = Truck.query.all()
-    load = Load.query.all()
-    return render_template("tabs.html", trucks=truck, loads=load)
+# @app.route("/tabs")
+# def view_tabs():
+#     truck = Truck.query.all()
+#     load = Load.query.all()
+#     return render_template("tabs.html", trucks=truck, loads=load)
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -138,8 +138,7 @@ def profile():
                 fullname = signup_form.fullname.data,
                 password_hash = hashed_password,
                 email = signup_form.email.data,
-                phone = request.form.get('full_phone')
-,
+                phone = request.form.get('full_phone'),
             )
             db.session.add(user)
             db.session.commit()
@@ -165,7 +164,7 @@ def profile():
 
 @app.route("/register/<string:booking_type>/<int:id>", methods=['POST', 'GET'])
 def register(booking_type, id):
-    form = TruckRegistrationForm() if booking_type == 'truck' else MaterialRegistrationForm()
+    form = MaterialRegistrationForm() if booking_type == 'truck' else TruckRegistrationForm()
     return render_template("register.html", form=form )
 
 @app.route('/dashboard', methods=['POST', 'GET'])
@@ -233,7 +232,7 @@ def admin():
 
     user = User.query.all()
     return render_template('admin.html', users=user)
- 
+
 if __name__ == "__main__":
     with app.app_context():
         db.create_all()

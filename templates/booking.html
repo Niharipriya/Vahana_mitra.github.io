@@ -23,8 +23,8 @@
                         {% include 'truck_capsule.html' %}
                     {% endfor %}
             </div>
-            {% else %}
-                <h2 class="mb-4 text-center">Available Trucks for booking</h2>
+            {% elif booking_type == 'load' %}
+                <h2 class="mb-4 text-center">Available Materials for booking</h2>
             {% endif %}
         </div>
 
