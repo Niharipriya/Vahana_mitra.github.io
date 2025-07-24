@@ -33,9 +33,9 @@
                     <!-- <a class="navbar-brand nav-link" href="{{ url_for('profile') }}"> Register</a> -->
                     <a class="navbar-brand nav-link" href="{{ url_for('dashboard') }}">Dashboard</a>
                     <a class="navbar-brand nav-link" href="{{ url_for('view_tabs') }}">Status</a>
-                             
                 <div class="d-flex ms-auto">
                     {% if current_user.fullname != NaN %}
+                        {{ current_user.fullname }} 
                         <a class="nav-item nav-link align-right" href="{{ url_for('logout')}}">Log out</a>
                     {% else %}
                         <a class="nav-item nav-link" href="{{ url_for('profile', form='login')}}">Log in</a>

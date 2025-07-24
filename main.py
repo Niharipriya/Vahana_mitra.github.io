@@ -1,6 +1,7 @@
 from models import *
 from form import SignupForm, LoginForm, TruckRegistrationForm, MaterialRegistrationForm, TruckRequestForm, MaterialRequestForm
 from config import DevelopmentConfig
+import random, string, os
 
 import json
 from flask import Flask, render_template, url_for, request, flash, redirect, session
@@ -21,6 +22,12 @@ db.init_app(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'profile'
+def generate_random_pass():
+    length = 13
+    chars = string.ascii_letters + string.digits + '!@#$%^&*()'
+    random.seed = (os.urandom(1024))
+
+    return ''.join(random.choice(chars) for i in range(length))
 
 # region BOOT ROUTINE
 
@@ -112,6 +119,71 @@ def admin():
     if current_user.email != ADMIN:
         flash('Access denied please login as admin', 'danger')
         return redirect(url_for('profile'), form= 'login')
+
+    if truck_registration_form.validate_on_submit():
+        user = User.query.filter_by(email=truck_registration_form.user_email.data).first()
+        if user:
+            user_id = user.user_id
+        else:
+            hashed_password = bcrypt.generate_password_hash(generate_random_pass()).decode('utf-8')
+            new_user = User(
+                fullname = truck_registration_form.user_fullname.data,
+                password_hash = hashed_password,
+                email = truck_registration_form.user_email.data,
+                phone = truck_registration_form.user_phone.data,
+            )
+            db.session.add(new_user)
+            db.session.commit()
+            user_id = new_user.user_id
+
+        print("Added trucks to db")
+        print(truck_registration_form.data)
+
+        flash(f"Successfully Created a material request for the user {material_registration_form.user_fullname.data}", "success")
+        return redirect(url_for('admin'))
+    elif material_registration_form.validate_on_submit():
+        user = User.query.filter_by(email=material_registration_form.user_email.data).first()
+        if user:
+            user_id = user.user_id
+        else:
+            hashed_password = bcrypt.generate_password_hash(generate_random_pass()).decode('utf-8')
+            new_user = User(
+                fullname = material_registration_form.user_fullname.data,
+                password_hash = hashed_password,
+                email = material_registration_form.user_email.data,
+                phone = material_registration_form.user_phone.data,
+            )
+            db.session.add(new_user)
+            db.session.commit()
+            user_id = new_user.user_id
+
+        load = Load(
+            user_id = user_id,
+            type = material_registration_form.material_type.data,
+            weight = material_registration_form.estimated_weight.data,
+            details = material_registration_form.material_details.data,
+
+            pickup_address = material_registration_form.pickup_location.data,
+            pickup_date = material_registration_form.pickup_date.data,
+            pickup_contact_name = material_registration_form.pickup_contact_name.data,
+            pickup_contact_phone = material_registration_form.pickup_contact_phone.data,
+
+            drop_address = material_registration_form.drop_location.data,
+            drop_date = material_registration_form.drop_date.data,
+            drop_contact_name = material_registration_form.drop_contact_name.data,
+            drop_contact_phone = material_registration_form.drop_contact_phone.data,
+        )
+        db.session.add(load)
+        db.session.commit()
+        print("Added materials to db")
+        print(material_registration_form.data)
+
+        flash(f"Successfully Created a material request for the user {material_registration_form.user_fullname.data}", "success")
+        return redirect(url_for('admin'))
+    if request.method == 'POST':
+        print("ERROR")
+        print(material_registration_form.data)
+        print(material_registration_form.errors)
 
     users = User.query.all()
     return render_template(

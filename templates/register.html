@@ -2,13 +2,24 @@
     <div
     class="row justify-content-center">
         <div
-        class="col  form-card">
+        class="col form-card">
             <form 
             method="POST"
             class="bg-light p-4">
                 {{truck_registration_form.hidden_tag()}}
                 <div
                 class="row g-3 align-items-center">
+                    <div
+                    class="col-12 container rounded shadow py-3">
+                        <div
+                        class="row g-3 align-items-center">
+                            <h3>User to add Truck to </h3>
+                            <div
+                            class="col-md-4">{{ truck_registration_form.user_fullname(class="form-control") }}</div>
+                            <div
+                            class="col-md-4">{{ truck_registration_form.user_phone(class="form-control") }}</div>
+                            <div
+                            class="col-md-4">{{ truck_registration_form.user_email(class="form-control") }}</div></div></div>
                     <div
                     class="col-md-6">
                         <label
@@ -32,6 +43,17 @@
                 <div
                 class="row g-3 align-items-center">
                     <div
+                    class="col-12 container rounded shadow py-3">
+                        <div
+                        class="row g-3 align-items-center">
+                            <h3>User to add MAterial to </h3>
+                            <div
+                            class="col-md-4">{{ material_registration_form.user_fullname(class="form-control") }}</div>
+                            <div
+                            class="col-md-4">{{ material_registration_form.user_phone(class="form-control") }}</div>
+                            <div
+                            class="col-md-4">{{ material_registration_form.user_email(class="form-control") }}</div></div></div>
+                    <div
                     class="col-md-6">
                         <label
                         class="form-label">PickUp Location</label>
@@ -49,8 +71,9 @@
                     <div
                     class="col-md-3">
                         <label
-                        class="form-label">PickUp Time</label>
-                        {{ material_registration_form.pickup_location(class="form-control") }}</div>
+                        class="form-label">PickUp Contacts <button class="btn btn-primary">Same as User</button></label>
+                        {{ material_registration_form.pickup_contact_name(class="form-control", placeholder="Name") }}
+                        {{ material_registration_form.pickup_contact_phone(class="form-control", placeholder="Phone Number")}}</div>
                     <div
                     class="col-md-3">
                         <label
@@ -59,8 +82,9 @@
                     <div
                     class="col-md-3">
                         <label
-                        class="form-label">Drop Time</label>
-                        {{ material_registration_form.drop_location(class="form-control") }}</div>
+                        class="form-label">Drop Contacts</label>
+                        {{ material_registration_form.drop_contact_name(class="form-control", placeholder="Name") }}
+                        {{ material_registration_form.drop_contact_phone(class="form-control", placeholder="Phone Number")}}</div>
                     <div
                     class="col-md-4">
                         <label
@@ -74,13 +98,13 @@
                     <div
                     class="col-md-4">
                         <label
-                        class="form-label">Contact Number of the Material owner</label>
-                        {{ material_registration_form.contact_number(class="form-control") }}</div>
+                        class="form-label">Type of Materials in load </label>
+                        {{ material_registration_form.material_type(class="form-control") }}</div>
                     <div
                     class="col-12">
                         <label
                         class="form-label">Material description</label>
-                        {{ material_registration_form.material_type(class="form-control") }}</div>
+                        {{ material_registration_form.material_details(class="form-control") }}</div>
                     <div
                     class="col-12">
                         {{ material_registration_form.submit(class="btn btn-primary") }}</div>
