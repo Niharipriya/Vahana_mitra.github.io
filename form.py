@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, EmailField, TelField, SubmitField, PasswordField, BooleanField, DateField, SelectField, IntegerField
-from wtforms import HiddenField
+from wtforms import HiddenField, TextAreaField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, Regexp
 
 pickup_hour = SelectField(
@@ -20,7 +20,6 @@ pickup_time = HiddenField('Pickup Time', validators=[DataRequired()])
 class SignupForm(FlaskForm):
     fullname = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=80)])
     phone = TelField('Phone Number', validators=[DataRequired(), Length(min=10)])
-    country_code = StringField('Country Code', validators=[DataRequired()]) # NEW
     email = EmailField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     submit = SubmitField('Signup')
@@ -82,8 +81,8 @@ class MaterialRegistrationForm(FlaskForm):
     drop_location = StringField('Drop Location', validators=[DataRequired()])
     drop_date = DateField('Drop date', validators=[DataRequired()])
     drop_time = SelectField('Drop time', choices=[('1-12', '01:00 - 12:00'), ('12-00', '12:00 - 00:00')], validators=[DataRequired()])
-    material_type = StringField('Type of Material', validators=[DataRequired()])
+    material_type = TextAreaField('Type of Material', validators=[DataRequired()])
     estimated_weight = IntegerField('Estimated Weight in tons', validators=[DataRequired()])
     truck_type = SelectField('Lorry type Needed', choices=[('open', 'Open'), ('close', 'Closed'), ('container', 'Container'), ('tanker', 'Tanker')], validators=[DataRequired()])
     contact_number = TelField('Contact Number', validators=[DataRequired()])
-    submit = SubmitField('Request Lorry')
+    submit = SubmitField('Register the Material')

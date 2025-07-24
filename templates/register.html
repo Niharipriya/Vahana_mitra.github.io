@@ -1,32 +1,89 @@
-{% extends 'base_page.html' %}
-
-{% block body %}
-    <div class="container py-5">
-    <div class="row justify-content-center">
-        <div class="col-md-6 form-card">
-
-            <div class="text-center mb-4">
-                <button class="btn btn-outline-light me-2" onclick="location.href='/dashboard?adding=truck'">Register Truck</button>
-                <button class="btn btn-outline-light" onclick="location.href='/dashboard?adding=material'">Schedule Material</button>
-            </div>
-
-            <form method="post" class="bg-white p-4 rounded shadow">
-                <!-- <h4 class="text-center mb-3">Register Your Truck</h4> -->
-                {{ form.hidden_tag() }}
-                {% for form_item in form %}
-                    <div class="mb-3">
-                        {{ form_item.label(class="form-label") }}
-                        {{ form_item(class="form-control") }}
-                        {% if form_item.errors %}
-                            <div class="text-danger">
-                                {% for error in form_item.errors %}
-                                    <small>{{ error }}</small>
-                                {% endfor %}
-                            </div>
-                        {% endif %}
-                    </div>
-                {% endfor %}
-            </form>
-        </div>
-    </div>
-{% endblock body %}
+{% if adding == 'truck' %}
+    <div
+    class="row justify-content-center">
+        <div
+        class="col  form-card">
+            <form 
+            method="POST"
+            class="bg-light p-4">
+                {{truck_registration_form.hidden_tag()}}
+                <div
+                class="row g-3 align-items-center">
+                    <div
+                    class="col-md-6">
+                        <label
+                        class="form-label">Truck RTO Number</label>
+                        {{ truck_registration_form.registration_number(class="form-control") }}</div>
+                    <div
+                    class="col-md-6">
+                        <label
+                        class="form-label">Current Location</label>
+                        {{ truck_registration_form.current_location(class="form-control") }}</div>
+            </div></form></div></div>
+{% elif adding == 'material' %}
+    <div
+    class="row justify-content-center">
+        <div
+        class="col form-card">
+            <form 
+            method="POST"
+            class="bg-light p-4">
+                {{material_registration_form.hidden_tag()}}
+                <div
+                class="row g-3 align-items-center">
+                    <div
+                    class="col-md-6">
+                        <label
+                        class="form-label">PickUp Location</label>
+                        {{ material_registration_form.pickup_location(class="form-control") }}</div>
+                    <div
+                    class="col-md-6">
+                        <label
+                        class="form-label">Drop Location</label>
+                        {{ material_registration_form.drop_location(class="form-control") }}</div>
+                    <div
+                    class="col-md-3">
+                        <label
+                        class="form-label">PickUp Date</label>
+                        {{ material_registration_form.pickup_date(class="form-control") }}</div>
+                    <div
+                    class="col-md-3">
+                        <label
+                        class="form-label">PickUp Time</label>
+                        {{ material_registration_form.pickup_location(class="form-control") }}</div>
+                    <div
+                    class="col-md-3">
+                        <label
+                        class="form-label">Drop Date</label>
+                        {{ material_registration_form.drop_date(class="form-control") }}</div>
+                    <div
+                    class="col-md-3">
+                        <label
+                        class="form-label">Drop Time</label>
+                        {{ material_registration_form.drop_location(class="form-control") }}</div>
+                    <div
+                    class="col-md-4">
+                        <label
+                        class="form-label">Estimated material weight</label>
+                        {{ material_registration_form.estimated_weight(class="form-control") }}</div>
+                    <div
+                    class="col-md-4">
+                        <label
+                        class="form-label">Type of truck </label>
+                        {{ material_registration_form.truck_type(class="form-control") }}</div>
+                    <div
+                    class="col-md-4">
+                        <label
+                        class="form-label">Contact Number of the Material owner</label>
+                        {{ material_registration_form.contact_number(class="form-control") }}</div>
+                    <div
+                    class="col-12">
+                        <label
+                        class="form-label">Material description</label>
+                        {{ material_registration_form.material_type(class="form-control") }}</div>
+                    <div
+                    class="col-12">
+                        {{ material_registration_form.submit(class="btn btn-primary") }}</div>
+                    
+            </div></form></div></div>
+{% endif %}

@@ -3,6 +3,7 @@ from datetime import timedelta
 
 # Base Directory
 basedir = os.path.abspath(os.path.dirname(__file__))
+print(basedir)
 
 class Config:
     # General

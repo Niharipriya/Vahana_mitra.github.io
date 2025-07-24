@@ -16,41 +16,51 @@
     <div class="container py-6 table-responsive">
         <div class="container py-5">
             {% if booking_type == 'truck' %}
-                <h2 class="mb-4 text-center">Available Trucks for booking</h2>
-                <div class="row row-cols-1 row-cols-md-3 g-4">
-                    {% for item in list_compatible %}
-                        {% set truck = item %}
-                        {% include 'truck_capsule.html' %}
-                    {% endfor %}
+            <h2 class="mb-4 text-center">Available Trucks for booking</h2>
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for truck in list_compatible %}
+                    <div class="col">
+                        <div class="card truck-card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title"> {{truck.model_name}} {{truck.type}} </h5>
+                                <p class="card-text">
+                                    <strong>capacity:</strong> {{ truck.capacity }} tons <br>
+                                    <strong>current location:</strong> {{ truck.current_location }} <br>
+                                    <strong>available to:</strong> {{ truck.available_locations or 'n/a'}} <br>
+                                    <strong>owner:</strong> {{ truck.owner_name }} ({{ truck.owner_mobile }})<br>
+                                </p>
+                                <form method="post" action="{{ url_for('register', booking_type='truck', id=truck.truck_id)}}">
+                                    <button class="btn btn-primary w-100">book now</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                {% endfor %}
             </div>
             {% elif booking_type == 'load' %}
-                <h2 class="mb-4 text-center">Available Materials for booking</h2>
+            <h2 class="mb-4 text-center">Available Materials for booking</h2>
+            <div class="row row-cols-1 row-cols-md-3 g-4">
+                {% for material in list_compatible %}
+                    <div class="col">
+                        <div class="card truck-card shadow-sm">
+                            <div class="card-body">
+                                <h5 class="card-title"> {{material.type}} {{material.weight}} </h5>
+                                <p class="card-text">
+                                    <strong>PickUp:</strong> {{material.pickup_address}} <br>
+                                    <strong>Drop:</strong> {{material.drop_address}} <br>
+                                    <strong>Cost:</strong> {{material.cost}}
+                                    <strong>Contacts:</strong> {{material.pickup_contact_name}} {{material.pickup_contact_phone}} <br>
+                                </p>
+                                <form method="post" action="{{ url_for('register', booking_type='truck', id=truck.truck_id)}}">
+                                    <button class="btn btn-primary w-100">book now</button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+
+                {% endfor %}
+            </div>
             {% endif %}
         </div>
-
-        <table class="table table-light table-hover table-striped">
-            <thead>
-                <tr>
-                    <th>Truck RTO Number</th>
-                    <th>Truck Type</th>
-                    <th>Capacity</th>
-                    <th>Current Location</th>
-                    <th>Is Verified</th>
-                    <th>Availability</th>
-                </tr>
-            </thead>
-            <tbody class="table-group-divider">
-                {% for truck in list_compatible %}
-                <tr>
-                    <td>{{ truck.registration_number }}</td>
-                    <td>{{ truck.type }}</td>
-                    <td>{{ truck.capacity }}</td>
-                    <td>{{ truck.current_location }}</td>
-                    <td>{{ 'Yes' if truck.is_verified else 'No' }}</td>
-                    <td>{{ 'Available' if truck.is_available else 'Not Available' }}</td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
     </div>
 {% endblock body %}

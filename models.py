@@ -30,8 +30,8 @@ class Truck(db.Model):
     __tablename__ = 'TRUCK'
 
     truck_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('USER.user_id'), nullable=False)
-    
+    user_id = db.Column(db.Integer, db.ForeignKey('USER.user_id'), unique=True, nullable=False)
+    # load_id = db.Column(db.Integer, db.ForeignKey('LOAD.load_id'), unique=True, nullable=True)
 
     registration_number = db.Column(db.String(10), nullable=False, unique=True)
     model_name = db.Column(db.Text, nullable=False)
@@ -88,7 +88,8 @@ class Load(db.Model):
     __tablename__ = 'LOAD'
 
     load_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('USER.user_id'), unique=True)
+    user_id = db.Column(db.Integer, db.ForeignKey('USER.user_id'), unique=True, nullable=False)
+    # truck_id = db.Column(db.Integer, db.ForeignKey('TRUCK.truck_id'), unique=True, nullable=True)
     type = db.Column(db.String(100), nullable=False)
     details = db.Column(db.Text, nullable=False) 
     weight = db.Column(db.Float, nullable=False)
