@@ -46,16 +46,18 @@ class TruckRegistrationForm(FlaskForm):
     user_email = EmailField('Email', validators=[DataRequired(), Email()])
 
     registration_number = StringField('Registration number', validators=[DataRequired(), Length(min=9, max=10), Regexp(RTO_number_regex, message=("Invalid RTO number"))])
+    model = StringField('Trucks Model', validators=[DataRequired()])
     type = SelectField('Lorry type Needed', choices=[('open', 'Open'), ('close', 'Closed'), ('container', 'Container'), ('tanker', 'Tanker')], validators=[DataRequired()])
     capacity = IntegerField('Max load capacity in tons', validators=[DataRequired()])
     current_location = StringField('Current location from ', validators=[DataRequired()])
-    destination_location = StringField('Preferred destination location')
+    # destination_location = StringField('Preferred destination location')
+
     owner_aadhaar = StringField('Owners Aadhaar number', validators=[Regexp(aadhaar_regex, message=("Write a valid aadhaar number"))])
     owner_name = StringField('Owners name', validators=[Length(min=10)])
-    contact_number = TelField('Contact Number', validators=[DataRequired(), Length(min=10)])
-    owner_tos = StringField('Owners Terms of Service', validators=[])
+    owner_phone = StringField('Phone Number', validators=[Length(min=10, max=20)], widget=IntlTelInput())
+    owner_tos = TextAreaField('Owners Terms of Service')
     owner_pan = StringField('Owners PAN card number', validators=[Regexp(pan_regex, message="Enter a valid PAN number")])
-    available_date = DateField('Date Available', validators=[DataRequired()])
+    # available_date = DateField('Date Available', validators=[DataRequired()])
     submit = SubmitField('Request Load')
 
 class MaterialRequestForm(FlaskForm):

@@ -135,12 +135,27 @@ def admin():
             db.session.add(new_user)
             db.session.commit()
             user_id = new_user.user_id
-
+        truck = Truck(
+            user_id = user_id,
+            registration_number = truck_registration_form.registration_number.data,
+            model_name = truck_registration_form.model.data,
+            type = truck_registration_form.type.data,
+            capacity = truck_registration_form.capacity.data,
+            current_location = truck_registration_form.current_location.data,
+            owner_name = truck_registration_form.owner_name.data, 
+            owner_mobile = truck_registration_form.owner_name.data, 
+            owner_aadhaar = truck_registration_form.owner_aadhaar.data,
+            owner_pan = truck_registration_form.owner_pan.data,
+            owner_tos = truck_registration_form.owner_tos.data,
+        )
+        db.session.all(truck)
+        db.session.commit()
         print("Added trucks to db")
         print(truck_registration_form.data)
 
         flash(f"Successfully Created a material request for the user {material_registration_form.user_fullname.data}", "success")
         return redirect(url_for('admin'))
+
     elif material_registration_form.validate_on_submit():
         user = User.query.filter_by(email=material_registration_form.user_email.data).first()
         if user:
