@@ -57,7 +57,7 @@ class TruckRegistrationForm(FlaskForm):
     owner_phone = StringField('Phone Number', validators=[Length(min=10, max=20)], widget=IntlTelInput())
     owner_tos = TextAreaField('Owners Terms of Service')
     owner_pan = StringField('Owners PAN card number', validators=[Regexp(pan_regex, message="Enter a valid PAN number")])
-    # available_date = DateField('Date Available', validators=[DataRequired()])
+    available_date = DateField('Date Available', validators=[DataRequired()])
     submit = SubmitField('Request Load')
 
 class MaterialRequestForm(FlaskForm):
