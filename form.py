@@ -20,7 +20,7 @@ pickup_time = HiddenField('Pickup Time', validators=[DataRequired()])
 class SignupForm(FlaskForm):
     fullname = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=80)])
     phone = TelField('Phone Number', validators=[DataRequired(), Length(min=10)])
-    country_code = StringField('Country Code', validators=[DataRequired()]) # NEW
+    country_code = StringField('Country Code') # NEW
     email = EmailField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     submit = SubmitField('Signup')
