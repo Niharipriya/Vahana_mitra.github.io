@@ -35,7 +35,7 @@
                     <a class="navbar-brand nav-link" href="{{ url_for('view_tabs') }}">Status</a>
                 <div class="d-flex ms-auto ">
                     {% if current_user.fullname != NaN %}
-                    <span style="width: 20px; height: 20px; border-radius: 50%; background-color: #000; display: inline-block; margin-right: 10px; vertical-align: middle;"></span>
+                    <span style="width: 20px; height: 20px; border-radius: 50%; background-color: #000; display: inline-block; margin-right: 5px; vertical-align: middle;margin-top:2px;"></span>
                         {{ current_user.fullname }}  &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;                
                         <a class="nav-item nav-link align-right" href="{{ url_for('logout')}}">         Log out</a>
                     {% else %}
