@@ -1,36 +1,67 @@
 {% extends 'base_page.html' %}
 
 {% block body %}
-    <div class="container py-6 table-responsive">
-        <h2>All Registered Users</h2>
-        <table class="table table-dark table-hover table-striped">
-            <thead>
-                <tr>
-                    <th scope="col">ID</th>
-                    <th scope="col">Full Name</th>
-                    <th scope="col">Email</th>
-                    <th scope="col">Phone</th>
-                    <th scope="col">Created At</th>
-                </tr>
-            </thead>
-            <tbody class="table-group-divider">
+<h1>ADMIN</h1>
+<div
+class="container rounded shadow">
+    <ul
+    class="nav nav-tabs">
+        <li
+        class="nav-item"><button
+            class="nav-link active" 
+            data-bs-toggle="tab" 
+            data-bs-target="#users">Users</button></li>
+        <li
+        class="nav-item"><button
+            class="nav-link"
+            data-bs-toggle="tab"
+            data-bs-target="#add_material">Add Materials</button></li>
+        <li
+        class="nav-item"><button
+            class="nav-link"
+            data-bs-toggle="tab"
+            data-bs-target="#add_truck">Add Trucks</button></li></ul>
+    <div
+    class="tab-content py-3">
+        <div
+        class="tab-pane fade show active table-responsive"
+        id="users"
+        role="tabpanel"><h2>All Registered Users</h2>
+            <table
+            class="table table-dark table-striped">
+                <thead>
+                    <tr>
+                        <th>NAME</th>
+                        <th>PHONE</th>
+                        <th>EMAIL</th>
+                        <th>TRUCKS</th>
+                        <th>MATERIALS</th>
+                    </tr>
+                </thead>
+                <tbody
+                class="table-group-divider">
                 {% for user in users %}
-                <tr>
-                    <td>{{ user.user_id }}</td>
-                    <td>{{ user.fullname }}</td>
-                    <td>{{ user.email }}</td>
-                    <td>{{ user.phone or '—' }}</td>
-                    <td>{{ user.creation_time.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-                </tr>
-                <tr class="collapse" id="details-{{current_user.user_id}}">
-                    <td colspan="6" class="p-0">
-                        <div class="card card-body bg-secondary text-light border-0 rounded">{% block details %} {% endblock details %}</div>
-                    </td>
-                </tr>
+                    <tr>
+                        <td> {{ user.fullname }} </td>
+                        <td> {{ user.phone }} </td>
+                        <td> {{ user.email }} </td>
+                        <td><a 
+                            href="admin/{{user.user_id}}/trucks"
+                            class="btn btn-primary">&#8942;</a></td>
+                        <td><a 
+                            href="admin/{{user.user_id}}/materials"
+                            class="btn btn-primary">&#8942;</a></td>
+                    </tr>
                 {% endfor %}
-            </tbody>
-        </table>
+                </tbody></table></div>
+        <div
+        class="tab-pane fade"
+        id="add_material">{% set adding = 'material' %}{% include 'register.html' %}</div>
+        <div
+        class="tab-pane fade"
+        id="add_truck">{% set adding = 'truck' %}{% include 'register.html' %}</div>
     </div>
+</div>
 
     <hr class="my-4">
 <h2>Filter by User ID</h2>

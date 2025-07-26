@@ -1,6 +1,7 @@
 from models import *
 from form import SignupForm, LoginForm, TruckRegistrationForm, MaterialRegistrationForm, TruckRequestForm, MaterialRequestForm
 from config import DevelopmentConfig
+import random, string, os
 
 import json
 from flask import Flask, render_template, url_for, request, flash, redirect, session
@@ -21,9 +22,18 @@ db.init_app(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'profile'
+def generate_random_pass():
+    length = 13
+    chars = string.ascii_letters + string.digits + '!@#$%^&*()'
+    random.seed = (os.urandom(1024))
+
+    return ''.join(random.choice(chars) for i in range(length))
+
+# region BOOT ROUTINE
 
 @app.before_request
 def create_table():
+    """Generates database, adds testing data to the database, and admin as a user"""
     db.create_all()
 
     [Truck.from_json(data= x) for x in truck_testing_data] 
@@ -40,27 +50,30 @@ def create_table():
         db.session.add(user)
         db.session.commit()
 
-# @app.route("/tabs")
-# def view_tabs():
-#     truck = Truck.query.all()
-#     load = Load.query.all()
-#     return render_template("tabs.html", trucks=truck, loads=load)
+@app.route("/", methods=['POST', 'GET'])
+def _():
+    """Redirect to landing"""
+    return redirect(url_for('landing'))
+
+#endregion
 
 @login_manager.user_loader
 def load_user(user_id):
     return User.query.get(int(user_id))
 
-@app.route("/", methods=['POST', 'GET'])
-def _():
-    return redirect(url_for('landing'))
-
 @app.route("/landing", methods=['POST', 'GET'])
 def landing():
-
+    """Landing page has about form to request truck and material"""
     truck_request_form = TruckRequestForm()
     material_request_form = MaterialRequestForm()
 
-    def not_profile_redirect(form_type, form) -> bool:
+    def not_profile_redirect(form_type, form):
+        """redirect to profile if not logged in else redirect to booking
+
+        Args:
+            form_type (str): name of the form requested
+            form (WTForm): the form object
+        """
         if not current_user.is_authenticated:
             session['pending_form_data'] = {
                 'form_type': form_type,
@@ -68,8 +81,9 @@ def landing():
                 'timestamp': datetime.now().isoformat()
             }
             flash("Please Login or SignUp to continue your booking process", "danger")
-            return False
-        return True
+            return redirect(url_for('profile'))
+        print("redirected to booking")
+        return redirect(url_for('booking'))
 
     if material_request_form.validate_on_submit():
         list_compatible_loads = Load.find_available_materials(
@@ -79,10 +93,7 @@ def landing():
 
         load_ids = [load.load_id for load in list_compatible_loads]
         session['compatible_load_ids'] = load_ids
-        if not_profile_redirect('material_request_form', material_request_form):
-            return redirect(url_for('booking'))
-        else:
-            return redirect(url_for('profile'))
+        return not_profile_redirect('material_request_form', material_request_form)
 
     elif truck_request_form.validate_on_submit():
         list_compatible_truck = Truck.find_available_truck(
@@ -93,15 +104,126 @@ def landing():
 
         truck_ids = [truck.truck_id for truck in list_compatible_truck]
         session['compatible_truck_ids'] = truck_ids
-        if not_profile_redirect('truck_request_form', truck_request_form):
-            return redirect(url_for('booking'))
-        else:
-            return redirect(url_for('profile'))
+        return not_profile_redirect('truck_request_form', truck_request_form)
 
     if request.method == 'POST':
         print(truck_request_form.errors)
 
     return render_template("landing.html", material_request_form = material_request_form, truck_request_form=truck_request_form)
+
+@app.route("/admin", methods=['POST', 'GET'])
+@login_required
+def admin():
+    truck_registration_form = TruckRegistrationForm()
+    material_registration_form = MaterialRegistrationForm()
+    if current_user.email != ADMIN:
+        flash('Access denied please login as admin', 'danger')
+        return redirect(url_for('profile'), form= 'login')
+
+    if truck_registration_form.validate_on_submit():
+        user = User.query.filter_by(email=truck_registration_form.user_email.data).first()
+        if user:
+            user_id = user.user_id
+        else:
+            hashed_password = bcrypt.generate_password_hash(generate_random_pass()).decode('utf-8')
+            new_user = User(
+                fullname = truck_registration_form.user_fullname.data,
+                password_hash = hashed_password,
+                email = truck_registration_form.user_email.data,
+                phone = truck_registration_form.user_phone.data,
+            )
+            db.session.add(new_user)
+            db.session.commit()
+            user_id = new_user.user_id
+        truck = Truck(
+            user_id = user_id,
+            registration_number = truck_registration_form.registration_number.data,
+            model_name = truck_registration_form.model.data,
+            type = truck_registration_form.type.data,
+            capacity = truck_registration_form.capacity.data,
+            current_location = truck_registration_form.current_location.data,
+            owner_name = truck_registration_form.owner_name.data, 
+            owner_mobile = truck_registration_form.owner_name.data, 
+            owner_aadhaar = truck_registration_form.owner_aadhaar.data,
+            owner_pan = truck_registration_form.owner_pan.data,
+            owner_tos = truck_registration_form.owner_tos.data,
+        )
+        db.session.all(truck)
+        db.session.commit()
+        print("Added trucks to db")
+        print(truck_registration_form.data)
+
+        flash(f"Successfully Created a material request for the user {material_registration_form.user_fullname.data}", "success")
+        return redirect(url_for('admin'))
+
+    elif material_registration_form.validate_on_submit():
+        user = User.query.filter_by(email=material_registration_form.user_email.data).first()
+        if user:
+            user_id = user.user_id
+        else:
+            hashed_password = bcrypt.generate_password_hash(generate_random_pass()).decode('utf-8')
+            new_user = User(
+                fullname = material_registration_form.user_fullname.data,
+                password_hash = hashed_password,
+                email = material_registration_form.user_email.data,
+                phone = material_registration_form.user_phone.data,
+            )
+            db.session.add(new_user)
+            db.session.commit()
+            user_id = new_user.user_id
+
+        load = Load(
+            user_id = user_id,
+            type = material_registration_form.material_type.data,
+            weight = material_registration_form.estimated_weight.data,
+            details = material_registration_form.material_details.data,
+
+            pickup_address = material_registration_form.pickup_location.data,
+            pickup_date = material_registration_form.pickup_date.data,
+            pickup_contact_name = material_registration_form.pickup_contact_name.data,
+            pickup_contact_phone = material_registration_form.pickup_contact_phone.data,
+
+            drop_address = material_registration_form.drop_location.data,
+            drop_date = material_registration_form.drop_date.data,
+            drop_contact_name = material_registration_form.drop_contact_name.data,
+            drop_contact_phone = material_registration_form.drop_contact_phone.data,
+        )
+        db.session.add(load)
+        db.session.commit()
+        print("Added materials to db")
+        print(material_registration_form.data)
+
+        flash(f"Successfully Created a material request for the user {material_registration_form.user_fullname.data}", "success")
+        return redirect(url_for('admin'))
+    if request.method == 'POST':
+        print("ERROR")
+        print(material_registration_form.data)
+        print(material_registration_form.errors)
+
+    users = User.query.all()
+    return render_template(
+        'admin.html',
+        users = users,
+        truck_registration_form = truck_registration_form,
+        material_registration_form = material_registration_form
+    )
+
+@app.route("/admin/<int:user_id>/materials", methods=['GET'])
+def show_materials(user_id):
+    material_list = Load.get_by_user(user_id)
+    return render_template(
+        "tabs.html",
+        list_type = "material",
+        loads = material_list
+    )
+@app.route("/admin/<int:user_id>/trucks", methods=['GET'])
+def show_trucks(user_id):
+    truck_list = Truck.get_by_user(user_id)
+    return render_template(
+        "tabs.html",
+        list_type = "truck",
+        trucks = truck_list
+    )
 
 @app.route("/booking", methods=['POST', 'GET'])
 def booking():
@@ -121,44 +243,50 @@ def booking():
 
 @app.route("/signup_login", methods=['POST', 'GET'])
 def profile():
-    form_type = request.args.get('form', 'signup')
+    """
+    <input type="tel" id="phone" name="phone" class="form-control" placeholder="Phone Number">
+    <input type="hidden" name="full_phone" id="full_phone">
+    <input type="hidden" name="country_code" id="country_code">
+    """
+    form_type = request.args.get('form_type', 'signup')
     signup_form = SignupForm()
     login_form = LoginForm()
 
-    if form_type == 'signup':
-        print("Form submitted:", request.method == 'POST')
-        print("Form validation status:", signup_form.validate_on_submit())
-        print("Form errors:", signup_form.errors)
+    # print("Form submitted:", request.method == 'POST')
+    # print("Form validation status:", signup_form.validate_on_submit())
+    # print("Form errors:", signup_form.errors)
 
-        if signup_form.validate_on_submit():
-            # Set phone data from hidden field
-            signup_form.phone.data = request.form.get('full_phone')
-            hashed_password = bcrypt.generate_password_hash(signup_form.password.data).decode('utf-8')
-            user = User(
-                fullname = signup_form.fullname.data,
-                password_hash = hashed_password,
-                email = signup_form.email.data,
-                phone = request.form.get('full_phone'),
-            )
-            db.session.add(user)
-            db.session.commit()
-            flash('Account created successfully. You can login now', 'success')
-            return redirect(url_for('profile', form='login'))
+    if signup_form.validate_on_submit():
+        # Set phone data from hidden field
+        signup_form.phone.data = request.form.get('full_phone')
+        hashed_password = bcrypt.generate_password_hash(signup_form.password.data).decode('utf-8')
+        user = User(
+            fullname = signup_form.fullname.data,
+            password_hash = hashed_password,
+            email = signup_form.email.data,
+            phone = request.form.get('full_phone'),
+        )
+        db.session.add(user)
+        db.session.commit()
+        flash('Account created successfully. You can login now', 'success')
+        return redirect(url_for('profile', form_type='login'))
 
-    elif form_type == 'login':
-        if login_form.validate_on_submit():
-            _user: User = User.query.filter_by(email = login_form.email.data).first()
-            if _user and _user.check_password(login_form.password.data, bcrypt):
-                login_user(_user)
-                flash('Login Successfully', 'success')
-                if _user.email == ADMIN:
-                    return redirect(url_for('admin'))
-                elif session.get('compatible_truck_ids') or session.get('compatible_load_ids'):
-                    return redirect(url_for('booking'))
-                else:
-                    return redirect(url_for('dashboard'))
+    elif login_form.validate_on_submit():
+        _user: User = User.query.filter_by(email = login_form.email.data).first()
+        if _user and _user.check_password(login_form.password.data, bcrypt):
+            login_user(_user)
+            flash('Login Successfully', 'success')
+            if _user.email == ADMIN:
+                return redirect(url_for('admin'))
+            elif session.get('compatible_truck_ids') or session.get('compatible_load_ids'):
+                return redirect(url_for('booking'))
             else:
-                flash('Login failed. Check your email or password.', 'danger')
+                return redirect(url_for('dashboard'))
+        else:
+            flash('Login failed. Check your email or password.', 'danger')
+
+    if request.method == 'POST':
+        print(signup_form.errors)
 
     return render_template("signup_login.html", form_type=form_type, signup_form=signup_form, login_form=login_form)
 
@@ -212,8 +340,8 @@ def dashboard():
 @app.route('/logout')
 @login_required
 def logout():
+    flash(f'Logged out successfully from {current_user.fullname}', 'info')
     logout_user()
-    flash('Logged out successfully.', 'info')
     return redirect(url_for('profile'))
 
 @app.route("/tabs")
@@ -221,17 +349,6 @@ def view_tabs():
     trucks = Truck.query.all()
     loads = Load.query.all()
     return render_template("tabs.html", trucks=trucks, loads=loads)
-
-
-@app.route("/admin")
-@login_required
-def admin():
-    if current_user.email != ADMIN:
-        flash('Access denied please login as admin', 'danger')
-        return redirect(url_for('profile'), form= 'login')
-
-    user = User.query.all()
-    return render_template('admin.html', users=user)
 
 if __name__ == "__main__":
     with app.app_context():

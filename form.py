@@ -1,6 +1,7 @@
+from support_wtform import IntlTelInput
 from flask_wtf import FlaskForm
 from wtforms import StringField, EmailField, TelField, SubmitField, PasswordField, BooleanField, DateField, SelectField, IntegerField
-from wtforms import HiddenField
+from wtforms import HiddenField, TextAreaField, DateTimeField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, Regexp
 
 pickup_hour = SelectField(
@@ -20,7 +21,6 @@ pickup_time = HiddenField('Pickup Time', validators=[DataRequired()])
 class SignupForm(FlaskForm):
     fullname = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=80)])
     phone = TelField('Phone Number', validators=[DataRequired(), Length(min=10)])
-    country_code = StringField('Country Code') # NEW
     email = EmailField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     submit = SubmitField('Signup')
@@ -41,17 +41,23 @@ class TruckRequestForm(FlaskForm):
     submit = SubmitField('Request Lorry')
 
 class TruckRegistrationForm(FlaskForm):
+    user_fullname = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=80)])
+    user_phone = StringField('Phone Number', validators=[DataRequired(), Length(min=10, max=20)], widget=IntlTelInput())
+    user_email = EmailField('Email', validators=[DataRequired(), Email()])
+
     registration_number = StringField('Registration number', validators=[DataRequired(), Length(min=9, max=10), Regexp(RTO_number_regex, message=("Invalid RTO number"))])
+    model = StringField('Trucks Model', validators=[DataRequired()])
     type = SelectField('Lorry type Needed', choices=[('open', 'Open'), ('close', 'Closed'), ('container', 'Container'), ('tanker', 'Tanker')], validators=[DataRequired()])
     capacity = IntegerField('Max load capacity in tons', validators=[DataRequired()])
     current_location = StringField('Current location from ', validators=[DataRequired()])
-    destination_location = StringField('Preferred destination location')
+    # destination_location = StringField('Preferred destination location')
+
     owner_aadhaar = StringField('Owners Aadhaar number', validators=[Regexp(aadhaar_regex, message=("Write a valid aadhaar number"))])
     owner_name = StringField('Owners name', validators=[Length(min=10)])
-    contact_number = TelField('Contact Number', validators=[DataRequired(), Length(min=10)])
-    owner_tos = StringField('Owners Terms of Service', validators=[])
+    owner_phone = StringField('Phone Number', validators=[Length(min=10, max=20)], widget=IntlTelInput())
+    owner_tos = TextAreaField('Owners Terms of Service')
     owner_pan = StringField('Owners PAN card number', validators=[Regexp(pan_regex, message="Enter a valid PAN number")])
-    available_date = DateField('Date Available', validators=[DataRequired()])
+    # available_date = DateField('Date Available', validators=[DataRequired()])
     submit = SubmitField('Request Load')
 
 class MaterialRequestForm(FlaskForm):
@@ -62,28 +68,46 @@ class MaterialRequestForm(FlaskForm):
     submit = SubmitField('Request Lorry')
 
 class MaterialRegistrationForm(FlaskForm):
+    user_fullname = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=80)])
+    user_phone = StringField('Phone Number', validators=[DataRequired(), Length(min=10, max=20)], widget=IntlTelInput())
+    user_email = EmailField('Email', validators=[DataRequired(), Email()])
+
+
+    # pickup_hour = SelectField(
+    #     'Pickup Hour',
+    #     choices=[(f"{h:02}", f"{h:02}") for h in range(0, 24)]
+    # )
+
+    # pickup_minute = SelectField(
+    #     'Pickup Minute',
+    #     choices=[(f"{h:02}", f"{h:02}") for h in range(0, 60)]
+    # )
+
+    # pickup_time = HiddenField('Pickup Time')  # This will be filled with "HH:MM" from JS
     pickup_location = StringField('Pickup Location', validators=[DataRequired()])
     pickup_date = DateField('Pickup date', validators=[DataRequired()])
-
-    pickup_hour = SelectField(
-        'Pickup Hour',
-        choices=[(f"{h:02}", f"{h:02}") for h in range(0, 24)],
-        validators=[DataRequired()]
-    )
-
-    pickup_minute = SelectField(
-        'Pickup Minute',
-        choices=[(f"{h:02}", f"{h:02}") for h in range(0, 60)],
-        validators=[DataRequired()]
-    )
-
-    pickup_time = HiddenField('Pickup Time', validators=[DataRequired()])  # This will be filled with "HH:MM" from JS
+    pickup_contact_name = StringField('Full Name', validators=[Length(min=2, max=80)])
+    pickup_contact_phone = StringField('Phone Number', validators=[Length(min=10)], widget=IntlTelInput())
 
     drop_location = StringField('Drop Location', validators=[DataRequired()])
-    drop_date = DateField('Drop date', validators=[DataRequired()])
-    drop_time = SelectField('Drop time', choices=[('1-12', '01:00 - 12:00'), ('12-00', '12:00 - 00:00')], validators=[DataRequired()])
-    material_type = StringField('Type of Material', validators=[DataRequired()])
+    drop_date = DateField('Drop date')
+    # drop_time = SelectField('Drop time', choices=[('1-12', '01:00 - 12:00'), ('12-00', '12:00 - 00:00')])
+    drop_contact_name = StringField('Full Name', validators=[Length(min=2, max=80)])
+    drop_contact_phone = StringField('Phone Number', validators=[DataRequired(), Length(min=10)], widget=IntlTelInput())
+
     estimated_weight = IntegerField('Estimated Weight in tons', validators=[DataRequired()])
     truck_type = SelectField('Lorry type Needed', choices=[('open', 'Open'), ('close', 'Closed'), ('container', 'Container'), ('tanker', 'Tanker')], validators=[DataRequired()])
-    contact_number = TelField('Contact Number', validators=[DataRequired()])
-    submit = SubmitField('Request Lorry')
+    material_details = TextAreaField('Material Details', validators=[DataRequired()])
+    material_type = SelectField('Type of Materials', choices = [
+    ('construction', 'Construction Materials'),
+    ('agriculture', 'Agricultural Produce'),
+    ('chemicals', 'Industrial Chemicals'),
+    ('furniture', 'Furniture'),
+    ('electronics', 'Electronics'),
+    ('machinery', 'Heavy Machinery'),
+    ('packaged', 'Packaged Goods'),
+    ('liquid', 'Liquid Cargo'),
+    ('perishables', 'Perishable Goods'),
+    ('scrap', 'Metal Scrap'),
+], validators=[DataRequired()])
+    submit = SubmitField('Register the Material')
