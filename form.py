@@ -20,7 +20,7 @@ pickup_time = HiddenField('Pickup Time', validators=[DataRequired()])
 
 class SignupForm(FlaskForm):
     fullname = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=80)])
-    phone = TelField('Phone Number', validators=[DataRequired(), Length(min=10)])
+    phone = StringField('Phone Number', validators=[DataRequired(), Length(min=10)], widget=IntlTelInput())
     email = EmailField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     submit = SubmitField('Signup')
@@ -57,8 +57,8 @@ class TruckRegistrationForm(FlaskForm):
     owner_phone = StringField('Phone Number', validators=[Length(min=10, max=20)], widget=IntlTelInput())
     owner_tos = TextAreaField('Owners Terms of Service')
     owner_pan = StringField('Owners PAN card number', validators=[Regexp(pan_regex, message="Enter a valid PAN number")])
-    # available_date = DateField('Date Available', validators=[DataRequired()])
-    submit = SubmitField('Request Load')
+    available_date = DateField('Date Available')
+    submit = SubmitField('Register Truck')
 
 class MaterialRequestForm(FlaskForm):
     truck_type = SelectField('Lorry type Needed', choices=[('open', 'Open'), ('close', 'Closed'), ('container', 'Container'), ('tanker', 'Tanker')], validators=[DataRequired()])
@@ -72,18 +72,6 @@ class MaterialRegistrationForm(FlaskForm):
     user_phone = StringField('Phone Number', validators=[DataRequired(), Length(min=10, max=20)], widget=IntlTelInput())
     user_email = EmailField('Email', validators=[DataRequired(), Email()])
 
-
-    # pickup_hour = SelectField(
-    #     'Pickup Hour',
-    #     choices=[(f"{h:02}", f"{h:02}") for h in range(0, 24)]
-    # )
-
-    # pickup_minute = SelectField(
-    #     'Pickup Minute',
-    #     choices=[(f"{h:02}", f"{h:02}") for h in range(0, 60)]
-    # )
-
-    # pickup_time = HiddenField('Pickup Time')  # This will be filled with "HH:MM" from JS
     pickup_location = StringField('Pickup Location', validators=[DataRequired()])
     pickup_date = DateField('Pickup date', validators=[DataRequired()])
     pickup_contact_name = StringField('Full Name', validators=[Length(min=2, max=80)])

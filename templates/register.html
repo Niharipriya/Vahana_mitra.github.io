@@ -17,7 +17,7 @@
                             <div
                             class="col-md-4">{{ material_registration_form.user_fullname(class="form-control", placeholder="USERNAME") }}</div>
                             <div
-                            class="col-md-4">{{ material_registration_form.user_phone(placeholder="PHONE NUMBER") }}</div>
+                            class="col-md-4">{{ material_registration_form.user_phone(class="form-control", placeholder="PHONE NUMBER") }}</div>
                             <div
                             class="col-md-4">{{ material_registration_form.user_email(class="form-control", placeholder="EMAIL") }}</div></div></div>
                     <div
@@ -38,8 +38,8 @@
                     <div
                     class="col-md-4">
                         <label
-                        class="form-label">Current Location</label>
-                        {{ truck_registration_form.current_location(class="form-control") }}</div>
+                        class="form-label">Truck Type</label>
+                        {{ truck_registration_form.type(class="form-control") }}</div>
                     <div
                     class="col-md-4">
                         <label 
@@ -75,10 +75,12 @@
                                 class="form-label">PAN number</label>
                                 {{ truck_registration_form.owner_pan(class="form-control") }}</div>
                             <div
-                            class="col">
+                            class="col-md-12">
                                 <label 
                                 class="form-label">TOS</label>
                                 {{ truck_registration_form.owner_tos(class="form-control") }}</div></div></div>
+                    <div
+                    class="col">{{ truck_registration_form.submit(class="btn btn-primary") }}</div>
                 </div></form></div></div>
 {% elif adding == 'material' %}
     <div
@@ -120,7 +122,11 @@
                     <div
                     class="col-md-3">
                         <label
-                        class="form-label">PickUp Contacts <button class="btn btn-primary">Same as User</button></label>
+                        class="form-label">PickUp Contacts 
+                            <button
+                            type="button"
+                            class="btn btn-secondary"
+                            onclick="autoFill_user()">Same as User</button></label>
                         {{ material_registration_form.pickup_contact_name(class="form-control", placeholder="Name") }}
                         {{ material_registration_form.pickup_contact_phone(class="form-control", placeholder="Phone Number")}}</div>
                     <div
@@ -159,4 +165,10 @@
                         {{ material_registration_form.submit(class="btn btn-primary") }}</div>
                     
             </div></form></div></div>
+<script>
+    function autoFill_user(){
+        document.getElementById("{{ material_registration_form.pickup_contact_name.id }}").value = document.getElementById("{{ material_registration_form.user_fullname.id }}").value;
+        document.getElementById("{{ material_registration_form.pickup_contact_phone.id }}").value = document.getElementById("{{ material_registration_form.user_phone.id }}").value
+    }
+</script>
 {% endif %}

@@ -39,7 +39,7 @@
                     {{ signup_form.email(class_="form-control", placeholder="Email Address") }}
                 </div>
                 <div class="mb-3">
-                    {{ signup_form.phone(class_="form-control", placeholder="Phone Number", id="phone")}}
+                    {{ signup_form.phone(class_="form-control", placeholder="Phone Number")}}
 
                     {% if signup_form.phone.errors %}
                     <div class="text-danger small mt-1">{{ signup_form.phone.errors[0] }}</div>
@@ -58,22 +58,4 @@
     </div>
 </div>
 
-<!-- Scripts for intl-tel-input -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/css/intlTelInput.min.css" />
-<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"></script>
-
-<script>
-    const phone = document.querySelector("#phone");
-    const iti = window.intlTelInput(phone, {
-        preferredCountries: ["in", "us", "gb"],
-        separateDialCode: true,
-        initialCountry: "in",
-        utilsScript: "https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/utils.js"
-    });
-
-    document.querySelector("#signup_form").addEventListener("submit", function (e) {
-        phone.value = iti.getNumber(); // E.164 format
-    });
-</script>
 {% endblock body %}

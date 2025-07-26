@@ -148,7 +148,7 @@ def admin():
             owner_pan = truck_registration_form.owner_pan.data,
             owner_tos = truck_registration_form.owner_tos.data,
         )
-        db.session.all(truck)
+        db.session.add(truck)
         db.session.commit()
         print("Added trucks to db")
         print(truck_registration_form.data)
