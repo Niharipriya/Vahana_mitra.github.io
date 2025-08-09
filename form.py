@@ -1,7 +1,7 @@
 from support_wtform import IntlTelInput
 from flask_wtf import FlaskForm
 from wtforms import StringField, EmailField, TelField, SubmitField, PasswordField, BooleanField, DateField, SelectField, IntegerField
-from wtforms import HiddenField, TextAreaField, DateTimeField
+from wtforms import HiddenField, TextAreaField, DateTimeField, FileField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, Regexp
 
 pickup_hour = SelectField(
@@ -52,11 +52,16 @@ class TruckRegistrationForm(FlaskForm):
     current_location = StringField('Current location from ', validators=[DataRequired()])
     # destination_location = StringField('Preferred destination location')
 
-    owner_aadhaar = StringField('Owners Aadhaar number', validators=[Regexp(aadhaar_regex, message=("Write a valid aadhaar number"))])
     owner_name = StringField('Owners name', validators=[Length(min=10)])
     owner_phone = StringField('Phone Number', validators=[Length(min=10, max=20)], widget=IntlTelInput())
-    owner_tos = TextAreaField('Owners Terms of Service')
+    owner_aadhaar = StringField('Owners Aadhaar number', validators=[Regexp(aadhaar_regex, message=("Write a valid aadhaar number"))])
     owner_pan = StringField('Owners PAN card number', validators=[Regexp(pan_regex, message="Enter a valid PAN number")])
+
+    driver_name = StringField('Driver Name')
+    driver_aadhaar = StringField('Driver Aadhaar')
+    driver_license = FileField('Driver Driving License')
+
+    vehicle_insurance = FileField('Vehicle Insurance')
     available_date = DateField('Date Available')
     submit = SubmitField('Register Truck')
 

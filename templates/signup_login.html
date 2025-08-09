@@ -33,29 +33,24 @@
                 {{ signup_form.hidden_tag() }}
 
                 <div class="mb-3">
-                    {{ signup_form.fullname(class_="form-control", placeholder="Full Name") }}
+                    {{ signup_form.fullname(class="form-control", placeholder="Full Name") }}
                 </div>
                 <div class="mb-3">
-                    {{ signup_form.email(class_="form-control", placeholder="Email Address") }}
+                    {{ signup_form.email(class="form-control", placeholder="Email Address") }}
                 </div>
                 <div class="mb-3">
-                    {{ signup_form.phone(class_="form-control", placeholder="Phone Number")}}
-
-                    {% if signup_form.phone.errors %}
-                    <div class="text-danger small mt-1">{{ signup_form.phone.errors[0] }}</div>
-                    {% endif %} 
+                    {{ signup_form.phone(placeholder="Phone Number")}}
                 </div>
                 <div class="mb-3">
-                    {{ signup_form.password(class_="form-control", placeholder="Password") }}
+                    {{ signup_form.password(class="form-control", placeholder="Password") }}
                 </div>
 
                 <div class="d-grid">
-                    {{ signup_form.submit(class_="btn btn-primary") }}
+                    {{ signup_form.submit(class="btn btn-primary") }}
                 </div>
             </form>
             {% endif %}
         </div>
     </div>
 </div>
-
 {% endblock body %}

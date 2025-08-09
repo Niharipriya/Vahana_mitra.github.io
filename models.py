@@ -1,4 +1,6 @@
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy import String, DateTime, ForeignKey, ARRAY, BLOB
+from sqlalchemy.orm import Mapped, mapped_column
 from datetime import datetime
 from flask_login import UserMixin
 from flask_bcrypt import Bcrypt
@@ -8,14 +10,14 @@ db = SQLAlchemy()
 class User(db.Model, UserMixin):
     __tablename__ = 'USER'
 
-    user_id = db.Column(db.Integer, primary_key=True)
-    fullname = db.Column(db.String(80), nullable=False)
-    password_hash = db.Column(db.String(128), nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=True)
-    phone = db.Column(db.String(20), unique=True, nullable=True)
+    user_id: Mapped[int] = mapped_column(primary_key=True)
+    fullname: Mapped[str] = mapped_column(String, nullable=False)
+    password_hash: Mapped[str] = mapped_column(String, nullable=False, unique=True)
+    email: Mapped[str] = mapped_column(String, nullable=False, unique=True)
+    phone: Mapped[str] = mapped_column(String, nullable=True, unique=True)
 
-    creation_time = db.Column(db.DateTime, default=datetime.utcnow)
-    update_time = db.Column(db.DateTime, default=datetime.utcnow, onupdate=datetime.utcnow)
+    creation_time: Mapped[datetime] = mapped_column(DateTime, default= datetime.utcnow)
+    update_time: Mapped[datetime] = mapped_column(DateTime, default= datetime.utcnow, onupdate= datetime.utcnow)
 
     truck = db.relationship('Truck', backref='owner', lazy=True, cascade='all, delete-orphan')
     load = db.relationship('Load', backref='shipper', lazy=True, cascade='all, delete-orphan')
@@ -29,26 +31,31 @@ class User(db.Model, UserMixin):
 class Truck(db.Model):
     __tablename__ = 'TRUCK'
 
-    truck_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('USER.user_id'), unique=True, nullable=False)
-    # load_id = db.Column(db.Integer, db.ForeignKey('LOAD.load_id'), unique=True, nullable=True)
+    truck_id: Mapped[int] = mapped_column(primary_key= True)
+    user_id: Mapped[int] = mapped_column(ForeignKey('USER.user_id'), nullable=False)
 
-    registration_number = db.Column(db.String(10), nullable=False, unique=True)
-    model_name = db.Column(db.Text, nullable=False)
-    type = db.Column(db.String(80), nullable=False)
-    capacity = db.Column(db.Float, nullable=False)
-    current_location = db.Column(db.Text, nullable=False)
-    available_locations = db.Column(db.Text)
+    registration_number: Mapped[int] = mapped_column(String(10), unique=True)
+    model_name: Mapped[str] = mapped_column(nullable= False)
+    type: Mapped[str] = mapped_column(nullable= False)
+    capacity: Mapped[float] = mapped_column(nullable= False)
+    current_location: Mapped[str] = mapped_column(nullable= False)
+    available_locations: Mapped[str] = mapped_column()
 
-    owner_name = db.Column(db.String(100), nullable=False)
-    owner_aadhaar = db.Column(db.String(12))
-    owner_mobile = db.Column(db.Integer)
-    owner_tos = db.Column(db.Text)
-    owner_pan = db.Column(db.String(10))
+    owner_name: Mapped[str] = mapped_column(nullable= False)
+    owner_phone: Mapped[str] = mapped_column(nullable= False)
+    owner_aadhaar: Mapped[str] = mapped_column(nullable= False)
+    owner_pan: Mapped[str] = mapped_column()
 
-    is_verified = db.Column(db.Boolean, default=False)
-    is_available = db.Column(db.Boolean, default=True)
-    availability = db.Column(db.Integer)
+    driver_name: Mapped[str] = mapped_column()
+    driver_aadhaar: Mapped[str] = mapped_column()
+    driver_license: Mapped[str] = mapped_column()
+
+    is_verified: Mapped[bool] = mapped_column(default= False)
+    is_available: Mapped[bool] = mapped_column(default= True)
+    tds: Mapped[str] = mapped_column()
+    insurance: Mapped[str] = mapped_column()
+
+    load: Mapped[set] = mapped_column(BLOB ,default= [])
 
     @classmethod
     def get_by_user(cls, user_id):
@@ -84,30 +91,33 @@ class Truck(db.Model):
             db.session.delete(user)
             db.session.commit()
 
+    @classmethod
+    def load_truck(cls, load_id, truck_id):
+        truck = cls.query.filter_by(truck_id=truck_id).first()
+
 class Load(db.Model):
     __tablename__ = 'LOAD'
 
-    load_id = db.Column(db.Integer, primary_key=True)
-    user_id = db.Column(db.Integer, db.ForeignKey('USER.user_id'), unique=True, nullable=False)
-    # truck_id = db.Column(db.Integer, db.ForeignKey('TRUCK.truck_id'), unique=True, nullable=True)
-    type = db.Column(db.String(100), nullable=False)
-    details = db.Column(db.Text, nullable=False) 
-    weight = db.Column(db.Float, nullable=False)
+    load_id: Mapped[int] = mapped_column(primary_key= True)
+    user_id: Mapped[int] = mapped_column(ForeignKey('USER.user_id'), unique= True, nullable= False)
+    type: Mapped[str] = mapped_column(nullable= False)
+    weight: Mapped[str] = mapped_column(nullable= False)
+    details: Mapped[str] = mapped_column(nullable= False)
 
-    pickup_address = db.Column(db.Text, nullable=False)
-    pickup_contact_name = db.Column(db.String(100))
-    pickup_contact_phone = db.Column(db.Integer, nullable=False)
-    pickup_date = db.Column(db.DateTime, nullable=False)                            #loading date
+    pickup_contact_name: Mapped[str] = mapped_column()
+    pickup_contact_phone: Mapped[str] = mapped_column()
+    pickup_address: Mapped[str] = mapped_column()
+    pickup_datetime: Mapped[datetime] = mapped_column()
 
-    drop_address = db.Column(db.Text, nullable=False)
-    drop_contact_name = db.Column(db.Integer)
-    drop_contact_phone = db.Column(db.String(100), nullable=False)
-    drop_date = db.Column(db.DateTime, nullable=False)                              #auto calculate from the pickup to drop
+    drop_contact_name: Mapped[str] = mapped_column()
+    drop_contact_phone: Mapped[str] = mapped_column()
+    drop_address: Mapped[str] = mapped_column()
+    drop_datetime: Mapped[datetime] = mapped_column()
 
-    cost = db.Column(db.Float)
-    load_image = db.Column(db.Text)
-    is_active = db.Column(db.Boolean, default=True)
-    in_progress = db.Column(db.Boolean, default=False)
+    cost: Mapped[float] = mapped_column()
+    is_active: Mapped[bool] = mapped_column()
+    in_progress: Mapped[bool] = mapped_column()
+    truck: Mapped[int] = mapped_column()
 
     @classmethod
     def get_by_user(cls, user_id):

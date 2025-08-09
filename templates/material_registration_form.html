@@ -1,0 +1,157 @@
+{% block style %}
+<style>
+    body {
+        background-color: #f8f9fa; /* A light gray background */
+    }
+    .custom-form-card {
+        border-radius: 1rem;
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        background-color: #ffffff !important;
+    }
+
+    .pickup-container, .drop-container, .material-container {
+        border: 1px solid #e9ecef;
+        border-radius: 0.75rem;
+        background-color: #f8f9fa;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    }
+
+    .pickup-container .container-fluid, .drop-container h4, .material-container h4 {
+        border-bottom: 2px solid #0d6efd;
+        padding-bottom: 0.5rem;
+    }
+    
+    .form-floating label {
+        color: #6c757d;
+    }
+
+    .form-floating .form-control:focus {
+        box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.25);
+        border-color: #0d6efd;
+    }
+
+    .btn-primary {
+        background-color: #0d6efd;
+        border-color: #0d6efd;
+        transition: background-color 0.3s ease;
+    }
+
+    .btn-primary:hover {
+        background-color: #0a58ca;
+        border-color: #0a58ca;
+    }
+
+    .btn-secondary {
+        background-color: #6c757d;
+        border-color: #6c757d;
+    }
+
+    .btn-secondary:hover {
+        background-color: #5c636a;
+        border-color: #565e64;
+    }
+</style>
+{% endblock style %}
+<div 
+class="d-flex justify-content-center">
+    <div 
+    class="form-card"
+    style="max-width: 1000px; width: 100%;">
+        <form 
+        method="POST" 
+        class="bg-light p-4 custom-form-card">
+            {{ form.hidden_tag() }}
+            <div
+            class="d-flex flex-column gap-2">
+                <div 
+                class="d-flex">
+                    <div
+                    class="pickup-container p-4 mb-4 flex-fill">
+                        <div 
+                        class="container-fluid d-flex justify-content-between align-items-center mb-4 py-2">
+                            <h4 class="m-0">Pickup Information</h4>
+                            <button type="button" class="btn btn-secondary btn-sm" onclick="autoFill_user()">Same as User</button></div>
+                        <div 
+                        class="row g-4">
+                            <div 
+                            class="col-12"><div 
+                            class="form-floating">
+                                {{ form.pickup_location(class="form-control", placeholder="PickUp Location") }}
+                                <label for="pickup_location" class="form-label">PickUp Location</label></div></div> 
+                            <div
+                            class="col-12"><div
+                            class="form-floating">
+                                {{ form.pickup_date(class="form-control") }}
+                                <label class="form-label mb-3">PickUp Date</label></div></div>
+                            <div 
+                            class="col-12">
+                                <label class="form-label m-2">PickUp Contacts</label>
+                                <div 
+                                class="row g-1">
+                                    {{ form.pickup_contact_name(class="form-control", placeholder="Name") }}
+                                    {{ form.pickup_contact_phone(class="form-control", placeholder="Phone Number") }}</div></div>
+                        </div></div>
+                    <div
+                    class="drop-container p-4 mb-4 flex-fill">
+                        <h4 class="p-2 mb-4">Drop Information</h4>
+                        <div
+                        class="row g-4">
+                            <div 
+                            class="col-12"><div 
+                            class="form-floating">
+                                {{ form.drop_location(class="form-control", placeholder="Drop Location") }}
+                                <label for="drop_location" class="form-label">Drop Location</label></div></div>
+                            <div 
+                            class="col-12"><div
+                            class="form-floating">
+                                {{ form.drop_date(class="form-control") }}
+                                <label for="drop_data" class="form-label">Drop Date</label></div></div>
+                            <div 
+                            class="col-12">
+                                <label class="form-label mb-2">Drop Contacts</label>
+                                <div 
+                                class="row g-1">
+                                    {{ form.drop_contact_name(class="form-control", placeholder="Name") }}
+                                    {{ form.drop_contact_phone(class="form-control", placeholder="Phone Number") }}</div></div>
+                        </div></div>
+                </div>
+                <div
+                class="material-container p-4 mb-4">
+                    <h4 class="mb-4">Load Details</h4>
+                    <div
+                    class="row g-4">  
+                        <div 
+                        class="col-md-4">
+                            <div 
+                            class="form-floating">
+                                {{ form.estimated_weight(class="form-control", placeholder="Estimated material weight") }}
+                                <label for="estimated_weight" class="form-label">Estimated material weight</label></div></div>
+                        <div 
+                        class="col-md-4">
+                            <div 
+                            class="form-floating">
+                                {{ form.truck_type(class="form-control", placeholder="Type of truck") }}
+                                <label for="truck_type" class="form-label">Type of truck</label></div></div>
+                        <div 
+                        class="col-md-4">
+                            <div 
+                            class="form-floating">
+                                {{ form.material_type(class="form-control", placeholder="Type of Materials in load") }}
+                                <label for="material_type" class="form-label">Type of Materials in load</label></div></div>
+                        <div 
+                        class="col-12">
+                            <div 
+                            class="form-floating">
+                                {{ form.material_details(class="form-control", style="height: 100px", placeholder="Material description") }}
+                                <label for="material_details" class="form-label">Material description</label></div></div>
+                </div></div>
+                <div class="col-12 text-center">{{ form.submit(class="btn btn-primary btn-lg mt-3 w-50") }}</div>
+                </div></form></div></div>
+            </div>
+
+<script>
+    function autoFill_user(){
+        document.getElementById("{{ form.pickup_contact_name.id }}").value = document.getElementById("{{ form.user_fullname.id }}").value;
+        document.getElementById("{{ form.pickup_contact_phone.id }}").value = document.getElementById("{{ form.user_phone.id }}").value;
+    }
+</script>

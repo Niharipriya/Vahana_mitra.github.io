@@ -36,16 +36,14 @@ def create_table():
     """Generates database, adds testing data to the database, and admin as a user"""
     db.create_all()
 
-    [Truck.from_json(data= x) for x in truck_testing_data] 
-    [Load.from_json(data= y) for y in load_testing_data]
-
     email_check = User.query.filter_by(email=ADMIN).first()
     if not email_check:
         hashed_password = bcrypt.generate_password_hash("admin1234").decode('utf-8')
         user = User(
             fullname = "Admin",
             password_hash = hashed_password,
-            email = ADMIN
+            email = ADMIN,
+            phone = '+910000000000'
         )
         db.session.add(user)
         db.session.commit()
@@ -83,7 +81,7 @@ def landing():
             flash("Please Login or SignUp to continue your booking process", "danger")
             return redirect(url_for('profile'))
         print("redirected to booking")
-        return redirect(url_for('booking'))
+        return redirect(url_for('booking', booking_type = form_type))
 
     if material_request_form.validate_on_submit():
         list_compatible_loads = Load.find_available_materials(
@@ -93,7 +91,7 @@ def landing():
 
         load_ids = [load.load_id for load in list_compatible_loads]
         session['compatible_load_ids'] = load_ids
-        return not_profile_redirect('material_request_form', material_request_form)
+        return not_profile_redirect('truck', material_request_form)
 
     elif truck_request_form.validate_on_submit():
         list_compatible_truck = Truck.find_available_truck(
@@ -104,7 +102,7 @@ def landing():
 
         truck_ids = [truck.truck_id for truck in list_compatible_truck]
         session['compatible_truck_ids'] = truck_ids
-        return not_profile_redirect('truck_request_form', truck_request_form)
+        return not_profile_redirect('material', truck_request_form)
 
     if request.method == 'POST':
         print(truck_request_form.errors)
@@ -225,21 +223,6 @@ def show_trucks(user_id):
         trucks = truck_list
     )
 
-@app.route("/booking", methods=['POST', 'GET'])
-def booking():
-    list_compatible = []
-    booking_type = ""
-
-    if session.get('compatible_truck_ids'):
-        truck_ids = session.pop('compatible_truck_ids', [])
-        list_compatible = Truck.query.filter(Truck.truck_id.in_(truck_ids)).all()
-        booking_type = "truck"
-    elif session.get('compatible_load_ids'):
-        load_ids = session.pop('compatible_load_ids', [])
-        list_compatible = Load.query.filter(Load.load_id.in_(load_ids)).all()
-        booking_type = "load"
-
-    return render_template("booking.html", list_compatible=list_compatible, booking_type=booking_type)
 
 @app.route("/signup_login", methods=['POST', 'GET'])
 def profile():
@@ -257,14 +240,13 @@ def profile():
     # print("Form errors:", signup_form.errors)
 
     if signup_form.validate_on_submit():
-        # Set phone data from hidden field
-        signup_form.phone.data = request.form.get('full_phone')
         hashed_password = bcrypt.generate_password_hash(signup_form.password.data).decode('utf-8')
+        print(signup_form.phone.data)
         user = User(
             fullname = signup_form.fullname.data,
             password_hash = hashed_password,
             email = signup_form.email.data,
-            phone = request.form.get('full_phone'),
+            phone = signup_form.phone.data,
         )
         db.session.add(user)
         db.session.commit()
@@ -273,6 +255,8 @@ def profile():
 
     elif login_form.validate_on_submit():
         _user: User = User.query.filter_by(email = login_form.email.data).first()
+        if _user:
+            print(_user)
         if _user and _user.check_password(login_form.password.data, bcrypt):
             login_user(_user)
             flash('Login Successfully', 'success')
@@ -290,10 +274,44 @@ def profile():
 
     return render_template("signup_login.html", form_type=form_type, signup_form=signup_form, login_form=login_form)
 
+@app.route("/booking/<string:booking_type>", methods=['POST', 'GET'])
+def booking(booking_type):
+    list_compatible = []
+
+    if session.get('compatible_truck_ids') and booking_type == 'material':
+        truck_ids = session.pop('compatible_truck_ids', [])
+        list_compatible = Truck.query.filter(Truck.truck_id.in_(truck_ids)).all()
+    elif session.get('compatible_load_ids') and booking_type == 'truck':
+        load_ids = session.pop('compatible_load_ids', [])
+        list_compatible = Load.query.filter(Load.load_id.in_(load_ids)).all()
+
+    print(booking_type)
+
+    return render_template(
+        "booking.html", 
+        booking_type=booking_type,
+        list_compatible=list_compatible, 
+    )
+
 @app.route("/register/<string:booking_type>/<int:id>", methods=['POST', 'GET'])
 def register(booking_type, id):
-    form = MaterialRegistrationForm() if booking_type == 'truck' else TruckRegistrationForm()
-    return render_template("register.html", form=form )
+    form = None
+    pending_data = session['pending_form_data']['data']
+    print(pending_data)
+    if booking_type == 'material':
+        form = MaterialRegistrationForm()
+        form.pickup_location.data = pending_data['pickup_location']
+        form.drop_location.data = pending_data['drop_location']
+        form.estimated_weight.data = pending_data['estimated_weight']
+        form.truck_type.data = pending_data['truck_type']
+
+    elif booking_type == 'truck':
+        form = TruckRegistrationForm()
+
+    if form.validate_on_submit():
+        redirect(url_for('dashboard'))
+
+    return render_template('user_register.html', booking_type=booking_type, form=form)
 
 @app.route('/dashboard', methods=['POST', 'GET'])
 @login_required

@@ -13,54 +13,76 @@
 {% endblock head %}
 
 {% block body %}
-    <div class="container py-6 table-responsive">
-        <div class="container py-5">
-            {% if booking_type == 'truck' %}
-            <h2 class="mb-4 text-center">Available Trucks for booking</h2>
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-                {% for truck in list_compatible %}
-                    <div class="col">
-                        <div class="card truck-card shadow-sm">
-                            <div class="card-body">
-                                <h5 class="card-title"> {{truck.model_name}} {{truck.type}} </h5>
-                                <p class="card-text">
-                                    <strong>capacity:</strong> {{ truck.capacity }} tons <br>
-                                    <strong>current location:</strong> {{ truck.current_location }} <br>
-                                    <strong>available to:</strong> {{ truck.available_locations or 'n/a'}} <br>
-                                    <strong>owner:</strong> {{ truck.owner_name }} ({{ truck.owner_mobile }})<br>
-                                </p>
-                                <form method="post" action="{{ url_for('register', booking_type='truck', id=truck.truck_id)}}">
-                                    <button class="btn btn-primary w-100">book now</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-                {% endfor %}
+    <div 
+    class="container py-6 table-responsive">
+        <div 
+        class="container py-5">
+
+            {% if booking_type == 'material' %}
+                {% if list_compatible %}
+                    <h2 class="mb-4 text-center">Available Trucks for booking</h2>
+                    <div 
+                    class="row row-cols-1 row-cols-md-3 g-4">
+                        {% for truck in list_compatible %}
+                            <div 
+                            class="col"><div 
+                            class="card truck-card shadow-sm">
+                                <div 
+                                class="card-body">
+                                    <h5 
+                                    class="card-title"> {{truck.model_name or 'Model' }} {{truck.type or 'Type' }} </h5>
+                                    <p 
+                                    class="card-text">
+                                        <strong>capacity:</strong> {{ truck.capacity or 'N/A'}} tons <br>
+                                        <strong>current location:</strong> {{ truck.current_location or 'N/A'}} <br>
+                                        <strong>available to:</strong> {{ truck.available_locations or 'N/A'}} <br>
+                                        <strong>owner:</strong> {{ truck.owner_name or 'N/A'}} ({{ truck.owner_mobile or 'N/A' }})<br></p>
+                                    <form 
+                                    method="post" 
+                                    action="/register/material/{{truck.truck_id}}">
+                                        <button class="btn btn-primary w-100">book now</button></form></div></div></div>
+                        {% endfor %}
+                {% else %}
+                    <h2> No Truck Available</h2>
+                    <form 
+                    method="post" 
+                    action="/register/material/0">
+                        <button class="btn btn-primary w-100">book now</button></form></div></div></div>
+                {% endif %}
             </div>
-            {% elif booking_type == 'load' %}
-            <h2 class="mb-4 text-center">Available Materials for booking</h2>
-            <div class="row row-cols-1 row-cols-md-3 g-4">
-                {% for material in list_compatible %}
-                    <div class="col">
-                        <div class="card truck-card shadow-sm">
-                            <div class="card-body">
-                                <h5 class="card-title"> {{material.type}} {{material.weight}} </h5>
-                                <p class="card-text">
+
+            {% elif booking_type == 'truck' %}
+                {% if list_compatible|length > 0 %}
+                    <h2 class="mb-4 text-center">Available Materials for booking</h2>
+                    <div 
+                    class="row row-cols-1 row-cols-md-3 g-4">
+                    {% for material in list_compatible %}
+                        <div 
+                        class="col"><div 
+                        class="card truck-card shadow-sm">
+                            <div 
+                            class="card-body">
+                                <h5 
+                                class="card-title"> {{material.type}} {{material.weight}} </h5>
+                                <p 
+                                class="card-text">
                                     <strong>PickUp:</strong> {{material.pickup_address}} <br>
                                     <strong>Drop:</strong> {{material.drop_address}} <br>
                                     <strong>Cost:</strong> {{material.cost}}
-                                    <strong>Contacts:</strong> {{material.pickup_contact_name}} {{material.pickup_contact_phone}} <br>
-                                </p>
-                                <form method="post" action="{{ url_for('register', booking_type='truck', id=truck.truck_id)}}">
-                                    <button class="btn btn-primary w-100">book now</button>
-                                </form>
-                            </div>
-                        </div>
-                    </div>
-
-                {% endfor %}
-            </div>
+                                    <strong>Contacts:</strong> {{material.pickup_contact_name}} {{material.pickup_contact_phone}} <br></p>
+                                <form 
+                                method="post" 
+                                action="/register/truck/{{material.load_id}}">
+                                    <button class="btn btn-primary w-100">book now</button></form></div></div></div>
+                    {% endfor %}
+                {% else %}
+                    <h2>No Material Available</h2>
+                    <form 
+                    method="post" 
+                    action="{{url_for('register', booking_type=booking_type, id=0)}}">
+                        <button class="btn btn-primary w-100">book now</button></form></div></div></div>
+                {% endif %}
+                </div>
             {% endif %}
-        </div>
-    </div>
+        </div></div>
 {% endblock body %}
