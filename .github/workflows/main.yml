@@ -4,4 +4,4 @@ on:
   workflow_dispatch:
 
 env:
-  google_key: ${{ secretes:PLACE_BROWSER_KEY }}
+  google_key: ${{ secrets.PLACE_BROWSER_KEY }}
