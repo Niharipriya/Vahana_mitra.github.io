@@ -109,6 +109,10 @@ def landing():
 
     return render_template("landing.html", material_request_form = material_request_form, truck_request_form=truck_request_form)
 
+@app.route("/testing", methods=['POST', 'GET'])
+def testing_stuff():
+    return render_template('testing.html')
+
 @app.route("/admin", methods=['POST', 'GET'])
 @login_required
 def admin():

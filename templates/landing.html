@@ -1,6 +1,7 @@
 {% extends 'base_page.html' %}
 
 {% block head %}
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDLBTvKD0tCiAMd0TiNaU7feeQi39-1WI8&libraries=places"></script>
     <title>Vahana Mitra - Simplifying Transport</title>
 {% endblock head %}
 
@@ -127,4 +128,14 @@
 
       </script>
 
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+    var input = document.getElementById("{{ material_request_form.current_location.id }}");
+    if (input) {
+        var autocomplete = new google.maps.places.Autocomplete(input, {
+            types: ['geocode']
+        });
+    }
+});
+</script>
 {% endblock body %}

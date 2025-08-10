@@ -1,9 +1,10 @@
 from markupsafe import Markup
 from wtforms.widgets import TelInput, TextInput
 import os
+from dotenv import load_dotenv
 
-GOOGLE_KEY = os.environ.get('PLACES_BROWSER_KEY')
-print(GOOGLE_KEY)
+load_dotenv()
+GOOGLE_KEY = os.environ.get('GOOGLE_KEY')
 
 class IntlTelInput(TextInput):
     """
