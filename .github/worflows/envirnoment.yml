@@ -1,2 +1,2 @@
 env:
-  PLACES_BROWSER_KEY = ${{ secrets.PLACES_BROWSER_KEY }}
+  PLACES_BROWSER_KEY: ${{ secrets.PLACES_BROWSER_KEY }}

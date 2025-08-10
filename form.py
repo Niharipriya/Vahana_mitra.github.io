@@ -1,4 +1,4 @@
-from support_wtform import IntlTelInput
+from support_wtform import IntlTelInput, GoogleAddressInput
 from flask_wtf import FlaskForm
 from wtforms import StringField, EmailField, TelField, SubmitField, PasswordField, BooleanField, DateField, SelectField, IntegerField
 from wtforms import HiddenField, TextAreaField, DateTimeField, FileField
@@ -34,7 +34,7 @@ RTO_number_regex = r'^[A-Z]{2}[0-9]{2}[A-Z]{1,2}[0-9]{4}'
 aadhaar_regex = r'^[2-9]{1}[0-9]{3}[0-9]{4}[0-9]{4}'
 pan_regex = r'^[A-Z]{5}[0-9]{4}[A-Z]{1}'
 class TruckRequestForm(FlaskForm):
-    pickup_location = StringField('Pickup Location', validators=[DataRequired()]) 
+    pickup_location = StringField('Pickup Location', validators=[DataRequired()], widget=GoogleAddressInput()) 
     drop_location = StringField('Drop Location', validators=[DataRequired()])
     truck_type = SelectField('Lorry type Needed', choices=[('open', 'Open'), ('close', 'Closed'), ('container', 'Container'), ('tanker', 'Tanker')], validators=[DataRequired()])
     estimated_weight = IntegerField('Estimated Weight in tons', validators=[DataRequired()])
