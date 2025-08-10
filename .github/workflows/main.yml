@@ -1,7 +1,26 @@
-name: Variables
+name: Secrets Example
 
 on:
   workflow_dispatch:
 
-env:
-  google_key: ${{ secrets.PLACE_BROWSER_KEY }}
+jobs:
+  run-python-with-secrets:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.13'
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Run Python script
+        env:
+          GOOGLE_KEY: ${{ secrets.PLACES_BROWSER_KEY }}
