@@ -24,3 +24,5 @@ jobs:
       - name: Run Python script
         env:
           GOOGLE_KEY: ${{ secrets.PLACES_BROWSER_KEY }}
+        run: |
+          echo "Running Python script with secrets..."
