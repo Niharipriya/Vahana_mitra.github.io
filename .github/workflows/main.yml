@@ -1,2 +1,7 @@
+name: Variables
+
+on:
+  workflow_dispatch:
+
 env:
-  PLACES_BROWSER_KEY: ${{ secrets.PLACES_BROWSER_KEY }}
+  google_key: ${{ secretes:PLACE_BROWSER_KEY }}
