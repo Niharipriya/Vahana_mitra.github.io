@@ -1,0 +1,35 @@
+name: Deploy with Places key
+
+on:
+  push:
+    branches: [ main ]   # change if your default branch is 'master'
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  build-deploy:
+    environment:
+      name: github-pages
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      # Create key.js from the secret (NOT committed; only in the build artifact)
+      - name: Create key.js from secret
+        run: echo "window.GOOGLE_PLACES_BROWSER_KEY='${{ secrets.PLACES_BROWSER_KEY }}';" > key.js
+
+      # If your site is plain HTML/CSS/JS at repo root, ship everything.
+      # If you have a build step (e.g., npm run build), insert it before upload.
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: ./
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
