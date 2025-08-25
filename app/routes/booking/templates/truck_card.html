@@ -1,0 +1,18 @@
+
+<div 
+class="col"><div 
+class="card truck-card shadow-sm"><div 
+class="card-body">
+    <h5 
+    class="card-title"> {{truck.model_name or 'Model' }} {{truck.type or 'Type' }} </h5>
+    <p 
+    class="card-text">
+        <strong>capacity:</strong> {{ truck.capacity or 'N/A'}} tons <br>
+        <strong>current location:</strong> {{ truck.current_location or 'N/A'}} <br>
+        <strong>available to:</strong> {{ truck.available_locations or 'N/A'}} <br>
+        <strong>owner:</strong> {{ truck.owner_name or 'N/A'}} ({{ truck.owner_mobile or 'N/A' }})<br></p>
+    <form 
+    method="post" 
+    action="url_for('register.truck', id = {{truck.truck_id}})">
+        <button class="btn btn-primary w-100">book now</button></form>
+</div></div></div>

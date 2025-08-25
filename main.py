@@ -2,33 +2,40 @@ from models import *
 from form import SignupForm, LoginForm, TruckRegistrationForm, MaterialRegistrationForm, TruckRequestForm, MaterialRequestForm
 from config import DevelopmentConfig
 import random, string, os
+from dotenv import load_dotenv
+load_dotenv()
 
-import json
-from flask import Flask, render_template, url_for, request, flash, redirect, session
+import enum
+from flask import Flask, render_template, url_for, request, flash, redirect, session, jsonify
 from flask_bcrypt import Bcrypt
 from flask_login import LoginManager, login_user, logout_user, current_user, login_required
 
-with open("./testing_data.json", 'r') as file:
-    testing_data = json.load(file)
-
-truck_testing_data = testing_data["trucks"]
-load_testing_data = testing_data["loads"]
-
 app = Flask(__name__)
 app.config.from_object(DevelopmentConfig)
-ADMIN = 'admin@gmail.com'
 
 db.init_app(app)
 bcrypt = Bcrypt(app)
 login_manager = LoginManager(app)
 login_manager.login_view = 'profile'
+
 def generate_random_pass():
     length = 13
-    chars = string.ascii_letters + string.digits + '!@#$%^&*()'
+    chars = string.ascii_letters + '!@#$%^&*()' + string.digits
     random.seed = (os.urandom(1024))
 
     return ''.join(random.choice(chars) for i in range(length))
 
+class User_Auth(enum.Enum):
+    ANONYMOUS = enum.auto()
+    AUNTHETICATED = enum.auto()
+    UNAUNTHETICATED = enum.auto()
+    ADMIN = enum.auto()
+class Booking_Type(enum.Enum):
+    TRUCK = 'truck'
+    MATERIAL = 'material'
+class Booking_State(enum.Enum):
+    IN_PROGRESS = enum.auto()
+    COMPLETE = enum.auto()
 # region BOOT ROUTINE
 
 @app.before_request
@@ -36,16 +43,15 @@ def create_table():
     """Generates database, adds testing data to the database, and admin as a user"""
     db.create_all()
 
-    email_check = User.query.filter_by(email=ADMIN).first()
+    email_check = User.query.filter_by(email=os.environ.get('ADMIN_EMAIL')).first()
     if not email_check:
-        hashed_password = bcrypt.generate_password_hash("admin1234").decode('utf-8')
-        user = User(
-            fullname = "Admin",
-            password_hash = hashed_password,
-            email = ADMIN,
-            phone = '+910000000000'
+        ADMIN = User(
+            fullname = os.environ.get('ADMIN_USERNAME'),
+            password_hash = bcrypt.generate_password_hash(os.environ.get('ADMIN_PASSWORD')).decode('utf-8'),
+            email = os.environ.get('ADMIN_EMAIL'),
+            phone = os.environ.get('ADMIN_PHONE'),
         )
-        db.session.add(user)
+        db.session.add(ADMIN)
         db.session.commit()
 
 @app.route("/", methods=['POST', 'GET'])
@@ -65,25 +71,17 @@ def landing():
     truck_request_form = TruckRequestForm()
     material_request_form = MaterialRequestForm()
 
-    def not_profile_redirect(form_type, form):
-        """redirect to profile if not logged in else redirect to booking
-
-        Args:
-            form_type (str): name of the form requested
-            form (WTForm): the form object
-        """
+    def not_profile_redirect(form):
+        """redirect to profile if not logged in else redirect to booking"""
         if not current_user.is_authenticated:
-            session['pending_form_data'] = {
-                'form_type': form_type,
-                'data': form.data,
-                'timestamp': datetime.now().isoformat()
-            }
+            session['pending_form_data'] = form.data
             flash("Please Login or SignUp to continue your booking process", "danger")
             return redirect(url_for('profile'))
         print("redirected to booking")
-        return redirect(url_for('booking', booking_type = form_type))
+        return redirect(url_for('booking', booking_type = session['BOOKING_TYPE']))
 
     if material_request_form.validate_on_submit():
+        session['BOOKING_TYPE'] = Booking_Type.MATERIAL
         list_compatible_loads = Load.find_available_materials(
             capacity= material_request_form.capacity.data,
             current_location= material_request_form.current_location.data
@@ -91,9 +89,10 @@ def landing():
 
         load_ids = [load.load_id for load in list_compatible_loads]
         session['compatible_load_ids'] = load_ids
-        return not_profile_redirect('truck', material_request_form)
+        return not_profile_redirect(material_request_form)
 
     elif truck_request_form.validate_on_submit():
+        session['BOOKING_TYPE'] = Booking_Type.TRUCK
         list_compatible_truck = Truck.find_available_truck(
             location= truck_request_form.pickup_location.data,
             min_capacity= truck_request_form.estimated_weight.data,
@@ -102,23 +101,29 @@ def landing():
 
         truck_ids = [truck.truck_id for truck in list_compatible_truck]
         session['compatible_truck_ids'] = truck_ids
-        return not_profile_redirect('material', truck_request_form)
+        return not_profile_redirect(truck_request_form)
 
     if request.method == 'POST':
         print(truck_request_form.errors)
-
-    return render_template("landing.html", material_request_form = material_request_form, truck_request_form=truck_request_form)
+    
+    return render_template(
+        "landing.html", 
+        material_request_form = material_request_form, 
+        truck_request_form=truck_request_form, 
+        GOOGLE_KEY = app.config.get('GOOGLE_KEY')
+    )
 
 @app.route("/testing", methods=['POST', 'GET'])
 def testing_stuff():
-    return render_template('testing.html')
+    
+    return render_template('testing.html', GOOGLE_KEY = os.environ.get('GOOGLE_KEY'))
 
 @app.route("/admin", methods=['POST', 'GET'])
 @login_required
 def admin():
     truck_registration_form = TruckRegistrationForm()
     material_registration_form = MaterialRegistrationForm()
-    if current_user.email != ADMIN:
+    if current_user.email != app.config.get('ADMIN_EMAIL'):
         flash('Access denied please login as admin', 'danger')
         return redirect(url_for('profile'), form= 'login')
 
@@ -227,57 +232,6 @@ def show_trucks(user_id):
         trucks = truck_list
     )
 
-
-@app.route("/signup_login", methods=['POST', 'GET'])
-def profile():
-    """
-    <input type="tel" id="phone" name="phone" class="form-control" placeholder="Phone Number">
-    <input type="hidden" name="full_phone" id="full_phone">
-    <input type="hidden" name="country_code" id="country_code">
-    """
-    form_type = request.args.get('form_type', 'signup')
-    signup_form = SignupForm()
-    login_form = LoginForm()
-
-    # print("Form submitted:", request.method == 'POST')
-    # print("Form validation status:", signup_form.validate_on_submit())
-    # print("Form errors:", signup_form.errors)
-
-    if signup_form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(signup_form.password.data).decode('utf-8')
-        print(signup_form.phone.data)
-        user = User(
-            fullname = signup_form.fullname.data,
-            password_hash = hashed_password,
-            email = signup_form.email.data,
-            phone = signup_form.phone.data,
-        )
-        db.session.add(user)
-        db.session.commit()
-        flash('Account created successfully. You can login now', 'success')
-        return redirect(url_for('profile', form_type='login'))
-
-    elif login_form.validate_on_submit():
-        _user: User = User.query.filter_by(email = login_form.email.data).first()
-        if _user:
-            print(_user)
-        if _user and _user.check_password(login_form.password.data, bcrypt):
-            login_user(_user)
-            flash('Login Successfully', 'success')
-            if _user.email == ADMIN:
-                return redirect(url_for('admin'))
-            elif session.get('compatible_truck_ids') or session.get('compatible_load_ids'):
-                return redirect(url_for('booking'))
-            else:
-                return redirect(url_for('dashboard'))
-        else:
-            flash('Login failed. Check your email or password.', 'danger')
-
-    if request.method == 'POST':
-        print(signup_form.errors)
-
-    return render_template("signup_login.html", form_type=form_type, signup_form=signup_form, login_form=login_form)
-
 @app.route("/booking/<string:booking_type>", methods=['POST', 'GET'])
 def booking(booking_type):
     list_compatible = []
@@ -320,7 +274,7 @@ def register(booking_type, id):
 @app.route('/dashboard', methods=['POST', 'GET'])
 @login_required
 def dashboard():
-    if current_user.email == ADMIN:
+    if current_user.email == app.config.get('ADMIN_EMAIL'):
         return redirect(url_for('admin'))
 
     adding_type = request.args.get('adding', 'truck')
@@ -358,13 +312,6 @@ def dashboard():
         if request.method == 'POST':
             print(material_form.errors)
     return render_template('dashboard.html', current_user=current_user, adding_type=adding_type, truck_form=truck_form, material_form=material_form, trucks=trucks)
-
-@app.route('/logout')
-@login_required
-def logout():
-    flash(f'Logged out successfully from {current_user.fullname}', 'info')
-    logout_user()
-    return redirect(url_for('profile'))
 
 @app.route("/tabs")
 def view_tabs():

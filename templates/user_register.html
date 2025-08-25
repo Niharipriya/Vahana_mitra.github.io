@@ -1,9 +1,0 @@
-{% extends 'base_page.html' %}
-
-{% block body %}
-    {% if booking_type == 'truck' %}
-        {% include 'truck_registration_form.html' %}
-    {% elif booking_type == 'material' %}
-        {% include 'material_registration_form.html' %}
-    {% endif %}
-{% endblock body %}

@@ -1,4 +1,4 @@
-from support_wtform import IntlTelInput, GoogleAddressInput
+from app.support_wtform import IntlTelInput, GoogleAddressInput, GoogleAutocomplete
 from flask_wtf import FlaskForm
 from wtforms import StringField, EmailField, TelField, SubmitField, PasswordField, BooleanField, DateField, SelectField, IntegerField
 from wtforms import HiddenField, TextAreaField, DateTimeField, FileField
@@ -26,6 +26,7 @@ class SignupForm(FlaskForm):
     submit = SubmitField('Signup')
 
 class LoginForm(FlaskForm):
+    phone = StringField('Phone Number', validators=[DataRequired(), Length(min=10)], widget=IntlTelInput())
     email = EmailField('Email', validators=[DataRequired(), Email()])
     password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     submit = SubmitField('Login')
@@ -46,11 +47,11 @@ class TruckRegistrationForm(FlaskForm):
     user_email = EmailField('Email', validators=[DataRequired(), Email()])
 
     registration_number = StringField('Registration number', validators=[DataRequired(), Length(min=9, max=10), Regexp(RTO_number_regex, message=("Invalid RTO number"))])
-    model = StringField('Trucks Model', validators=[DataRequired()])
+    model_name = StringField('Trucks Model', validators=[DataRequired()])
     type = SelectField('Lorry type Needed', choices=[('open', 'Open'), ('close', 'Closed'), ('container', 'Container'), ('tanker', 'Tanker')], validators=[DataRequired()])
     capacity = IntegerField('Max load capacity in tons', validators=[DataRequired()])
     current_location = StringField('Current location from ', validators=[DataRequired()])
-    # destination_location = StringField('Preferred destination location')
+    available_locations = StringField('Preferred destination location')
 
     owner_name = StringField('Owners name', validators=[Length(min=10)])
     owner_phone = StringField('Phone Number', validators=[Length(min=10, max=20)], widget=IntlTelInput())
@@ -65,14 +66,14 @@ class TruckRegistrationForm(FlaskForm):
     available_date = DateField('Date Available')
     submit = SubmitField('Register Truck')
 
-class MaterialRequestForm(FlaskForm):
+class LoadRequestForm(FlaskForm):
     truck_type = SelectField('Lorry type Needed', choices=[('open', 'Open'), ('close', 'Closed'), ('container', 'Container'), ('tanker', 'Tanker')], validators=[DataRequired()])
     capacity = IntegerField('Max load capacity in tons', validators=[DataRequired()])
     current_location = StringField('Current location from ', validators=[DataRequired()])
     destination_location = StringField('Preferred destination location')
     submit = SubmitField('Request Lorry')
 
-class MaterialRegistrationForm(FlaskForm):
+class LoadRegistrationForm(FlaskForm):
     user_fullname = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=80)])
     user_phone = StringField('Phone Number', validators=[DataRequired(), Length(min=10, max=20)], widget=IntlTelInput())
     user_email = EmailField('Email', validators=[DataRequired(), Email()])

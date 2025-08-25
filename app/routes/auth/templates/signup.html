@@ -1,0 +1,36 @@
+{% extends 'base_page.html' %}
+
+{% block body %}   
+    <div
+	class="container py-5"><div
+	class="row justify-content-center"><div
+	class="col-md-6">
+    	<form 
+    	method="POST" 
+    	class="bg-white p-4 p-md-5 rounded shadow mx-auto mt-4" 
+    	style="max-width: 500px;">
+    	    <h3 class="text-center mb-4">Create Account</h3>
+    	    <p 
+    	    class="text-center text-muted">Already have an account? <a 
+    	        href="{{ url_for('auth.login') }}" 
+    	        class="text-decoration-none">Login</a></p>
+    	    {{ signup_form.hidden_tag() }}
+	
+    	    <div 
+			class="mb-3">
+    	        {{ signup_form.fullname(class="form-control", placeholder="Full Name") }}</div>
+    	    <div 
+			class="mb-3">
+    	        {{ signup_form.email(class="form-control", placeholder="Email Address") }}</div>
+    	    <div 
+			class="mb-3">
+    	        {{ signup_form.phone(placeholder="Phone Number")}}</div>
+    	    <div 
+			class="mb-3">
+    	        {{ signup_form.password(class="form-control", placeholder="Password") }}</div>
+    	    <div 
+			class="d-grid">
+    	        {{ signup_form.submit(class="btn btn-primary") }}</div>
+    	</form>
+	</div></div></div>
+{% endblock body %}

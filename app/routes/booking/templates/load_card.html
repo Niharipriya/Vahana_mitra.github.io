@@ -1,0 +1,17 @@
+<div 
+class="col"><div 
+class="card truck-card shadow-sm"><div 
+class="card-body">
+    <h5 
+    class="card-title"> {{load.type or 'N/A'}} {{load.weight or 'N/A'}} </h5>
+    <p 
+    class="card-text">
+        <strong>PickUp:</strong> {{load.pickup_address  or 'N/A'}} <br>
+        <strong>Drop:</strong> {{load.drop_address or 'N/A'}} <br>
+        <strong>Cost:</strong> {{load.cost or 'N/A'}}
+        <strong>Contacts:</strong> {{load.pickup_contact_name or 'N/A'}} {{load.pickup_contact_phone or 'N/A'}} <br></p>
+    <form 
+    method="post" 
+    action="url_for('register.load', id={{load.load_id}})">
+        <button class="btn btn-primary w-100">book now</button></form>
+ </div></div></div>

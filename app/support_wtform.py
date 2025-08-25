@@ -1,37 +1,25 @@
 from markupsafe import Markup
 from wtforms.widgets import TelInput, TextInput
-import os
-from dotenv import load_dotenv
+from wtforms.widgets import html_params 
 
-load_dotenv()
-GOOGLE_KEY = os.environ.get('GOOGLE_KEY')
-
-class IntlTelInput(TextInput):
+class IntlTelInput(TelInput):
     """
     A WTForms widget that integrates with the intl-tel-input JavaScript library.
     It automatically formats the phone number to E.164 format on form submission.
     """
     def __call__(self, field, **kwargs):
-        """
-        Renders the TelInput widget along with the necessary JavaScript for
-        the intl-tel-input library.
-        """
-        # Ensure the id attribute is set for the JavaScript to work
-        kwargs.setdefault('id', field.id)
-
-        # Render the basic TelInput field
+        kwargs.setdefault('type', 'tel')
         html = super().__call__(field, **kwargs)
-
-        # Create the JSON string for preferred countries
+        print(html)
         preferred_countries_js = str(["us", "gb", "in"]).replace("'", '"')
 
-        # Construct the script for intl-tel-input
         script = f"""
         <script src="https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.16/build/js/intlTelInput.min.js"></script>
         <script>
         document.addEventListener("DOMContentLoaded", function() {{
             const input = document.getElementById("{field.id}");
             const form = input.closest("form");
+            input.classList.add("form-control")
 
             const iti = window.intlTelInput(input, {{
                 preferredCountries: {preferred_countries_js},
@@ -54,25 +42,58 @@ class IntlTelInput(TextInput):
         }});
         </script>"""
         # Combine the input and the script
-        return Markup(f'<div>{html}\n{script}</div>')
+        return Markup(f'<div class="form-group">{html}\n{script}</div>  ')
+
+class GoogleAutocomplete(TextInput):
+    def __call__(self, field, **kwargs):
+        kwargs.setdefault('class', 'form-control')
+        html = f'<gmp-place-autocomplete {html_params(id=field.id, type="geocode")}></gmp-place-autocomplete>'
+
+        
+        script = """
+            <script>
+              document.addEventListener("DOMContentLoaded", function () {""" + f"const autocompleteElement = document.getElementById({field.id});"
+        script = script + """
+                // Listen for the place change event
+                autocompleteElement.addEventListener("gmp-placechange", () => {
+                  const place = autocompleteElement.value;
+                  console.log("Selected place:", place);
+                });
+              });
+            </script>
+        """
+        print(Markup(html+script))
+        return Markup(html+script)
 
 class GoogleAddressInput(TextInput):
     def __call__(self, field, **kwargs):
         kwargs.setdefault('id', field.id)
         kwargs.setdefault('class', 'form-control')
         html = super().__call__(field, **kwargs)
-
+ 
         script = f"""
-        <script src="https://maps.googleapis.com/maps/api/js?key={GOOGLE_KEY}&libraries=places"></script>
         <script>
+
         document.addEventListener("DOMContentLoaded", function () {{
             var input = document.getElementById("{field.id}");
             if (input) {{
-                var autocomplete = new google.maps.places.PlaceAutocompleteElement(input, {{
-                    types: ['geocode']
-                }});
+                const autocomplete = new google.maps.places.PlaceAutocompleteElement();
+                autocomplete.input = input;
             }}
         }});
         </script>
         """
         return Markup(f'<div>{html}\n{script}</div>')
+        # <script>
+        #   document.addEventListener("DOMContentLoaded", function () {{
+        #     const autocompleteElement = document.getElementById("{field.id}");
+
+        #     // Listen for the place change event
+        #     autocompleteElement.addEventListener("change", () => {{
+        #       autocompleteElement.value = new google.maps.places.PlaceAutocompleteElement(autocompleteElement, {{
+        #         types: ['geocode']
+        #       }});
+        #       console.log("Selected place:", place);
+        #     }});
+        #   }});
+        # </script>

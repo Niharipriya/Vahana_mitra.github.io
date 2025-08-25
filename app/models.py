@@ -3,9 +3,8 @@ from sqlalchemy import String, DateTime, ForeignKey, ARRAY, BLOB
 from sqlalchemy.orm import Mapped, mapped_column
 from datetime import datetime
 from flask_login import UserMixin
-from flask_bcrypt import Bcrypt
 
-db = SQLAlchemy()
+from app import db
 
 class User(db.Model, UserMixin):
     __tablename__ = 'USER'
@@ -24,9 +23,6 @@ class User(db.Model, UserMixin):
 
     def get_id(self):
         return str(self.user_id)
-
-    def check_password(self, password, bcrypt: Bcrypt):
-        return bcrypt.check_password_hash(self.password_hash, password)
 
 class Truck(db.Model):
     __tablename__ = 'TRUCK'
@@ -67,13 +63,13 @@ class Truck(db.Model):
         return cls.query.filter_by(user_id=user_id).all()
 
     @classmethod
-    def find_available_truck(cls, location=None, min_capacity=None, truck_type=None):
+    def find_available_trucks(cls, location=None, min_capacity=None, truck_type=None):
         query = cls.query.filter(cls.is_available == True, cls.is_verified == True)
 
         query = query.filter(cls.current_location.ilike(f"%{location}%")) if location else query
         query = query.filter(cls.type.ilike(f"%{truck_type}%")) if truck_type else query
         query = query.filter(cls.capacity >= min_capacity) if min_capacity else query
-        return query.all()
+        return [truck.truck_id for truck in query.all()]
 
     @classmethod
     def from_json(cls, data):
@@ -166,10 +162,10 @@ class Load(db.Model):
             db.session.commit()
 
     @classmethod
-    def find_available_materials(cls, capacity=None, current_location=None, ):
+    def find_available_loads(cls, capacity=None, current_location=None, ):
 
         query = cls.query.filter(cls.is_active == True, cls.in_progress == False)
         query = query.filter(cls.weight <= capacity) if capacity else query
         query = query.filter(cls.pickup_address.ilike(f"%{current_location}%")) if current_location else query
-        return query.all()
+        return [load.load_id for load in query.all()]
         

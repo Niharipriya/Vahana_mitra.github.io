@@ -1,0 +1,54 @@
+{% extends 'base_page.html' %}
+
+{% block head %}
+    <style>
+        .truck-card{
+            border-radius: 15px;
+            transition: transform 0.2s ease-in-out;
+        }
+        .truck-card:hover{
+            transform: scale(1.02);
+        }
+    </style>
+{% endblock head %}
+
+{% block body %}
+    <div 
+    class="container py-6 table-responsive"><div 
+    class="container py-5">
+        {% if booking_type == 'Load' %}
+            <h2 class="mb-4 text-center">Available Trucks for booking</h2>
+            {% if list_compatible|length > 0 %}
+                <div 
+                class="row row-cols-1 row-cols-md-3 g-4">
+                    {% for truck in list_compatible %}
+                        {% set truck = truck %}
+                        {% include 'truck_card.html' %}
+                    {% endfor %}
+            {% else %}
+                <h1>No Truck in the compatible list</h1>
+                <a 
+                class="btn btn-primary w-100"
+                href="{{ url_for('register.load', id=0) }}">Book Now</a> 
+            {% endif %}
+        </div>
+
+        {% elif booking_type == 'Truck' %}
+            <h2 class="mb-4 text-center">Available Materials for booking</h2>
+            {% if list_compatible|length > 0 %}
+                <div 
+                class="row row-cols-1 row-cols-md-3 g-4">
+                {% for material in list_compatible %}
+                    {% set load = material %}
+                    {% include 'load_card.html' %}
+                {% endfor %}
+            {% else %}
+                <h1>No Load in the compatible list</h1>
+                <a 
+                class="btn btn-primary w-100"
+                href="{{ url_for('register.truck', id=0) }}">Book Now</a>
+            {% endif %}
+            </div>
+        {% endif %}
+        </div></div>
+{% endblock body %}
