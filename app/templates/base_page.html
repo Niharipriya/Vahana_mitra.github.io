@@ -18,48 +18,11 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/intl-tel-input/17.0.8/js/intlTelInput.min.js"></script>
 
-    <nav
-    class="navbar navbar-expand-lg navbar-light bg-light shadow-sm"><div
-    class="container-fluid">
-        <a class="navbar-brand" href="{{ url_for('landing.index') }}">HOME</a>
+    <gmpx-api-loader 
+    key= "{{ GOOGLE_KEY }}" 
+    solution-channel="GMP_QB_addressselection_v4_cAC"></gmpx-api-loader>
 
-        <button
-        class="navbar-toggler d-lg-none"
-        type="button"
-        data-bs-toggle="collapse"
-        data-bs-target="#mainNavbar"
-        aria-controls="mainNavbar"
-        aria-expanded="false"
-        aria-label="Toggle navigation"><span class="navbar-toggler-icon"></span></button>
-
-        <div
-        class="collapse navbar-collapse"
-        id="mainNavbar">
-            <ul
-            class="navbar-nav me-auto mb-2 mb-lg-0">
-                <li
-                class="nav-item"><a href="{{ url_for('auth.signup') }}" class="nav-link">Register</a></li>
-                <li
-                class="nav-item"><a href="/" class="nav-link">Dashboard</a></li>
-                <li
-                class="nav-item"><a href="/" class="nav-link">Status</a></li>
-            </ul>
-
-            <ul
-            class="navbar-nav ms-auto mb-2 md-lg-0">
-                {% if current_user.is_authenticated %}
-                    <li
-                    class="nav-item"><span class="nav-text">{{ current_user.fullname }}</span></li>
-                    <li
-                    class="nav-item"><a href="{{ url_for('auth.logout') }}" class="nav-link text-danger">LOG OUT</a></li>
-                {% else %}
-                    <li
-                    class="nav-item"><a href="{{ url_for('auth.login')}}" class="nav-link">LOG IN</a></li> 
-                {% endif %}
-            </ul>
-        </div>
-    </div></nav>
-
+    {% include 'nav_bar.html' %}
     
     {% with messages = get_flashed_messages(with_categories=true) %}
         {% if messages %}
@@ -80,5 +43,9 @@
     {% block body %}
         
     {% endblock body %}
+
+    <script
+    type="module"
+    src="{{ url_for('static', filename='js/googlePlaces_integration.js') }}"></script>
 </body>
 </html>

@@ -24,6 +24,12 @@ def create_app(
       app = Flask(__name__, instance_relative_config=True)
       app.config.from_object(config_class)
 
+      @app.context_processor
+      def inject_globals():
+            return dict(
+                  GOOGLE_KEY = app.config['GOOGLE_KEY']
+            )
+
       db.init_app(app)
       bcrypt.init_app(app)
       login_manager.init_app(app)

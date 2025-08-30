@@ -1,4 +1,4 @@
-from app.support_wtform import IntlTelInput, GoogleAddressInput, GoogleAutocomplete
+from app.support_wtform import IntlTelInput
 from flask_wtf import FlaskForm
 from wtforms import StringField, EmailField, TelField, SubmitField, PasswordField, BooleanField, DateField, SelectField, IntegerField
 from wtforms import HiddenField, TextAreaField, DateTimeField, FileField
