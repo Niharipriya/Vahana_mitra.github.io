@@ -33,8 +33,21 @@ def autofill_fields(
     }
     return autofill_fields
 
-def autofill_db(
-    form: FlaskForm,
-    db
+def autofill_db_dict(
+    input_data: dict,
+    database_class
 ):
-    pass
+    valid_fields = {
+        column.name
+        for column in database_class.__table__.columns
+    }
+    
+    filtered_data = {
+        column_name: data
+        for column_name, data in input_data.items()
+        if column_name in valid_fields
+    }
+
+    print(valid_fields, filtered_data)
+    
+    return database_class(**filtered_data)

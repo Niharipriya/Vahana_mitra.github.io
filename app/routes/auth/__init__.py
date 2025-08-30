@@ -12,6 +12,7 @@ from app import login_manager, bcrypt, db
 from app.form import SignupForm, LoginForm
 from app.models import User
 from app.constants.session_keys import SessionKeys
+from app.utils import autofill_db_dict
 
 bp = Blueprint(
      "auth", 
@@ -28,12 +29,18 @@ def load_user(user_id):
 def signup():
       signup_form = SignupForm()
       if signup_form.validate_on_submit():
-            hashed_password = bcrypt.generate_password_hash(signup_form.password.data).decode('utf-8')
-            user = User(
-                  fullname = signup_form.fullname.data,
-                  password_hash = hashed_password,
-                  email = signup_form.email.data,
-                  phone = signup_form.phone.data
+            hashed_password = bcrypt.generate_password_hash(signup_form.password_hash.data).decode('utf-8')
+            # user = User(
+            #       fullname = signup_form.fullname.data,
+            #       password_hash = hashed_password,
+            #       email = signup_form.email.data,
+            #       phone = signup_form.phone.data
+            # )
+            signup_form_data = signup_form.data
+            signup_form_data['password_hash'] = hashed_password
+            user = autofill_db_dict(
+                  signup_form_data,
+                  User
             )
             db.session.add(user)
             db.session.commit()

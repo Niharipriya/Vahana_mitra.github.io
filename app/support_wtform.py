@@ -10,7 +10,7 @@ class IntlTelInput(TelInput):
     def __call__(self, field, **kwargs):
         kwargs.setdefault('type', 'tel')
         html = super().__call__(field, **kwargs)
-        print(html)
+        # print(html)
         preferred_countries_js = str(["us", "gb", "in"]).replace("'", '"')
 
         script = f"""

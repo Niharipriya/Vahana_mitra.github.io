@@ -4,25 +4,11 @@ from wtforms import StringField, EmailField, TelField, SubmitField, PasswordFiel
 from wtforms import HiddenField, TextAreaField, DateTimeField, FileField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, Regexp
 
-pickup_hour = SelectField(
-    'Pickup Hour',
-    choices=[(f"{h:02}", f"{h:02}") for h in range(0, 24)],
-    validators=[DataRequired()]
-)
-
-pickup_minute = SelectField(
-    'Pickup Minute',
-    choices=[("00", "00"), ("30", "30")],
-    validators=[DataRequired()]
-)
-
-pickup_time = HiddenField('Pickup Time', validators=[DataRequired()])
-
 class SignupForm(FlaskForm):
     fullname = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=80)])
     phone = StringField('Phone Number', validators=[DataRequired(), Length(min=10)], widget=IntlTelInput())
     email = EmailField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
+    password_hash = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     submit = SubmitField('Signup')
 
 class LoginForm(FlaskForm):
