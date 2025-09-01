@@ -1,18 +1,28 @@
-import os, json
+import os
+import json
 from datetime import timedelta
+from dotenv import load_dotenv
+
+# Load .env file if present
+load_dotenv()
 
 # Base Directory
 basedir = os.path.abspath(os.path.dirname(__file__))
-with open("./testing_data.json", 'r') as file:
+
+# Load testing data (if needed by seeds)
+with open(os.path.join(basedir, "testing_data.json"), "r") as file:
     testing_data = json.load(file)
 
-truck_testing_data = testing_data["trucks"]
-load_testing_data = testing_data["loads"]
+truck_testing_data = testing_data.get("trucks", [])
+load_testing_data = testing_data.get("loads", [])
+
 
 class Config:
+    """Base configuration (shared across environments)."""
+
     # General
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'your-default-secret-key'
-    SESSION_COOKIE_NAME = 'your_session'
+    SECRET_KEY = os.getenv("SECRET_KEY", "your-default-secret-key")
+    SESSION_COOKIE_NAME = "your_session"
     PERMANENT_SESSION_LIFETIME = timedelta(days=7)
 
     # Database
@@ -21,23 +31,26 @@ class Config:
     # Security
     WTF_CSRF_ENABLED = True
 
-    GOOGLE_KEY = os.environ.get('GOOGLE_KEY')
+    # Google Maps API Key
+    GOOGLE_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
 
-    #Admin credentials
-    ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL')
+    # Admin credentials
+    ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
+
 
 class DevelopmentConfig(Config):
     DEBUG = True
     FLASK_ADMIN_SWATCH = "litera"
     SQLALCHEMY_DATABASE_URI = (
-        os.environ.get("DEV_DATABASE_URL")
-        or f"sqlite:///{os.path.join(basedir, 'instance/dev.db')}"
+        os.getenv("DEV_DATABASE_URL")
+        or f"sqlite:///{os.path.join(basedir, 'instance', 'dev.db')}"
     )
+
 
 class TestingConfig(Config):
     TESTING = True
     SQLALCHEMY_DATABASE_URI = (
-        os.environ.get("TEST_DATABASE_URL") or "sqlite:///:memory:"
+        os.getenv("TEST_DATABASE_URL") or "sqlite:///:memory:"
     )
     WTF_CSRF_ENABLED = False  # Disable CSRF for testing
 
@@ -45,6 +58,6 @@ class TestingConfig(Config):
 class ProductionConfig(Config):
     DEBUG = False
     SQLALCHEMY_DATABASE_URI = (
-        os.environ.get("DATABASE_URL")
-        or f"sqlite:///{os.path.join(basedir, 'instance/prod.db')}"
+        os.getenv("DATABASE_URL")
+        or f"sqlite:///{os.path.join(basedir, 'instance', 'prod.db')}"
     )

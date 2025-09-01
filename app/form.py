@@ -8,7 +8,7 @@ class SignupForm(FlaskForm):
     fullname = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=80)])
     phone = StringField('Phone Number', validators=[DataRequired(), Length(min=10)], widget=IntlTelInput())
     email = EmailField('Email', validators=[DataRequired(), Email()])
-    password_hash = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
+    password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     submit = SubmitField('Signup')
 
 class LoginForm(FlaskForm):

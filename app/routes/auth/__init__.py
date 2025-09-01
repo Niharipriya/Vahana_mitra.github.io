@@ -29,19 +29,19 @@ def load_user(user_id):
 def signup():
       signup_form = SignupForm()
       if signup_form.validate_on_submit():
-            hashed_password = bcrypt.generate_password_hash(signup_form.password_hash.data).decode('utf-8')
-            # user = User(
-            #       fullname = signup_form.fullname.data,
-            #       password_hash = hashed_password,
-            #       email = signup_form.email.data,
-            #       phone = signup_form.phone.data
-            # )
-            signup_form_data = signup_form.data
-            signup_form_data['password_hash'] = hashed_password
-            user = autofill_db_dict(
-                  signup_form_data,
-                  User
+            hashed_password = bcrypt.generate_password_hash(signup_form.password.data).decode('utf-8')
+            user = User(
+                  fullname = signup_form.fullname.data,
+                  password = hashed_password,
+                  email = signup_form.email.data,
+                  phone = signup_form.phone.data
             )
+            # signup_form_data = signup_form.data
+            # signup_form_data['password'] = hashed_password
+            # user = autofill_db_dict(
+            #       signup_form_data,
+            #       User
+            # )
             db.session.add(user)
             db.session.commit()
             flash(f'Account successfully under {signup_form.fullname.data}', 'success')
@@ -60,10 +60,11 @@ def login():
                   email = login_form.email.data,
                   phone = login_form.phone.data
             ).first()
-            if bcrypt.check_password_hash(user.password_hash, login_form.password.data):
+            if bcrypt.check_password_hash(user.password, login_form.password.data):
                   login_user(user)
-                  if session[SessionKeys.PENDING_FORM_DATA]:
-                        return redirect(f'/booking/{session[SessionKeys.BOOKING_TYPE]}')
+                  
+                  if session.get(SessionKeys.PENDING_FORM_DATA):
+                        return redirect(f'/booking/{session.get(SessionKeys.BOOKING_TYPE)}')
                   return redirect(url_for('landing.index'))
 
       return render_template(

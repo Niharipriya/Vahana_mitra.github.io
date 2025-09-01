@@ -9,6 +9,10 @@
 		method="post" 
 		class="bg-white p-4 rounded shadow">
 		    <h4 class="text-center mb-3">Login</h4>
+			<p 
+    	    class="text-center text-muted">Don't have an account? <a 
+    	        href="{{ url_for('auth.login') }}" 
+    	        class="text-decoration-none">Register Now</a></p>
 		    {{ login_form.hidden_tag() }}
 		    <div
 		    class="mb-3">
