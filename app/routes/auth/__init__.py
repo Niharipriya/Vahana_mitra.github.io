@@ -12,6 +12,7 @@ from app import login_manager, bcrypt, db
 from app.form import SignupForm, LoginForm
 from app.models import User
 from app.constants.session_keys import SessionKeys
+from app.constants.variable_constants import User_conts
 from app.utils import autofill_db_dict
 
 bp = Blueprint(
@@ -29,7 +30,8 @@ def load_user(user_id):
 def signup():
       signup_form = SignupForm()
       if signup_form.validate_on_submit():
-            hashed_password = bcrypt.generate_password_hash(signup_form.password_hash.data).decode('utf-8')
+            hashed_password = bcrypt.generate_password_hash(
+                getattr(signup_form, User_conts.PASSWORD).data).decode('utf-8')
             # user = User(
             #       fullname = signup_form.fullname.data,
             #       password_hash = hashed_password,
@@ -37,14 +39,14 @@ def signup():
             #       phone = signup_form.phone.data
             # )
             signup_form_data = signup_form.data
-            signup_form_data['password_hash'] = hashed_password
+            signup_form_data[User_conts.PASSWORD] = hashed_password
             user = autofill_db_dict(
                   signup_form_data,
                   User
             )
             db.session.add(user)
             db.session.commit()
-            flash(f'Account successfully under {signup_form.fullname.data}', 'success')
+            flash(f'Account successfully under {getattr(signup_form, User_conts.FULLNAME).data}', 'success')
             return redirect(url_for('auth.login'))
 
       return render_template(
@@ -56,15 +58,18 @@ def signup():
 def login():
       login_form = LoginForm()
       if login_form.validate_on_submit():
-            user = User.query.filter_by(
-                  email = login_form.email.data,
-                  phone = login_form.phone.data
+            user: User = User.query.filter_by(
+                  email = getattr(login_form, User_conts.EMAIL).data,
+                  phone = getattr(login_form, User_conts.PHONE).data
             ).first()
-            if bcrypt.check_password_hash(user.password_hash, login_form.password.data):
+            if bcrypt.check_password_hash(
+                        getattr(user, user.attribute_map()[User_conts.PASSWORD]),
+                        getattr(login_form, User_conts.PASSWORD).data
+                  ):
                   login_user(user)
-                  if session[SessionKeys.PENDING_FORM_DATA]:
-                        return redirect(f'/booking/{session[SessionKeys.BOOKING_TYPE]}')
-                  return redirect(url_for('landing.index'))
+            if session.get(SessionKeys.PENDING_FORM_DATA):
+                  return redirect(f'/booking/{session[SessionKeys.BOOKING_TYPE]}')
+            return redirect(url_for('landing.index'))
 
       return render_template(
             'login.html',
@@ -74,6 +79,6 @@ def login():
 @bp.route('/logout')
 @login_required
 def logout():
-    flash(f'Logged out successfully from {current_user.fullname}', 'info')
+    flash(f'Logged out successfully from {getattr(current_user, User.attribute_map(current_user)[User_conts.FULLNAME])}', 'info')
     logout_user()
     return redirect(url_for('landing.index'))

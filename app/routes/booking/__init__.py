@@ -15,7 +15,11 @@ bp = Blueprint(
 
 @bp.route('/<string:booking_type>')
 def booking(booking_type: str):
-      list_compatible = session[SessionKeys.COMPATIBLE_LOAD_IDS] if booking_type == 'Load' else session[SessionKeys.COMPATIBLE_TRUCK_IDS]
+      list_compatible = []
+      if booking_type == 'Load' and session.get(SessionKeys.COMPATIBLE_LOAD_IDS):
+            list_compatible = session.get(SessionKeys.COMPATIBLE_LOAD_IDS)
+      elif booking_type == 'Truck' and session.get(SessionKeys.COMPATIBLE_TRUCK_IDS):
+            list_compatible = session.get(SessionKeys.COMPATIBLE_TRUCK_IDS)
       
       return render_template(
             'booking.html',

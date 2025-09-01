@@ -4,17 +4,19 @@ from wtforms import StringField, EmailField, TelField, SubmitField, PasswordFiel
 from wtforms import HiddenField, TextAreaField, DateTimeField, FileField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, Regexp
 
+from app.constants.variable_constants import User_conts
+
 class SignupForm(FlaskForm):
-    fullname = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=80)])
-    phone = StringField('Phone Number', validators=[DataRequired(), Length(min=10)], widget=IntlTelInput())
-    email = EmailField('Email', validators=[DataRequired(), Email()])
-    password_hash = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
+    locals()[User_conts.FULLNAME] = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=80)])
+    locals()[User_conts.PHONE] = StringField('Phone Number', validators=[DataRequired(), Length(min=10)], widget=IntlTelInput())
+    locals()[User_conts.EMAIL] = EmailField('Email', validators=[DataRequired(), Email()])
+    locals()[User_conts.PASSWORD] = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     submit = SubmitField('Signup')
 
 class LoginForm(FlaskForm):
-    phone = StringField('Phone Number', validators=[DataRequired(), Length(min=10)], widget=IntlTelInput())
-    email = EmailField('Email', validators=[DataRequired(), Email()])
-    password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
+    locals()[User_conts.PHONE] = StringField('Phone Number', validators=[DataRequired(), Length(min=10)], widget=IntlTelInput())
+    locals()[User_conts.EMAIL] = EmailField('Email', validators=[DataRequired(), Email()])
+    locals()[User_conts.PASSWORD] = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     submit = SubmitField('Login')
 
 RTO_number_regex = r'^[A-Z]{2}[0-9]{2}[A-Z]{1,2}[0-9]{4}'

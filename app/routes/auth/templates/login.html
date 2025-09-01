@@ -12,13 +12,13 @@
 		    {{ login_form.hidden_tag() }}
 		    <div
 		    class="mb-3">
-		      	{{ login_form.email(class_="form-control", placeholder="Email") }}</div>
+		      	{{ login_form.user_email(class_="form-control", placeholder="Email") }}</div>
 		    <div 
 			class="mb-3">
-		        {{ login_form.phone(class_="form-control", placeholder="Phone Number") }}</div>
+		        {{ login_form.user_phone(class_="form-control", placeholder="Phone Number") }}</div>
 		    <div 
 			class="mb-3">
-		    	{{ login_form.password(class_="form-control", placeholder="Password") }}</div>
+		    	{{ login_form.user_password(class_="form-control", placeholder="Password") }}</div>
 		    <div 
 			class="d-grid">
 		        {{ login_form.submit(class_="btn btn-primary") }}</div>

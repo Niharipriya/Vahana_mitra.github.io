@@ -37,7 +37,12 @@ class User(db.Model, UserMixin):
 
     def get_id(self):
         return str(self.user_id)
-
+    
+    def attribute_map(cls) -> dict[str, str]:
+        return {
+            column.name: attribute
+            for attribute, column in cls.__mapper__.columns.items()
+        }
 
 class Truck(db.Model):
     __tablename__ = 'TRUCK'
@@ -90,6 +95,12 @@ class Truck(db.Model):
 
         return [truck.truck_id for truck in query.all()]
 
+    def attribute_map(cls) -> dict[str, str]:
+        return {
+            column.name: attribute
+            for attribute, column in cls.__mapper__.columns.items()
+        }
+
 
 class Load(db.Model):
     __tablename__ = 'LOAD'
@@ -135,3 +146,9 @@ class Load(db.Model):
             query = query.filter(cls.pickup_location.ilike(f"%{current_location}%"))
 
         return [load.load_id for load in query.all()]
+
+    def attribute_map(cls) -> dict[str, str]:
+        return {
+            column.name: attribute
+            for attribute, column in cls.__mapper__.columns.items()
+        }
