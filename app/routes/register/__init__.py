@@ -1,13 +1,15 @@
 from flask import (
     Blueprint,
     session, 
-    render_template
+    render_template, request
 )
+from flask_login import current_user
 
 from app.constants.session_keys import SessionKeys
 from app.form import LoadRegistrationForm, TruckRegistrationForm
 from app.utils import autofill_fields, autofill_db_dict
-from app.models import Load, Truck
+from app.constants.variable_constants import User_conts, Load_conts
+from app.models import Load, Truck, User
 from app import db
 
 bp = Blueprint(
@@ -27,13 +29,25 @@ def truck(id: int):
 
     if form.validate_on_submit():
         print("adding truck")
+        form_data  = form.data
+        form_data[User_conts.ID] = getattr(
+            current_user, 
+            User.attribute_map(current_user)[User_conts.ID]
+        )
         truck = autofill_db_dict(
-            form.data,
+            form_data,
             Truck
         )
         db.session.add(truck)
         db.session.commit()
+    else:
+        print("not a valid form")
+        print(form.errors)
+    
+    if request.method == 'POST':
+        print(form.errors)
 
+    print("conformation")
     return render_template(
        "truck_registration_form.html" ,
        form = form
@@ -49,14 +63,34 @@ def load(id: int):
 
     if form.validate_on_submit():
         print("adding load")
+        form_data  = form.data
+        form_data[User_conts.ID] = getattr(
+            current_user, 
+            User.attribute_map(current_user)[User_conts.ID]
+        )
+        form_data[Load_conts.CURRENT_LOCATION] = getattr(
+            form,
+            Load_conts.PICKUP_LOCATION
+        ).data
+        print(form_data)
         load = autofill_db_dict(
-            form.data,
+            form_data,
             Load
         )
         db.session.add(load)
         db.session.commit()
+    else:
+        print("not a valid form")
+        print(form.errors)
+
+    if request == 'POST':
+        print(form.errors)
+    
+    print("conformation")
 
     return render_template(
         "load_registration_form.html",
-        form = form
+        form = form,
+        current_user_fullname = getattr(current_user, User.attribute_map(current_user)[User_conts.FULLNAME]),
+        current_user_phone = getattr(current_user, User.attribute_map(current_user)[User_conts.PHONE])
     )

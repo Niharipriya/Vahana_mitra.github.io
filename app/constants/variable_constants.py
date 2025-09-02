@@ -28,7 +28,7 @@ class Truck_conts:
     VEHICLE_TYPE: str = 'vehicle_type'
     VEHICLE_CAPACITY: str = 'vehicle_capacity'
     VEHICLE_INSURANCE: str = 'vheicle_insurance' 
-    VEHICLE_PERMIT: str = 'vehical_permit'
+    VEHICLE_PERMIT: str = 'vehicle_permit'
 
     # Truck Owner Information
     OWNER_NAME: str = 'truck_owner_name'

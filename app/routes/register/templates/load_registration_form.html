@@ -82,7 +82,7 @@ style="max-width: 1000px; width: 100%;">
                     <div
                     class="col-12"><div
                     class="form-floating">
-                        {{ form.pickup_date(class="form-control") }}
+                        {{ form.pickup_datetime(class="form-control") }}
                         <label class="form-label mb-3">PickUp Date</label></div></div>
                     <div 
                     class="col-12">
@@ -105,7 +105,7 @@ style="max-width: 1000px; width: 100%;">
                     <div 
                     class="col-12"><div
                     class="form-floating">
-                        {{ form.drop_date(class="form-control") }}
+                        {{ form.drop_datetime(class="form-control") }}
                         <label for="drop_data" class="form-label">Drop Date</label></div></div>
                     <div 
                     class="col-12">
@@ -124,25 +124,25 @@ style="max-width: 1000px; width: 100%;">
                     class="col-md-4">
                         <div 
                         class="form-floating">
-                            {{ form.estimated_weight(class="form-control", placeholder="Estimated material weight") }}
+                            {{ form.load_weight(class="form-control", placeholder="Estimated material weight") }}
                             <label for="estimated_weight" class="form-label">Estimated material weight</label></div></div>
                     <div 
                     class="col-md-4">
                         <div 
                         class="form-floating">
-                            {{ form.truck_type(class="form-control", placeholder="Type of truck") }}
+                            {{ form.vehicle_type(class="form-control", placeholder="Type of truck") }}
                             <label for="truck_type" class="form-label">Type of truck</label></div></div>
                     <div 
                     class="col-md-4">
                         <div 
                         class="form-floating">
-                            {{ form.material_type(class="form-control", placeholder="Type of Materials in load") }}
+                            {{ form.load_type(class="form-control", placeholder="Type of Materials in load") }}
                             <label for="material_type" class="form-label">Type of Materials in load</label></div></div>
                     <div 
                     class="col-12">
                         <div 
                         class="form-floating">
-                            {{ form.material_details(class="form-control", style="height: 100px", placeholder="Material description") }}
+                            {{ form.load_details(class="form-control", style="height: 100px", placeholder="Material description") }}
                             <label for="material_details" class="form-label">Material description</label></div></div>
             </div></div>
             <div class="col-12 text-center">{{ form.submit(class="btn btn-primary btn-lg mt-3 w-50") }}</div>
@@ -152,8 +152,8 @@ style="max-width: 1000px; width: 100%;">
 
 <script>
     function autoFill_user(){
-        document.getElementById("{{ form.pickup_contact_name.id }}").value = document.getElementById("{{ form.user_fullname.id }}").value;
-        document.getElementById("{{ form.pickup_contact_phone.id }}").value = document.getElementById("{{ form.user_phone.id }}").value;
+        document.getElementById("{{ form.pickup_contact_name.id }}").value = "{{ current_user_fullname }}";
+        document.getElementById("{{ form.pickup_contact_phone.id }}").value = "{{ current_user_phone }}";
     }
 </script>
 {% endblock body %}

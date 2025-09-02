@@ -42,13 +42,13 @@
                 <div 
                 class="col-md-6">
                     <label class="form-label">Type of truck</label>
-                    {{ truck_request_form.truck_type(class_="form-control", placeholder="Cement, Grains, Steel, etc.") }}</div>
+                    {{ truck_request_form.vehicle_type(class_="form-control", placeholder="Cement, Grains, Steel, etc.") }}</div>
                 <div 
                 class="col-md-4">
                     <div class="col-auto"><label class="col-form-label">Estimated Weight</label></div>
                     <div 
                     class="row g-4 align-items-center">
-                        <div class="col-auto">{{ truck_request_form.estimated_weight(class_="form-control", placeholder="5")}}</div>
+                        <div class="col-auto">{{ truck_request_form.load_weight(class_="form-control", placeholder="5")}}</div>
                         <div class="col-auto"><span id="weightHelpInline" class="form-text">Tons</span></div></div>
             </div>
             <div class="col-12">{{ truck_request_form.submit(class_="btn btn-primary")}}</div>
@@ -70,7 +70,7 @@
             class="row g-3"><div 
             class="col-md-4">
                 <label class="form-label">Available From Location</label>
-                {{ load_request_form.current_location(class="form-control", placeholder="Guntur, Andhra Pradesh") }}</div>
+                {{ load_request_form.truck_current_location(class="form-control", placeholder="Guntur, Andhra Pradesh") }}</div>
                 <div 
                 class="col-md-4">
                     <label class="form-label">Destination Preference</label>
@@ -78,11 +78,11 @@
                 <div 
                 class="col-md-3">
                     <label class="form-label">Type of Lorry</label>
-                    {{load_request_form.truck_type(class="form-select")}}</div>
+                    {{load_request_form.vehicle_type(class="form-select")}}</div>
                 <div 
                 class="col-md-3">
                     <label class="form-label">Max Load Capacity (tons)</label>
-                    {{load_request_form.capacity(class="form-control")}}</div>
+                    {{load_request_form.vehicle_capacity(class="form-control")}}</div>
                 <div class="col-12">{{load_request_form.submit(class="btn btn-primary")}}</div>
         </div></form>
     </div></section>

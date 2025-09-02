@@ -4,7 +4,7 @@ from wtforms import StringField, EmailField, TelField, SubmitField, PasswordFiel
 from wtforms import HiddenField, TextAreaField, DateTimeField, FileField
 from wtforms.validators import DataRequired, Email, Length, EqualTo, Regexp
 
-from app.constants.variable_constants import User_conts
+from app.constants.variable_constants import User_conts, Truck_conts, Load_conts
 
 class SignupForm(FlaskForm):
     locals()[User_conts.FULLNAME] = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=80)])
@@ -22,65 +22,77 @@ class LoginForm(FlaskForm):
 RTO_number_regex = r'^[A-Z]{2}[0-9]{2}[A-Z]{1,2}[0-9]{4}'
 aadhaar_regex = r'^[2-9]{1}[0-9]{3}[0-9]{4}[0-9]{4}'
 pan_regex = r'^[A-Z]{5}[0-9]{4}[A-Z]{1}'
+
 class TruckRequestForm(FlaskForm):
-    pickup_location = StringField('Pickup Location', validators=[DataRequired()]) 
-    drop_location = StringField('Drop Location', validators=[DataRequired()])
-    truck_type = SelectField('Lorry type Needed', choices=[('open', 'Open'), ('close', 'Closed'), ('container', 'Container'), ('tanker', 'Tanker')], validators=[DataRequired()])
-    estimated_weight = IntegerField('Estimated Weight in tons', validators=[DataRequired()])
+    locals()[Load_conts.PICKUP_LOCATION] = StringField('Pickup Location', validators=[DataRequired()]) 
+    locals()[Load_conts.DROP_LOCATION] = StringField('Drop Location', validators=[DataRequired()])
+    locals()[Truck_conts.VEHICLE_TYPE] = SelectField('Lorry type Needed', choices=[('open', 'Open'), ('close', 'Closed'), ('container', 'Container'), ('tanker', 'Tanker')], validators=[DataRequired()])
+    locals()[Load_conts.LOAD_WEIGHT] = IntegerField('Estimated Weight in tons', validators=[DataRequired()])
     submit = SubmitField('Request Lorry')
 
 class TruckRegistrationForm(FlaskForm):
-    user_fullname = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=80)])
-    user_phone = StringField('Phone Number', validators=[DataRequired(), Length(min=10, max=20)], widget=IntlTelInput())
-    user_email = EmailField('Email', validators=[DataRequired(), Email()])
+    locals()[Truck_conts.CURRENT_LOCATION] = StringField('Current location from ', validators=[DataRequired()])
 
-    registration_number = StringField('Registration number', validators=[DataRequired(), Length(min=9, max=10), Regexp(RTO_number_regex, message=("Invalid RTO number"))])
-    model_name = StringField('Trucks Model', validators=[DataRequired()])
-    type = SelectField('Lorry type Needed', choices=[('open', 'Open'), ('close', 'Closed'), ('container', 'Container'), ('tanker', 'Tanker')], validators=[DataRequired()])
-    capacity = IntegerField('Max load capacity in tons', validators=[DataRequired()])
-    current_location = StringField('Current location from ', validators=[DataRequired()])
-    available_locations = StringField('Preferred destination location')
+    locals()[Truck_conts.VEHICLE_REGISTRATION_NUMBER] = StringField(
+        'Registration number', 
+        validators=[DataRequired(), Length(min=9, max=10), Regexp(RTO_number_regex, message=("Invalid RTO number"))]
+    )
+    locals()[Truck_conts.VEHICLE_MODEL_NAME] = StringField(
+        'Trucks Model', 
+        validators=[DataRequired()]
+    )
+    locals()[Truck_conts.VEHICLE_TYPE] = SelectField(
+        'Lorry type Needed', 
+        choices=[('open', 'Open'), ('close', 'Closed'), ('container', 'Container'), ('tanker', 'Tanker')], 
+        validators=[DataRequired()]
+    )
+    locals()[Truck_conts.VEHICLE_CAPACITY] = IntegerField('Max load capacity in tons', validators=[DataRequired()])
+    locals()[Truck_conts.VEHICLE_INSURANCE] = FileField('Vehicle Insurance')
+    locals()[Truck_conts.VEHICLE_PERMIT] = StringField('Vehicle permits')
 
-    owner_name = StringField('Owners name', validators=[Length(min=10)])
-    owner_phone = StringField('Phone Number', validators=[Length(min=10, max=20)], widget=IntlTelInput())
-    owner_aadhaar = StringField('Owners Aadhaar number', validators=[Regexp(aadhaar_regex, message=("Write a valid aadhaar number"))])
-    owner_pan = StringField('Owners PAN card number', validators=[Regexp(pan_regex, message="Enter a valid PAN number")])
+    locals()[Truck_conts.OWNER_NAME] = StringField('Owners name', validators=[Length(min=10)])
+    locals()[Truck_conts.OWNER_PHONE] = StringField('Phone Number', validators=[Length(min=10, max=20)], widget=IntlTelInput())
+    locals()[Truck_conts.OWNER_AADHAAR] = StringField(
+        'Owners Aadhaar number', 
+        validators=[Regexp(aadhaar_regex, message=("Write a valid aadhaar number"))]
+    )
+    locals()[Truck_conts.OWNER_PAN] = StringField(
+        'Owners PAN card number', 
+        validators=[Regexp(pan_regex, message="Enter a valid PAN number")]
+    )
 
-    driver_name = StringField('Driver Name')
-    driver_aadhaar = StringField('Driver Aadhaar')
-    driver_license = FileField('Driver Driving License')
+    locals()[Truck_conts.DRIVER_NAME] = StringField('Driver Name')
+    locals()[Truck_conts.DRIVER_PHONE] = StringField('Driver Phone number')
+    locals()[Truck_conts.DRIVER_AADHAAR] = StringField('Driver Aadhaar')
+    locals()[Truck_conts.DRIVER_LICENSE] = FileField('Driver Driving License')
 
-    vehicle_insurance = FileField('Vehicle Insurance')
     available_date = DateField('Date Available')
     submit = SubmitField('Register Truck')
 
 class LoadRequestForm(FlaskForm):
-    truck_type = SelectField('Lorry type Needed', choices=[('open', 'Open'), ('close', 'Closed'), ('container', 'Container'), ('tanker', 'Tanker')], validators=[DataRequired()])
-    capacity = IntegerField('Max load capacity in tons', validators=[DataRequired()])
-    current_location = StringField('Current location from ', validators=[DataRequired()])
-    destination_location = StringField('Preferred destination location')
+    locals()[Truck_conts.VEHICLE_TYPE] = SelectField('Lorry type Needed', choices=[('open', 'Open'), ('close', 'Closed'), ('container', 'Container'), ('tanker', 'Tanker')], validators=[DataRequired()])
+    locals()[Truck_conts.VEHICLE_CAPACITY] = IntegerField('Max load capacity in tons', validators=[DataRequired()])
+    locals()[Truck_conts.CURRENT_LOCATION] = StringField('Current location from ', validators=[DataRequired()])
+
+    destination_location = SelectField('Prefered destination location')
     submit = SubmitField('Request Lorry')
 
 class LoadRegistrationForm(FlaskForm):
-    user_fullname = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=80)])
-    user_phone = StringField('Phone Number', validators=[DataRequired(), Length(min=10, max=20)], widget=IntlTelInput())
-    user_email = EmailField('Email', validators=[DataRequired(), Email()])
+    locals()[Load_conts.PICKUP_LOCATION] = StringField('Pickup Location', validators=[DataRequired()])
+    locals()[Load_conts.PICKUP_DATETIME] = DateField('Pickup date', validators=[DataRequired()])
+    locals()[Load_conts.PICKUP_CONTACT_NAME] = StringField('Full Name', validators=[Length(min=2, max=80)])
+    locals()[Load_conts.PICKUP_CONTACT_PHONE] = StringField('Phone Number', validators=[Length(min=10)], widget=IntlTelInput())
 
-    pickup_location = StringField('Pickup Location', validators=[DataRequired()])
-    pickup_date = DateField('Pickup date', validators=[DataRequired()])
-    pickup_contact_name = StringField('Full Name', validators=[Length(min=2, max=80)])
-    pickup_contact_phone = StringField('Phone Number', validators=[Length(min=10)], widget=IntlTelInput())
-
-    drop_location = StringField('Drop Location', validators=[DataRequired()])
-    drop_date = DateField('Drop date')
+    locals()[Load_conts.DROP_LOCATION] = StringField('Drop Location', validators=[DataRequired()])
+    locals()[Load_conts.DROP_DATETIME] = DateField('Drop date')
     # drop_time = SelectField('Drop time', choices=[('1-12', '01:00 - 12:00'), ('12-00', '12:00 - 00:00')])
-    drop_contact_name = StringField('Full Name', validators=[Length(min=2, max=80)])
-    drop_contact_phone = StringField('Phone Number', validators=[DataRequired(), Length(min=10)], widget=IntlTelInput())
+    locals()[Load_conts.DROP_CONTACT_NAME] = StringField('Full Name', validators=[Length(min=2, max=80)])
+    locals()[Load_conts.DROP_CONTACT_PHONE] = StringField('Phone Number', validators=[DataRequired(), Length(min=10)], widget=IntlTelInput())
 
-    estimated_weight = IntegerField('Estimated Weight in tons', validators=[DataRequired()])
-    truck_type = SelectField('Lorry type Needed', choices=[('open', 'Open'), ('close', 'Closed'), ('container', 'Container'), ('tanker', 'Tanker')], validators=[DataRequired()])
-    material_details = TextAreaField('Material Details', validators=[DataRequired()])
-    material_type = SelectField('Type of Materials', choices = [
+    locals()[Load_conts.LOAD_WEIGHT] = IntegerField('Estimated Weight in tons', validators=[DataRequired()])
+    locals()[Truck_conts.VEHICLE_TYPE] = SelectField('Lorry type Needed', choices=[('open', 'Open'), ('close', 'Closed'), ('container', 'Container'), ('tanker', 'Tanker')], validators=[DataRequired()])
+    locals()[Load_conts.LOAD_DETAILS] = TextAreaField('Material Details', validators=[DataRequired()])
+    locals()[Load_conts.LOAD_TYPE] = SelectField('Type of Materials', choices = [
     ('construction', 'Construction Materials'),
     ('agriculture', 'Agricultural Produce'),
     ('chemicals', 'Industrial Chemicals'),
