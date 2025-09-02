@@ -3,6 +3,7 @@ from flask import (
       render_template, 
       session
 )
+from flask_login import login_required
 
 from app.constants.session_keys import SessionKeys
 
@@ -14,6 +15,7 @@ bp = Blueprint(
 )
 
 @bp.route('/<string:booking_type>')
+@login_required
 def booking(booking_type: str):
       list_compatible = []
       if booking_type == 'Load' and session.get(SessionKeys.COMPATIBLE_LOAD_IDS):

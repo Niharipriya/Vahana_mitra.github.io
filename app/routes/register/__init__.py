@@ -3,7 +3,7 @@ from flask import (
     session, 
     render_template, request
 )
-from flask_login import current_user
+from flask_login import current_user, login_required
 
 from app.constants.session_keys import SessionKeys
 from app.form import LoadRegistrationForm, TruckRegistrationForm
@@ -20,6 +20,7 @@ bp = Blueprint(
 )
 
 @bp.route('/truck/<int:id>', methods = ['POST', 'GET'])
+@login_required
 def truck(id: int):
     form = TruckRegistrationForm( data = autofill_fields(
         'truck-',
@@ -54,6 +55,7 @@ def truck(id: int):
     )
 
 @bp.route('/load/<int:id>', methods = ['POST', 'GET'])
+@login_required
 def load(id: int):
     form = LoadRegistrationForm(data = autofill_fields(
         'load-',

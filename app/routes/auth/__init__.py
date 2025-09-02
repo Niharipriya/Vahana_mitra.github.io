@@ -1,10 +1,10 @@
 from flask import (
-      Blueprint,
-      render_template,
-      flash,
-      redirect,
-      url_for,
-      session
+    Blueprint,
+    render_template,
+    flash,
+    redirect,
+    url_for,
+    session
 )
 from flask_login import login_required, current_user, logout_user, login_user
 
@@ -24,57 +24,56 @@ bp = Blueprint(
 
 @login_manager.user_loader
 def load_user(user_id):
-      return User.query.get(int(user_id))
+    return User.query.get(int(user_id))
 
 @bp.route('/signup', methods=['POST', 'GET'])
 def signup():
-      signup_form = SignupForm()
-      if signup_form.validate_on_submit():
-            hashed_password = bcrypt.generate_password_hash(
-                getattr(signup_form, User_conts.PASSWORD).data).decode('utf-8')
-            # user = User(
-            #       fullname = signup_form.fullname.data,
-            #       password_hash = hashed_password,
-            #       email = signup_form.email.data,
-            #       phone = signup_form.phone.data
-            # )
-            signup_form_data = signup_form.data
-            signup_form_data[User_conts.PASSWORD] = hashed_password
-            user = autofill_db_dict(
-                  signup_form_data,
-                  User
-            )
-            db.session.add(user)
-            db.session.commit()
-            flash(f'Account successfully under {getattr(signup_form, User_conts.FULLNAME).data}', 'success')
-            return redirect(url_for('auth.login'))
+    signup_form = SignupForm()
+    if signup_form.validate_on_submit():
+        hashed_password = bcrypt.generate_password_hash(
+            getattr(signup_form, User_conts.PASSWORD).data).decode('utf-8')
+        
+        signup_form_data = signup_form.data
+        signup_form_data[User_conts.PASSWORD] = hashed_password
+        user = autofill_db_dict(
+            signup_form_data,
+            User
+        )
+        db.session.add(user)
+        db.session.commit()
+        flash(f'Account successfully under {getattr(signup_form, User_conts.FULLNAME).data}', 'success')
+        return redirect(url_for('auth.login'))
 
-      return render_template(
-            'signup.html',
-            signup_form = signup_form
-      )
+    return render_template(
+        'signup.html',
+        signup_form = signup_form
+    )
 
 @bp.route('/login', methods=["POST", "GET"])
 def login():
-      login_form = LoginForm()
-      if login_form.validate_on_submit():
-            user: User = User.query.filter_by(
-                  email = getattr(login_form, User_conts.EMAIL).data,
-                  phone = getattr(login_form, User_conts.PHONE).data
-            ).first()
+    login_form = LoginForm()
+    if login_form.validate_on_submit():
+        user: User = User.query.filter_by(
+            email = getattr(login_form, User_conts.EMAIL).data,
+            phone = getattr(login_form, User_conts.PHONE).data
+        ).first()
+        if user:
             if bcrypt.check_password_hash(
-                        getattr(user, user.attribute_map()[User_conts.PASSWORD]),
-                        getattr(login_form, User_conts.PASSWORD).data
-                  ):
-                  login_user(user)
+                    getattr(user, user.attribute_map()[User_conts.PASSWORD]),
+                    getattr(login_form, User_conts.PASSWORD).data
+                ):
+                login_user(user)
             if session.get(SessionKeys.PENDING_FORM_DATA):
-                  return redirect(f'/booking/{session[SessionKeys.BOOKING_TYPE]}')
-            return redirect(url_for('landing.index'))
+                return redirect(f'/booking/{session[SessionKeys.BOOKING_TYPE]}')
+        else:
+            flash(f"No user with Email:{getattr(login_form, User_conts.EMAIL).data} and Phone:{getattr(login_form, User_conts.PHONE).data}", 'danger')
+            return redirect(url_for('auth.signup'))
+        return redirect(url_for('landing.index'))
 
-      return render_template(
-            'login.html',
-            login_form = login_form
-      )
+    return render_template(
+        'login.html',
+        login_form = login_form
+    )
 
 @bp.route('/logout')
 @login_required
