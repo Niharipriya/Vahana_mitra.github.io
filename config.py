@@ -32,10 +32,11 @@ class Config:
     WTF_CSRF_ENABLED = True
 
     # Google Maps API Key
-    GOOGLE_KEY = os.getenv("GOOGLE_MAPS_API_KEY")
+   
 
     # Admin credentials
     ADMIN_EMAIL = os.getenv("ADMIN_EMAIL")
+    GOOGLE_KEY = os.environ.get('GOOGLE_MAPS_API_KEY')
 
 
 class DevelopmentConfig(Config):

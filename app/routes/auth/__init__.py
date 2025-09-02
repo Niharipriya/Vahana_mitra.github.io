@@ -56,11 +56,14 @@ def signup():
 def login():
       login_form = LoginForm()
       if login_form.validate_on_submit():
-            user = User.query.filter_by(
-                  email = login_form.email.data,
-                  phone = login_form.phone.data
+            user: User = User.query.filter_by(
+                  email = getattr(login_form, User_conts.EMAIL).data,
+                  # phone = getattr(login_form, User_conts.PHONE).data
             ).first()
-            if bcrypt.check_password_hash(user.password, login_form.password.data):
+            if bcrypt.check_password_hash(
+                        user.password,  # ✅ stored hash
+            getattr(login_form, User_conts.PASSWORD).data  # ✅ entered password
+                  ):
                   login_user(user)
                   
                   if session.get(SessionKeys.PENDING_FORM_DATA):
