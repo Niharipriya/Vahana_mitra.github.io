@@ -21,7 +21,7 @@ class Config:
     # Security
     WTF_CSRF_ENABLED = True
 
-    GOOGLE_KEY = os.environ.get('GOOGLE_KEY')
+    GOOGLE_KEY = os.getenv('GOOGLE_KEY')
 
     #Admin credentials
     ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL')
