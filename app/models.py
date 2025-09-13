@@ -1,8 +1,12 @@
+from uuid import uuid4
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import String, DateTime, ForeignKey, Float, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
-from flask_login import UserMixin
+from flask_login import UserMixin, current_user, login_user
+from werkzeug.security import generate_password_hash, check_password_hash
+
+from typing import Optional
 
 from app import db
 from app.constants.variable_constants import User_conts, Truck_conts, Load_conts
@@ -13,7 +17,7 @@ class User(db.Model, UserMixin):
 
     user_id: Mapped[int] = mapped_column(primary_key=True, name=User_conts.ID)
     fullname: Mapped[str] = mapped_column(nullable=False, name=User_conts.FULLNAME)
-    password: Mapped[str] = mapped_column(nullable=False, unique=True, name=User_conts.PASSWORD)
+    _password: Mapped[str] = mapped_column(nullable=False, unique=True, name=User_conts.PASSWORD)
     email: Mapped[str] = mapped_column(nullable=False, unique=True, name=User_conts.EMAIL)
     phone: Mapped[str] = mapped_column(nullable=True, unique=True, name=User_conts.PHONE)
 
@@ -43,6 +47,30 @@ class User(db.Model, UserMixin):
             column.name: attribute
             for attribute, column in cls.__mapper__.columns.items()
         }
+
+    @property
+    def password(self):
+        return self._password
+
+    def check_password(self, password: Optional["User"]):
+        if password is not None:
+            return check_password_hash(
+                self._password, password
+            )
+        return False
+
+    @password.setter
+    def password(self, password: str) -> None:
+        if not password:
+            return
+        if self._password is None or not self.check_password(password):
+            self._password = generate_password_hash(
+                password,
+                method="pbkdf2",
+            )
+            self.alternative_id = uuid4().hex
+            if current_user and current_user == self:
+                login_user(self)
 
 class Truck(db.Model):
     __tablename__ = 'TRUCK'

@@ -1,9 +1,18 @@
 {% extends 'base_page.html' %}
 
 {% block body %}
+
+<div 
+class="card mb-4 shadow-sm" 
+style="border-radius: 20px;"><div 
+class="card-body text-center">
+    <h5 class="card-title">👤 Current User</h5>
+    <p class="mb-0"><strong>Name:</strong> N/A </p>
+    <p class="mb-0"><strong>Email:</strong> N/A </p>
+</div></div>
     
 <div
-class="row justify-content-center"><div
+class="row justify-content-center container-justify"><div
 class="col form-card">
     <form 
     method="POST"
@@ -12,16 +21,45 @@ class="col form-card">
         <div
         class="row g-3 align-items-center">
             <div
-            class="col-md-6">
-                <label class="form-label">Current Location</label>
-                {{ form.truck_current_location(class="form-control") }}</div>
+            class="col-md-6 mb-3">
+                <label 
+                class="form-label">
+                    Current Location
+                    {% if form.truck_current_location.flags.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}</label>
+                {{ form.truck_current_location(class="form-control" + ("is-invalid" if form.truck_current_location.errors else "")) }}
+                {% if form.truck_current_location.errors %}
+                    <div
+                    class="invalid-feedback">
+                        {% for error in form.truck_current_location.errors %}
+                            {{ error }}
+                        {% endfor %}</div>
+                {% endif %}</div>
             <div
-            class="col-md-6">
-                <label class="form-label">Trucks Model</label>
-                {{ form.vehicle_model_name(class="form-control") }}</div>
+            class="col-md-6 mb-3">
+                <label 
+                class="form-label">
+                    Trucks Model
+                    {% if form.vehicle_model_name.flags.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}</label>
+                {{ form.vehicle_model_name(class="form-control" + ("is-invalid" if form.vehicle_model_name.errors else "")) }}
+                {% if form.vehicle_model_name.errors %}
+                    <div
+                    class="invalid-feedback">
+                        {% for error in form.vehicle_model_name.errors %}
+                            {{ error }}
+                        {% endfor %}</div>
+                {% endif %}</div>
             <div
-            class="col-md-4">
-                <label class="form-label">Truck RTO Number</label>
+            class="col-md-4 mb-3">
+                <label 
+                class="form-label">
+                    Truck RTO Number
+                    {% if form.vehicle_registration_number.flags.required %}
+                        <span class="text-danger">*</span>
+                    {% endif %}</label>
                 {{ form.vehicle_registration_number(class="form-control") }}</div>
             <div
             class="col-md-4">

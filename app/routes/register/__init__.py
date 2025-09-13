@@ -1,14 +1,15 @@
 from flask import (
     Blueprint,
     session, 
-    render_template, request
+    render_template, request,
+    flash, redirect, url_for
 )
 from flask_login import current_user, login_required
 
 from app.constants.session_keys import SessionKeys
 from app.form import LoadRegistrationForm, TruckRegistrationForm
 from app.utils import autofill_fields, autofill_db_dict
-from app.constants.variable_constants import User_conts, Load_conts
+from app.constants.variable_constants import User_conts, Load_conts, Truck_conts
 from app.models import Load, Truck, User
 from app import db
 
@@ -19,9 +20,9 @@ bp = Blueprint(
     template_folder= 'templates'
 )
 
-@bp.route('/truck/<int:id>', methods = ['POST', 'GET'])
+@bp.route('/truck', methods = ['POST', 'GET'])
 @login_required
-def truck(id: int):
+def truck():
     form = TruckRegistrationForm( data = autofill_fields(
         'truck-',
         session[SessionKeys.PENDING_FORM_DATA],
@@ -41,22 +42,31 @@ def truck(id: int):
         )
         db.session.add(truck)
         db.session.commit()
+        flash(
+            f"Successfully registered your vehicle {form_data[Truck_conts.VEHICLE_MODEL_NAME]}",
+            "success"
+        )
+        redirect(url_for('dashboard.index'))
     else:
         print("not a valid form")
+        flash(
+            "You have filled the form incorrectly please recheck the form",
+            'danger'
+        )
         print(form.errors)
     
     if request.method == 'POST':
         print(form.errors)
 
-    print("conformation")
+    print("conformation") 
     return render_template(
        "truck_registration_form.html" ,
        form = form
     )
 
-@bp.route('/load/<int:id>', methods = ['POST', 'GET'])
+@bp.route('/load', methods = ['POST', 'GET'])
 @login_required
-def load(id: int):
+def load():
     form = LoadRegistrationForm(data = autofill_fields(
         'load-',
         session[SessionKeys.PENDING_FORM_DATA],
@@ -74,15 +84,23 @@ def load(id: int):
             form,
             Load_conts.PICKUP_LOCATION
         ).data
-        print(form_data)
         load = autofill_db_dict(
             form_data,
             Load
         )
         db.session.add(load)
         db.session.commit()
+        flash(
+            f"Successfully scheduled a booking from {form_data[Load_conts.PICKUP_LOCATION]} to {form_data[Load_conts.DROP_LOCATION]}",
+            'success'
+        )
+        redirect(url_for('dashboard.index'))
     else:
         print("not a valid form")
+        flash(
+            "You have filled the form incorrectly please recheck the form",
+            'danger'
+        )
         print(form.errors)
 
     if request == 'POST':

@@ -74,7 +74,7 @@ class LoadRequestForm(FlaskForm):
     locals()[Truck_conts.VEHICLE_CAPACITY] = IntegerField('Max load capacity in tons', validators=[DataRequired()])
     locals()[Truck_conts.CURRENT_LOCATION] = StringField('Current location from ', validators=[DataRequired()])
 
-    destination_location = SelectField('Prefered destination location')
+    destination_location = StringField('Prefered destination location')
     submit = SubmitField('Request Lorry')
 
 class LoadRegistrationForm(FlaskForm):

@@ -24,6 +24,7 @@ class IntlTelInput(TelInput):
             const iti = window.intlTelInput(input, {{
                 preferredCountries: {preferred_countries_js},
                 separateDialCode: true,
+                strictMode: true,
                 initialCountry: "in",
                 utilsScript: "https://cdn.jsdelivr.net/npm/intl-tel-input@19.2.16/build/js/utils.js"
             }});

@@ -13,6 +13,6 @@ class="card-body">
         <strong>owner:</strong> {{ truck.owner_name or 'N/A'}} ({{ truck.owner_mobile or 'N/A' }})<br></p>
     <form 
     method="post" 
-    action="url_for('register.truck', id = {{truck.truck_id}})">
+    action="url_for('register.truck')">
         <button class="btn btn-primary w-100">book now</button></form>
 </div></div></div>

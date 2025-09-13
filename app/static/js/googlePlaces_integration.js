@@ -58,6 +58,7 @@ async function initMap() {
   inputs.forEach(
     (inputEL) => {
       const autocomplete = new Autocomplete(inputEL, {
+        componentRestrictions: { country: ["in"] },
         fields: ['address_components', 'geometry', 'name'],
         types: ['address'],
       });

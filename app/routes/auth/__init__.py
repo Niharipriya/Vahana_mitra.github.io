@@ -1,6 +1,6 @@
 from flask import (
     Blueprint,
-    render_template,
+    render_template, request,
     flash,
     redirect,
     url_for,
@@ -16,10 +16,10 @@ from app.constants.variable_constants import User_conts
 from app.utils import autofill_db_dict
 
 bp = Blueprint(
-     "auth", 
-     __name__, 
-     url_prefix='/auth',
-     template_folder='templates'
+    "auth", 
+    __name__, 
+    url_prefix='/auth',
+    template_folder='templates'
 )
 
 @login_manager.user_loader
@@ -28,7 +28,7 @@ def load_user(user_id):
 
 @bp.route('/signup', methods=['POST', 'GET'])
 def signup():
-    signup_form = SignupForm()
+    signup_form = SignupForm(request.form)
     if signup_form.validate_on_submit():
         hashed_password = bcrypt.generate_password_hash(
             getattr(signup_form, User_conts.PASSWORD).data).decode('utf-8')
@@ -41,7 +41,7 @@ def signup():
         )
         db.session.add(user)
         db.session.commit()
-        flash(f'Account successfully under {getattr(signup_form, User_conts.FULLNAME).data}', 'success')
+        flash(f'Account successfully created under {getattr(signup_form, User_conts.FULLNAME).data}', 'success')
         return redirect(url_for('auth.login'))
 
     return render_template(
@@ -53,9 +53,9 @@ def signup():
 def login():
     login_form = LoginForm()
     if login_form.validate_on_submit():
-        user: User = User.query.filter_by(
-            email = getattr(login_form, User_conts.EMAIL).data,
-            phone = getattr(login_form, User_conts.PHONE).data
+        user: User = User.query.filter(
+            (User.email == getattr(login_form, User_conts.EMAIL).data) |
+            (User.phone == getattr(login_form, User_conts.PHONE).data)
         ).first()
         if user:
             if bcrypt.check_password_hash(
@@ -63,8 +63,13 @@ def login():
                     getattr(login_form, User_conts.PASSWORD).data
                 ):
                 login_user(user)
+            else:
+                flash("Invalid password", "danger")
+                return redirect(url_for("auth.login")) 
             if session.get(SessionKeys.PENDING_FORM_DATA):
                 return redirect(f'/booking/{session[SessionKeys.BOOKING_TYPE]}')
+            return redirect(url_for('landing.index'))
+
         else:
             flash(f"No user with Email:{getattr(login_form, User_conts.EMAIL).data} and Phone:{getattr(login_form, User_conts.PHONE).data}", 'danger')
             return redirect(url_for('auth.signup'))
