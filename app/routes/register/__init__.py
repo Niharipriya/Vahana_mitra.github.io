@@ -8,7 +8,7 @@ from flask_login import current_user, login_required
 
 from app.constants.session_keys import SessionKeys
 from app.form import LoadRegistrationForm, TruckRegistrationForm
-from app.utils import autofill_fields, autofill_db_dict
+from app.utils import autofill_fields, _autofill_db_dict
 from app.constants.variable_constants import User_conts, Load_conts, Truck_conts
 from app.models import Load, Truck, User
 from app import db
@@ -32,11 +32,8 @@ def truck():
     if form.validate_on_submit():
         print("adding truck")
         form_data  = form.data
-        form_data[User_conts.ID] = getattr(
-            current_user, 
-            User.attribute_map(current_user)[User_conts.ID]
-        )
-        truck = autofill_db_dict(
+        form_data[User_conts.ID] = current_user.id
+        truck = _autofill_db_dict(
             form_data,
             Truck
         )
@@ -47,6 +44,7 @@ def truck():
             "success"
         )
         redirect(url_for('dashboard.index'))
+        session.clear()
     else:
         print("not a valid form")
         flash(
@@ -60,8 +58,8 @@ def truck():
 
     print("conformation") 
     return render_template(
-       "truck_registration_form.html" ,
-       form = form
+        "truck_registration_form.html" ,
+        form = form
     )
 
 @bp.route('/load', methods = ['POST', 'GET'])
@@ -76,15 +74,12 @@ def load():
     if form.validate_on_submit():
         print("adding load")
         form_data  = form.data
-        form_data[User_conts.ID] = getattr(
-            current_user, 
-            User.attribute_map(current_user)[User_conts.ID]
-        )
+        form_data[User_conts.ID] = current_user.id
         form_data[Load_conts.CURRENT_LOCATION] = getattr(
             form,
             Load_conts.PICKUP_LOCATION
         ).data
-        load = autofill_db_dict(
+        load = _autofill_db_dict(
             form_data,
             Load
         )
@@ -95,6 +90,7 @@ def load():
             'success'
         )
         redirect(url_for('dashboard.index'))
+        session.clear()
     else:
         print("not a valid form")
         flash(
@@ -111,6 +107,6 @@ def load():
     return render_template(
         "load_registration_form.html",
         form = form,
-        current_user_fullname = getattr(current_user, User.attribute_map(current_user)[User_conts.FULLNAME]),
-        current_user_phone = getattr(current_user, User.attribute_map(current_user)[User_conts.PHONE])
+        current_user_fullname = current_user.fullname,
+        current_user_phone = current_user.phone
     )

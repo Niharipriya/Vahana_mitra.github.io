@@ -2,26 +2,26 @@
 
 {% block body %}
     <div
-	class="container py-5"><div
-	class="row justify-content-center"><div
-	class="col-md-6">
-		<form 
-		method="post" 
-		class="bg-white p-4 rounded shadow">
-		    <h4 class="text-center mb-3">Login</h4>
-		    {{ login_form.hidden_tag() }}
-		    <div
-		    class="mb-3">
-		      	{{ login_form.user_email(class_="form-control", placeholder="Email") }}</div>
-		    <div 
-			class="mb-3">
-		        {{ login_form.user_phone(class_="form-control", placeholder="Phone Number") }}</div>
-		    <div 
-			class="mb-3">
-		    	{{ login_form.user_password(class_="form-control", placeholder="Password") }}</div>
-		    <div 
-			class="d-grid">
-		        {{ login_form.submit(class_="btn btn-primary") }}</div>
-		</form>
-	</div></div></div>
+    class="container py-5"><div
+    class="row justify-content-center"><div
+    class="col-md-6">
+        <form 
+        method="post" 
+        class="bg-white p-4 rounded shadow">
+            <h4 class="text-center mb-3">Login</h4>
+            {{ login_form.hidden_tag() }}
+            <div
+            class="mb-3">
+                {{ login_form.user_email(class_="form-control", placeholder="Email") }}</div>
+            <div 
+            class="mb-3">
+                {{ login_form.user_phone(class_="form-control", placeholder="Phone Number") }}</div>
+            <div 
+            class="mb-3">
+                {{ login_form.user_password(class_="form-control", placeholder="Password") }}</div>
+            <div 
+            class="d-grid">
+                {{ login_form.submit(class_="btn btn-primary") }}</div>
+        </form>
+    </div></div></div>
 {% endblock body %}

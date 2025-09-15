@@ -3,61 +3,74 @@ from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import String, DateTime, ForeignKey, Float, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
 from datetime import datetime
-from flask_login import UserMixin, current_user, login_user
+from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
-from typing import Optional
+from typing import Optional, TypeVar, Type
 
 from app import db
 from app.constants.variable_constants import User_conts, Truck_conts, Load_conts
 
+T = TypeVar("T", bound="ModelMixin")
 
-class User(db.Model, UserMixin):
+class ModelMixin:
+    @classmethod
+    def _resolve_column(cls, field: str):
+        """Safely resolve a column from a field string/constant."""
+        # 1. Direct Python attribute (safe if used)
+        if hasattr(cls, field):
+            return getattr(cls, field)
+
+        # 2. DB column name (constant → column.key)
+        for attr, col in cls.__mapper__.columns.items():
+            if col.name == field:
+                return getattr(cls, attr)
+
+        raise ValueError(f"Invalid field: {field} for model {cls.__name__}")
+
+    @classmethod
+    def find_by(cls: Type[T], field: str, value) -> Optional[T]:
+        """Find a single record by one field (supports constants)."""
+        return db.session.scalar(
+            db.select(cls).where(cls._resolve_column(field) == value)
+        )
+
+    @classmethod
+    def filter_by_fields(cls: Type[T], **kwargs) -> list[T]:
+        """
+        Filter by multiple fields.
+        Example:
+        User.filter_by_fields(email="x", phone="y")
+        User.filter_by_fields(**{User_conts.EMAIL: "x"})
+        """
+        query = db.select(cls)
+        for field, value in kwargs.items():
+            query = query.where(cls._resolve_column(field) == value)
+        return db.session.execute(query).scalars().all()
+
+class User(db.Model, UserMixin, ModelMixin):
     __tablename__ = 'USER'
 
-    user_id: Mapped[int] = mapped_column(primary_key=True, name=User_conts.ID)
+    id: Mapped[int] = mapped_column(primary_key=True, name=User_conts.ID)
     fullname: Mapped[str] = mapped_column(nullable=False, name=User_conts.FULLNAME)
     _password: Mapped[str] = mapped_column(nullable=False, unique=True, name=User_conts.PASSWORD)
-    email: Mapped[str] = mapped_column(nullable=False, unique=True, name=User_conts.EMAIL)
-    phone: Mapped[str] = mapped_column(nullable=True, unique=True, name=User_conts.PHONE)
+    email: Mapped[str] = mapped_column(nullable=False, unique=True, index= True, name=User_conts.EMAIL)
+    phone: Mapped[str] = mapped_column(nullable=True, unique=True, index= True, name=User_conts.PHONE)
 
     # Audit fields
     creation_time: Mapped[datetime] = mapped_column(default=datetime.utcnow, name=User_conts.CREATED_TIME)
     update_time: Mapped[datetime] = mapped_column(default=datetime.utcnow, onupdate=datetime.utcnow, name=User_conts.UPDATED_TIME)
 
     # Relationships
-    truck = relationship(
-        'Truck',
-        backref='owner',
-        lazy=True,
-        cascade='all, delete-orphan'
-    )
-    load = relationship(
-        'Load',
-        backref='shipper',
-        lazy=True,
-        cascade='all, delete-orphan'
-    )
+    truck = relationship('Truck', backref='owner', lazy=True, cascade='all, delete-orphan')
+    load = relationship('Load', backref='shipper', lazy=True, cascade='all, delete-orphan')
 
-    def get_id(self):
-        return str(self.user_id)
-    
-    def attribute_map(cls) -> dict[str, str]:
-        return {
-            column.name: attribute
-            for attribute, column in cls.__mapper__.columns.items()
-        }
+    alternative_id: Mapped[str] = mapped_column(String, default=uuid4().hex, index= True)
+    is_admin: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, server_default='false')
 
     @property
     def password(self):
         return self._password
-
-    def check_password(self, password: Optional["User"]):
-        if password is not None:
-            return check_password_hash(
-                self._password, password
-            )
-        return False
 
     @password.setter
     def password(self, password: str) -> None:
@@ -66,13 +79,14 @@ class User(db.Model, UserMixin):
         if self._password is None or not self.check_password(password):
             self._password = generate_password_hash(
                 password,
-                method="pbkdf2",
+                method="pbkdf2:sha256",
             )
             self.alternative_id = uuid4().hex
-            if current_user and current_user == self:
-                login_user(self)
 
-class Truck(db.Model):
+    def check_password(self, password: Optional["User"]):
+        return bool(password) and check_password_hash(self._password, password)
+
+class Truck(db.Model, ModelMixin):
     __tablename__ = 'TRUCK'
 
     truck_id: Mapped[int] = mapped_column(primary_key=True, name=Truck_conts.ID )
@@ -107,10 +121,6 @@ class Truck(db.Model):
     load = relationship('Load', backref='truck', lazy=True, cascade='all, delete-orphan')
 
     @classmethod
-    def get_by_user(cls, user_id):
-        return cls.query.filter_by(user_id=user_id).all()
-
-    @classmethod
     def find_available_trucks(cls, location=None, min_capacity=None, truck_type=None):
         query = cls.query.filter(cls.is_available == True, cls.is_verified == True)
 
@@ -123,14 +133,7 @@ class Truck(db.Model):
 
         return [truck.truck_id for truck in query.all()]
 
-    def attribute_map(cls) -> dict[str, str]:
-        return {
-            column.name: attribute
-            for attribute, column in cls.__mapper__.columns.items()
-        }
-
-
-class Load(db.Model):
+class Load(db.Model, ModelMixin):
     __tablename__ = 'LOAD'
 
     load_id: Mapped[int] = mapped_column(primary_key=True, name=Load_conts.ID)
@@ -161,10 +164,6 @@ class Load(db.Model):
     in_progress: Mapped[bool] = mapped_column(Boolean, default=False)
 
     @classmethod
-    def get_by_user(cls, user_id):
-        return cls.query.filter_by(user_id=user_id).all()
-
-    @classmethod
     def find_available_loads(cls, capacity=None, current_location=None):
         query = cls.query.filter(cls.is_active == True, cls.in_progress == False)
 
@@ -174,9 +173,3 @@ class Load(db.Model):
             query = query.filter(cls.pickup_location.ilike(f"%{current_location}%"))
 
         return [load.load_id for load in query.all()]
-
-    def attribute_map(cls) -> dict[str, str]:
-        return {
-            column.name: attribute
-            for attribute, column in cls.__mapper__.columns.items()
-        }

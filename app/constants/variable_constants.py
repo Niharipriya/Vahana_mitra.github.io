@@ -19,9 +19,21 @@ class Truck_conts:
         Constants for truck-related fields.
         Covers details about the truck, its owner, and driver.
     """
+
+    VEHICLE_TYPE_CHOICES = [
+        ("open", "Open"),
+        ("close", "Closed"),
+        ("container", "Container"),
+        ("tanker", "Tanker"),
+    ]
+
+    RTO_NUMBER_REGEX = r'^[A-Z]{2}[0-9]{2}[A-Z]{1,2}[0-9]{4}'
+    AADHAAR_REGEX = r'^[2-9]{1}[0-9]{3}[0-9]{4}[0-9]{4}'
+    PAN_REGEX = r'^[A-Z]{5}[0-9]{4}[A-Z]{1}'
+
     ID: str = 'truck_id'
     CURRENT_LOCATION: str = 'truck_current_location'
-    
+
     # Vehicle Information
     VEHICLE_REGISTRATION_NUMBER: str = 'vehicle_registration_number'
     VEHICLE_MODEL_NAME: str = 'vehicle_model_name'
@@ -69,3 +81,16 @@ class Load_conts:
 
     CREATED_TIME: str = 'load_created_time'
     UPDATED_TIME: str = 'load_updated_time'
+
+    LOAD_TYPE_CHOICES = [
+        ("construction", "Construction Materials"),
+        ("agriculture", "Agricultural Produce"),
+        ("chemicals", "Industrial Chemicals"),
+        ("furniture", "Furniture"),
+        ("electronics", "Electronics"),
+        ("machinery", "Heavy Machinery"),
+        ("packaged", "Packaged Goods"),
+        ("liquid", "Liquid Cargo"),
+        ("perishables", "Perishable Goods"),
+        ("scrap", "Metal Scrap"),
+    ]

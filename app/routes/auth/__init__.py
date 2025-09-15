@@ -13,7 +13,7 @@ from app.form import SignupForm, LoginForm
 from app.models import User
 from app.constants.session_keys import SessionKeys
 from app.constants.variable_constants import User_conts
-from app.utils import autofill_db_dict
+from app.utils import _autofill_db_dict
 
 bp = Blueprint(
     "auth", 
@@ -29,20 +29,15 @@ def load_user(user_id):
 @bp.route('/signup', methods=['POST', 'GET'])
 def signup():
     signup_form = SignupForm(request.form)
+
     if signup_form.validate_on_submit():
-        hashed_password = bcrypt.generate_password_hash(
-            getattr(signup_form, User_conts.PASSWORD).data).decode('utf-8')
-        
-        signup_form_data = signup_form.data
-        signup_form_data[User_conts.PASSWORD] = hashed_password
-        user = autofill_db_dict(
-            signup_form_data,
-            User
-        )
+        user = _autofill_db_dict(input_data= signup_form.data, database_class= User)
+
         db.session.add(user)
         db.session.commit()
+        login_user(user)
         flash(f'Account successfully created under {getattr(signup_form, User_conts.FULLNAME).data}', 'success')
-        return redirect(url_for('auth.login'))
+        return redirect(url_for('landing.index'))
 
     return render_template(
         'signup.html',
@@ -51,17 +46,16 @@ def signup():
 
 @bp.route('/login', methods=["POST", "GET"])
 def login():
-    login_form = LoginForm()
+    login_form = LoginForm(request.form)
     if login_form.validate_on_submit():
         user: User = User.query.filter(
             (User.email == getattr(login_form, User_conts.EMAIL).data) |
             (User.phone == getattr(login_form, User_conts.PHONE).data)
         ).first()
+        print(user)
         if user:
-            if bcrypt.check_password_hash(
-                    getattr(user, user.attribute_map()[User_conts.PASSWORD]),
-                    getattr(login_form, User_conts.PASSWORD).data
-                ):
+            if user.check_password(getattr(login_form, User_conts.PASSWORD).data):
+                flash(f"Welcome back, {user.fullname}", "success")
                 login_user(user)
             else:
                 flash("Invalid password", "danger")
@@ -73,7 +67,9 @@ def login():
         else:
             flash(f"No user with Email:{getattr(login_form, User_conts.EMAIL).data} and Phone:{getattr(login_form, User_conts.PHONE).data}", 'danger')
             return redirect(url_for('auth.signup'))
-        return redirect(url_for('landing.index'))
+
+    if request.method == 'POST':
+        print(login_form.errors)
 
     return render_template(
         'login.html',
@@ -83,6 +79,6 @@ def login():
 @bp.route('/logout')
 @login_required
 def logout():
-    flash(f'Logged out successfully from {getattr(current_user, User.attribute_map(current_user)[User_conts.FULLNAME])}', 'info')
+    flash(f'Logged out successfully from {current_user.fullname}', 'info')
     logout_user()
     return redirect(url_for('landing.index'))

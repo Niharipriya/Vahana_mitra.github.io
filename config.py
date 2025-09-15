@@ -11,7 +11,7 @@ load_testing_data = testing_data["loads"]
 
 class Config:
     # General
-    SECRET_KEY = os.environ.get('SECRET_KEY') or 'your-default-secret-key'
+    SECRET_KEY = os.environ.get('SECRET_KEY')
     SESSION_COOKIE_NAME = 'your_session'
     PERMANENT_SESSION_LIFETIME = timedelta(days=7)
 
@@ -22,9 +22,8 @@ class Config:
     WTF_CSRF_ENABLED = True
 
     GOOGLE_KEY = os.getenv('GOOGLE_KEY')
-
-    #Admin credentials
-    ADMIN_EMAIL = os.environ.get('ADMIN_EMAIL')
+    ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')
+    ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
 
 class DevelopmentConfig(Config):
     DEBUG = True

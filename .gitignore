@@ -1,7 +1,12 @@
+# Flask-Migrate migration files
+migrations/
 
+#vscode
 settings.json
 .vscode
-\__pycache__
+
+# Byte-compiled / optimized / DLL files
+__pycache__/
 
 # Logs
 logs

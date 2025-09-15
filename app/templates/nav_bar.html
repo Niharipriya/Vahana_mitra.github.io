@@ -32,7 +32,10 @@ class="container-fluid">
                 class="nav-item"><a href="{{ url_for('auth.logout') }}" class="nav-link text-danger">LOG OUT</a></li>
             {% else %}
                 <li
-                class="nav-item"><a href="{{ url_for('auth.signup')}}" class="nav-link">SIGIN UP/LOG IN</a></li> 
+                class="nav-item d-flex align-items-center">
+                    <a href="{{ url_for('auth.signup')}}" class="nav-link">SIGIN UP</a>
+                    <span class="mx-1">/</span>
+                    <a href="{{ url_for('auth.login') }}" class="nav-link">LOGIN</a></li> 
             {% endif %}
         </ul>
     </div>
