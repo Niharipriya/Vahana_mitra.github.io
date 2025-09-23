@@ -1,6 +1,6 @@
 # Trip Booking Flow Document
-	- ## **Enter Load Trip Details**
-		- The user first enters the trip's origin and destination using an intelligent, autocomplete-enabled input field. This section details the front-end interaction and the API integration that powers it.
+ ## **Enter Load Trip Details**
+ - The user first enters the trip's origin and destination using an intelligent, autocomplete-enabled input field. This section details the front-end interaction and the API integration that powers it.
 		- ### Pickup and Drop Location
 		  collapsed:: true
 			- ![image.png](../assets/image_1758654253677_0.png)
@@ -13,8 +13,7 @@
 				- ***File:*** `./app/static/js/googleControls.js` [[HelperFunctions]]
 				- ```javascript
 				  //Helper function which Returns all input elements whose ID contains "location" or "address".
-				  const locationsInputs = getAllLocationInputs(); 
-				  
+				  const locationsInputs = getAllLocationInputs();  
 				  function locationInput(inputs){
 				    inputs.forEach((input) => {
 				      const autocomplete = new AutoComplete(input, {
