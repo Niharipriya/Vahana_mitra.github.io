@@ -1,3 +1,6 @@
+# Instance db files
+instance/*.db
+
 # Flask-Migrate migration files
 migrations/
 

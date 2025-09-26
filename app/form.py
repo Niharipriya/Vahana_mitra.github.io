@@ -1,10 +1,14 @@
 from flask_wtf import FlaskForm
 from wtforms import StringField, EmailField, TelField, SubmitField, PasswordField, BooleanField, DateField, SelectField, IntegerField
 from wtforms import HiddenField, TextAreaField, DateTimeField, FileField
-from wtforms.validators import DataRequired, Email, Length, EqualTo, Regexp, ValidationError
+from wtforms.validators import DataRequired, Email, Length, EqualTo, Regexp, ValidationError, Optional
 
 from app.constants.variable_constants import User_conts, Truck_conts, Load_conts
 from app.models import User
+
+"""
+Make sure to make all the validation on the client side with wtforms validators
+"""
 
 class SignupForm(FlaskForm):
     locals()[User_conts.FULLNAME] = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=80)])
@@ -22,14 +26,28 @@ class SignupForm(FlaskForm):
             raise ValidationError(f"Already have an account with number {field.data}")
 
 class LoginForm(FlaskForm):
-    locals()[User_conts.PHONE] = StringField('Phone Number', validators=[DataRequired(), Length(min=10)])
-    locals()[User_conts.EMAIL] = EmailField('Email', validators=[DataRequired(), Email()])
+    locals()[User_conts.PHONE] = StringField('Phone Number', validators=[Length(min=10), Optional()])
+    locals()[User_conts.EMAIL] = EmailField('Email', validators=[Email(), Optional()])
     locals()[User_conts.PASSWORD] = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     submit = SubmitField('Login')
 
+    # Ether phone or email should be provided
+    def validate(self, extra_validators=None):
+        if not super().validate():
+            return False
+        if not (getattr(self, User_conts.EMAIL).data or getattr(self, User_conts.PHONE).data):
+            msg = "Either Email or Phone number is required to login"
+            getattr(self, User_conts.EMAIL).errors.append(msg)
+            getattr(self, User_conts.PHONE).errors.append(msg)
+            return False
+        return True
+
+    def validate_user_email(self, field):
+        if User.find_by(User_conts.EMAIL, field.data) is None:
+            raise ValidationError("Invalid Email address")
     def validate_user_phone(self, field):
         if User.find_by(User_conts.PHONE, field.data) is None:
-            raise ValidationError("Invalid Username")
+            raise ValidationError("Invalid Phone number")
 
 class TruckRequestForm(FlaskForm):
     locals()[Load_conts.PICKUP_LOCATION] = StringField('Pickup Location', validators=[DataRequired()]) 

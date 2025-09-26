@@ -54,7 +54,7 @@ class User(db.Model, UserMixin, ModelMixin):
     id: Mapped[int] = mapped_column(primary_key=True, name=User_conts.ID)
     fullname: Mapped[str] = mapped_column(nullable=False, name=User_conts.FULLNAME)
     _password: Mapped[str] = mapped_column(nullable=False, unique=True, name=User_conts.PASSWORD)
-    email: Mapped[str] = mapped_column(nullable=False, unique=True, index= True, name=User_conts.EMAIL)
+    email: Mapped[str] = mapped_column(nullable=True, unique=True, index= True, name=User_conts.EMAIL)
     phone: Mapped[str] = mapped_column(nullable=True, unique=True, index= True, name=User_conts.PHONE)
 
     # Audit fields
@@ -93,7 +93,7 @@ class Truck(db.Model, ModelMixin):
     user_id: Mapped[int] = mapped_column(ForeignKey(f"USER.{User_conts.ID}"), nullable=False )
 
     # Vehicle information
-    vehicle_registration_number: Mapped[str] = mapped_column(String, unique=True, nullable=False, name=Truck_conts.VEHICLE_REGISTRATION_NUMBER)
+    vehicle_registration_number: Mapped[str] = mapped_column(String, nullable=False, name=Truck_conts.VEHICLE_REGISTRATION_NUMBER)
     vehicle_model_name: Mapped[str] = mapped_column(String, nullable=False, name=Truck_conts.VEHICLE_MODEL_NAME)
     vehicle_type: Mapped[str] = mapped_column(String, nullable=False, name=Truck_conts.VEHICLE_TYPE)
     vehicle_capacity: Mapped[float] = mapped_column(Float, nullable=False, name=Truck_conts.VEHICLE_CAPACITY)
@@ -122,7 +122,7 @@ class Truck(db.Model, ModelMixin):
 
     @classmethod
     def find_available_trucks(cls, location=None, min_capacity=None, truck_type=None):
-        query = cls.query.filter(cls.is_available == True, cls.is_verified == True)
+        query = cls.query.filter(cls.is_available == True)
 
         if location:
             query = query.filter(cls.current_location.ilike(f"%{location}%"))

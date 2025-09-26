@@ -81,4 +81,5 @@ def login():
 def logout():
     flash(f'Logged out successfully from {current_user.fullname}', 'info')
     logout_user()
+    session.clear()
     return redirect(url_for('landing.index'))

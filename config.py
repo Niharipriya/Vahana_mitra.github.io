@@ -28,6 +28,7 @@ class Config:
 class DevelopmentConfig(Config):
     DEBUG = True
     FLASK_ADMIN_SWATCH = "litera"
+    TESTING_DATA = False
     SQLALCHEMY_DATABASE_URI = (
         os.environ.get("DEV_DATABASE_URL")
         or f"sqlite:///{os.path.join(basedir, 'instance/dev.db')}"
@@ -35,9 +36,8 @@ class DevelopmentConfig(Config):
 
 class TestingConfig(Config):
     TESTING = True
-    SQLALCHEMY_DATABASE_URI = (
-        os.environ.get("TEST_DATABASE_URL") or "sqlite:///:memory:"
-    )
+    SQLALCHEMY_DATABASE_URI = f"sqlite:///{os.path.join(basedir, 'instance/test.db')}"
+    TESTING_DATA = True
     WTF_CSRF_ENABLED = False  # Disable CSRF for testing
 
 
@@ -47,3 +47,4 @@ class ProductionConfig(Config):
         os.environ.get("DATABASE_URL")
         or f"sqlite:///{os.path.join(basedir, 'instance/prod.db')}"
     )
+
