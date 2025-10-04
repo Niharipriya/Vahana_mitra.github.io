@@ -30,8 +30,7 @@ class UserAdminView(ModelView):
     form_extra_fields = {
         'password': PasswordField('Password')
     }
-<<<<<<< Updated upstream
-=======
+
     # column to show number of trucks and loads for each user
     column_list = ('id', 'fullname', 'email', 'phone', 'is_admin', 'truck_count', 'load_count')
 
@@ -167,4 +166,3 @@ class TruckAdminView(ModelView):
             raise ValueError("Vehicle registration number is required.")
         if not model.vehicle_type:
             raise ValueError("Vehicle type is required.")
->>>>>>> Stashed changes
