@@ -40,7 +40,7 @@ def create_app(
                 GOOGLE_KEY = app.config['GOOGLE_KEY']
             )
 
-    from .routes.admin import UserAdminView, AdminView
+    from .routes.admin import UserAdminView, AdminView, LoadAdminView, TruckAdminView
 
     db.init_app(app)
     bcrypt.init_app(app)
@@ -51,8 +51,8 @@ def create_app(
 
     from .models import User, Truck, Load
     admin.add_view(UserAdminView(User, db.session))
-    admin.add_view(ModelView(Truck, db.session))
-    admin.add_view(ModelView(Load, db.session))
+    admin.add_view(TruckAdminView(Truck, db.session))
+    admin.add_view(LoadAdminView(Load, db.session))
 
     with app.app_context():
         make_admin_user(
