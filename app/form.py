@@ -22,7 +22,7 @@ class SignupForm(FlaskForm):
             raise ValidationError(f"Already have an account with number {field.data}")
 
 class LoginForm(FlaskForm):
-    locals()[User_conts.PHONE] = StringField('Phone Number', validators=[DataRequired(), Length(min=10)])
+    locals()[User_conts.PHONE] = StringField('Phone Number', validators=[DataRequired(), Length(min=10, max=12)])
     locals()[User_conts.EMAIL] = EmailField('Email', validators=[DataRequired(), Email()])
     locals()[User_conts.PASSWORD] = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     submit = SubmitField('Login')
