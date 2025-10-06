@@ -8,7 +8,7 @@ from app.models import User
 
 class SignupForm(FlaskForm):
     locals()[User_conts.FULLNAME] = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=80)])
-    locals()[User_conts.PHONE] = StringField('Phone Number', validators=[DataRequired(), Length(min=10)])
+    locals()[User_conts.PHONE] = StringField('Phone Number', validators=[DataRequired(), Length(min=10, max=13)])
     locals()[User_conts.EMAIL] = EmailField('Email', validators=[DataRequired(), Email()])
     locals()[User_conts.PASSWORD] = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     submit = SubmitField('Signup')
