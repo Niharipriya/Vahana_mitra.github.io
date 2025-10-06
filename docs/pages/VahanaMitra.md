@@ -1,6 +1,6 @@
-# Trip Booking Flow Document
-- ## **Enter Load Trip Details**
-  	- The user first enters the trip's origin and destination using an intelligent, autocomplete-enabled input field. This section details the front-end interaction and the API integration that powers it.
+# Load Booking Flow Document
+	- ## **Landing Page**
+		- The user first enters the trip's origin and destination using an intelligent, autocomplete-enabled input field. This section details the front-end interaction and the API integration that powers it.
 		- ### Pickup and Drop Location
 		  collapsed:: true
 			- ![image.png](../assets/image_1758654253677_0.png)
@@ -114,61 +114,60 @@
 				  
 				  ```
 	- ## **Select Vehicle**
-	  collapsed:: true
 		- After user confirms Load Trip Details, animates to the div for select Truck, which includes
 		  * bootstrap5 input-group for estimated weight in tons/metric tons.
 		  * dropdown for type of material with a side panel showing the respective icons/pictures.
 		  * dropdown for type of truck with a side panel showing the respective pictures.
 		- ### Input estimated weight (Tons/ Metric Tons)
-			- Show **capacity & dimensions** for clarity (use icons/pictures).
-			- Implemented using **Bootstrap 5 input-group**.
-			- Display **capacity & dimensions** with icons/pictures for clarity.
-			- Helps user understand whether the chosen truck can handle the load.
-			- **HTML**
-				- ***File:*** `./app/template/landing.html`
-				- ```html
-				  <div class="input-group mb-3">
-				      <span class="input-group-text">Weight</span>
-				      {{ form.estimated_weight(class = 'form-control')}}
-				      <span class="input-group-text">Tons</span>
-				  </div>
-				  ```
+		- Show **capacity & dimensions** for clarity (use icons/pictures).
+		- Implemented using **Bootstrap 5 input-group**.
+		- Display **capacity & dimensions** with icons/pictures for clarity.
+		- Helps user understand whether the chosen truck can handle the load.
+		- **HTML**
+			- ***File:*** `./app/template/landing.html`
+			- ```html
+			  <div class="input-group mb-3">
+			      <span class="input-group-text">Weight</span>
+			      {{ form.estimated_weight(class = 'form-control')}}
+			      <span class="input-group-text">Tons</span>
+			  </div>
+			  ```
 		- ### Material Type
-			- Dropdown to select type of material (e.g., Construction Materials, Food Grains, Furniture, Electronics, etc.).
-			- Each material type shows an **icon/picture** in a **side panel** for clarity.
-			- Helps user & transporter identify correct handling needs.
-			- Bardana jute or plastic
-			  Fertilizers &amp; Pesticides
-			  Fruits And Vegetables
-			  Grain
-			  Other
-			  Refrigerated Good
-			  Spices / Pulses / Seeds
-			  Wood &amp; Sugar cane
-			  Tools &amp; Equipment
-			- **HTML**
-				- ***File:*** `./app/template/landing.html`
-				- ```html
-				  <div class="mb-3">
-				    <label for="material-type" class="form-label">Material Type</label>
-				    {{ form.load_type(class='form-select')}}
-				  </div>
-				  
-				  <!-- Side Panel for Material Icons -->
-				  <div id="material-icon-panel" hidden>
-				      <img src="/static/images/material-default.png" alt="Material Icon" />
-				      <p id="material-description">Material details will appear here.</p>
-				  </div>
-				  ```
+		- Dropdown to select type of material (e.g., Construction Materials, Food Grains, Furniture, Electronics, etc.).
+		- Each material type shows an **icon/picture** in a **side panel** for clarity.
+		- Helps user & transporter identify correct handling needs.
+		- Bardana jute or plastic
+		  Fertilizers &amp; Pesticides
+		  Fruits And Vegetables
+		  Grain
+		  Other
+		  Refrigerated Good
+		  Spices / Pulses / Seeds
+		  Wood &amp; Sugar cane
+		  Tools &amp; Equipment
+		- **HTML**
+			- ***File:*** `./app/template/landing.html`
+			- ```html
+			  <div class="mb-3">
+			    <label for="material-type" class="form-label">Material Type</label>
+			    {{ form.load_type(class='form-select')}}
+			  </div>
+			  
+			  <!-- Side Panel for Material Icons -->
+			  <div id="material-icon-panel" hidden>
+			      <img src="/static/images/material-default.png" alt="Material Icon" />
+			      <p id="material-description">Material details will appear here.</p>
+			  </div>
+			  ```
 		- Truck Type
-			- Categories (2W, Mini Truck, LCV, HCV, Trailer). & Different truck sizes
-	- ## Login/SignUp
-	  collapsed:: true
+		- Categories (2W, Mini Truck, LCV, HCV, Trailer). & Different truck sizes
+		- ## Login/SignUp
+		  collapsed:: true
 		- OTP-based login (mobile-first, quick entry).
 		- Option for Web + App.
 		- Save basic profile details (Name, Phone, Company, GST if applicable).
-	- ## Get Fare Estimate
-	  collapsed:: true
+		- ## Get Fare Estimate
+		  collapsed:: true
 		- Most apps allow users to either view fixed pricing or receive multiple quotes.
 		  
 		  This feature ensures flexibility and transparency for both shippers and truck owner.
@@ -185,8 +184,8 @@
 		  Instant Online Freight Calculator
 		  Reference Websites: 
 		  	https://kisansabha.in/FreightCalculator.aspx
-	- ## Booking Confirmation
-	  collapsed:: true
+		- ## Booking Confirmation
+		  collapsed:: true
 		- Direct calling or in-app chat option is common.
 		  
 		  Helps shippers coordinate pickup times, route changes, and delivery instructions.
@@ -197,19 +196,19 @@
 		    * Digital: UPI, Wallet, Cards, Netbanking.
 		    * Cash on Delivery (if allowed).
 		  * Confirm & proceed.
-	- ##  Driver Assignment
-	  collapsed:: true
+		- ##  Driver Assignment
+		  collapsed:: true
 		- System auto-assigns available driver (like Ola/Uber model).
 		- If the doesn't like the prices given by auto-assigns, user has the option to post the load.
 		  -> redirected to user dashboard
 		  * Show driver details (Name, Vehicle No., Contact).
 		  * Shareable tracking link via SMS/WhatsApp.
-	- ## Live Tracking
-	  collapsed:: true
+		- ## Live Tracking
+		  collapsed:: true
 		- * Real-time GPS tracking on map.
 		  * Status updates: "Driver En Route → Pickup → In Transit → Delivered".
 		  * ETA updates.
-	- ## Delivery & Proof
-	  collapsed:: true
+		- ## Delivery & Proof
+		  collapsed:: true
 		- * Digital **Proof of Delivery (POD)** with photo or signature upload.
 		  * Auto-generated Invoice sent via Email/SMS.
