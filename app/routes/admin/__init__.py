@@ -20,9 +20,10 @@ class AdminView(AdminIndexView):
         return current_user.is_authenticated and current_user.is_admin
 
     def inaccessible_callback(self, name, **kwargs):
-        """Redirect to login page if the user doesn't have access."""
+        """Handle the response to inaccessible views by aborting with 403."""
         flash("You do not have permission to access the admin panel.", "danger")
-        return redirect(url_for('auth.login'))
+        from flask import abort
+        return abort(403)
 
 class UserAdminView(ModelView):
     """Admin view for the User model with customizations.

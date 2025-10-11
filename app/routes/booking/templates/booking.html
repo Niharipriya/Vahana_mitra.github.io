@@ -18,10 +18,10 @@
     class="container py-5">
         {% if booking_type == 'Load' %}
             <h2 class="mb-4 text-center">Available Trucks for booking</h2>
-            {% if list_compatible|length > 0 %}
+            {% if list_compatible_trucks|length > 0 %}
                 <div 
                 class="row row-cols-1 row-cols-md-3 g-4">
-                    {% for truck in list_compatible %}
+                    {% for truck in list_compatible_trucks %}
                         {% set truck = truck %}
                         {% include 'truck_card.html' %}
                     {% endfor %}
@@ -35,10 +35,10 @@
 
         {% elif booking_type == 'Truck' %}
             <h2 class="mb-4 text-center">Available Materials for booking</h2>
-            {% if list_compatible|length > 0 %}
+            {% if list_compatible_trucks|length > 0 %}
                 <div 
                 class="row row-cols-1 row-cols-md-3 g-4">
-                {% for material in list_compatible %}
+                {% for material in list_compatible_trucks %}
                     {% set load = material %}
                     {% include 'load_card.html' %}
                 {% endfor %}

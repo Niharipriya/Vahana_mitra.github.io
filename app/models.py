@@ -121,8 +121,12 @@ class Truck(db.Model, ModelMixin):
     load = relationship('Load', backref='truck', lazy=True, cascade='all, delete-orphan')
 
     @classmethod
-    def find_available_trucks(cls, location=None, min_capacity=None, truck_type=None):
-        query = cls.query.filter(cls.is_available == True)
+    def find_available_trucks(
+        cls, location: str | None = None, 
+        min_capacity: int | None = None, 
+        truck_type: str | None = None
+    ):
+        query = cls.query
 
         if location:
             query = query.filter(cls.current_location.ilike(f"%{location}%"))
@@ -131,7 +135,7 @@ class Truck(db.Model, ModelMixin):
         if min_capacity:
             query = query.filter(cls.vehicle_capacity >= min_capacity)
 
-        return [truck.truck_id for truck in query.all()]
+        return query.all()
 
 class Load(db.Model, ModelMixin):
     __tablename__ = 'LOAD'
@@ -164,12 +168,17 @@ class Load(db.Model, ModelMixin):
     in_progress: Mapped[bool] = mapped_column(Boolean, default=False)
 
     @classmethod
-    def find_available_loads(cls, capacity=None, current_location=None):
-        query = cls.query.filter(cls.is_active == True, cls.in_progress == False)
+    def find_available_loads(
+        cls, 
+        capacity: int | None = None, 
+        current_location: str | None = None
+    ):
+        # query = cls.query.filter(cls.is_active == True, cls.in_progress == False)
+        query = cls.query
 
         if capacity:
             query = query.filter(cls.load_weight <= capacity)
         if current_location:
             query = query.filter(cls.pickup_location.ilike(f"%{current_location}%"))
 
-        return [load.load_id for load in query.all()]
+        return query.all()

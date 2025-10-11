@@ -4,13 +4,13 @@ class="col"><div
 class="card truck-card shadow-sm"><div 
 class="card-body">
     <h5 
-    class="card-title"> {{truck.model_name or 'Model' }} {{truck.type or 'Type' }} </h5>
+    class="card-title"> {{truck.vehicle_model_name or 'Model' }} {{truck.vehicle_type or 'Type' }} </h5>
     <p 
     class="card-text">
-        <strong>capacity:</strong> {{ truck.capacity or 'N/A'}} tons <br>
-        <strong>current location:</strong> {{ truck.current_location or 'N/A'}} <br>
+        <strong>capacity:</strong> {{ truck.vehicle_capacity or 'N/A'}} tons <br>
+        <strong>current location:</strong> {{ truck.truck_current_location or 'N/A'}} <br>
         <strong>available to:</strong> {{ truck.available_locations or 'N/A'}} <br>
-        <strong>owner:</strong> {{ truck.owner_name or 'N/A'}} ({{ truck.owner_mobile or 'N/A' }})<br></p>
+        <strong>owner:</strong> {{ truck.truck_owner_name or 'N/A'}} ({{ truck.truck_owner_phone or 'N/A' }})<br></p>
     <form 
     method="post" 
     action="url_for('register.truck')">

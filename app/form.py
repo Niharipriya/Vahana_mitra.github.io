@@ -11,10 +11,10 @@ Make sure to make all the validation on the client side with wtforms validators
 """
 
 class SignupForm(FlaskForm):
-    locals()[User_conts.FULLNAME] = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=80)])
-    locals()[User_conts.PHONE] = StringField('Phone Number', validators=[DataRequired(), Length(min=10)])
-    locals()[User_conts.EMAIL] = EmailField('Email', validators=[DataRequired(), Email()])
-    locals()[User_conts.PASSWORD] = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
+    user_fullname = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=80)])
+    user_phone = StringField('Phone Number', validators=[DataRequired(), Length(min=10)])
+    user_email = EmailField('Email', validators=[DataRequired(), Email()])
+    user_password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     submit = SubmitField('Signup')
 
     def validate_user_email(self, field):
@@ -26,9 +26,9 @@ class SignupForm(FlaskForm):
             raise ValidationError(f"Already have an account with number {field.data}")
 
 class LoginForm(FlaskForm):
-    locals()[User_conts.PHONE] = StringField('Phone Number', validators=[Length(min=10), Optional()])
-    locals()[User_conts.EMAIL] = EmailField('Email', validators=[Email(), Optional()])
-    locals()[User_conts.PASSWORD] = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
+    user_phone = StringField('Phone Number', validators=[Length(min=10), Optional()])
+    user_email = EmailField('Email', validators=[Email(), Optional()])
+    user_password = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     submit = SubmitField('Login')
 
     # Ether phone or email should be provided
@@ -57,32 +57,37 @@ class TruckRequestForm(FlaskForm):
     submit = SubmitField('Request Lorry')
 
 class TruckRegistrationForm(FlaskForm):
-    locals()[Truck_conts.CURRENT_LOCATION] = StringField('Current location from ', validators=[DataRequired()])
-
-    locals()[Truck_conts.VEHICLE_REGISTRATION_NUMBER] = StringField(
+    truck_current_location = StringField('Current location from ', validators=[DataRequired()]) #Auto GPS detection in future
+    vehicle_registration_number = StringField(
         'Registration number', 
-        validators=[DataRequired(), Length(min=9, max=10), Regexp(Truck_conts.RTO_NUMBER_REGEX, message="Invalid RTO number")]
+        validators=[
+            DataRequired(), 
+            Length(min=9, max=10), 
+            Regexp(Truck_conts.RTO_NUMBER_REGEX, message="Invalid RTO number")
+        ]
     )
-    locals()[Truck_conts.VEHICLE_MODEL_NAME] = StringField(
+    vehicle_model_name = StringField(
         'Trucks Model', 
         validators=[DataRequired()]
     )
-    locals()[Truck_conts.VEHICLE_TYPE] = SelectField('Lorry type Needed', choices=Truck_conts.VEHICLE_TYPE_CHOICES, validators=[DataRequired()])
-    locals()[Truck_conts.VEHICLE_CAPACITY] = IntegerField('Max load capacity in tons', validators=[DataRequired()])
-    locals()[Truck_conts.VEHICLE_INSURANCE] = FileField('Vehicle Insurance')
-    locals()[Truck_conts.VEHICLE_PERMIT] = StringField('Vehicle permits')
+    vehicle_type = SelectField('Lorry type Needed', choices=Truck_conts.VEHICLE_TYPE_CHOICES, validators=[DataRequired()])
+    vehicle_capacity = IntegerField('Max load capacity in tons', validators=[DataRequired()])
+    vehicle_insurance = FileField('Vehicle Insurance')
+    vehicle_permit = StringField('Vehicle permits')
 
-    locals()[Truck_conts.OWNER_NAME] = StringField('Owners name', validators=[Length(min=10)])
-    locals()[Truck_conts.OWNER_PHONE] = StringField('Phone Number', validators=[Length(min=10, max=20)])
-    locals()[Truck_conts.OWNER_AADHAAR] = StringField('Owners Aadhaar number', validators=[Regexp(Truck_conts.AADHAAR_REGEX, message="Write a valid aadhaar number")])
-    locals()[Truck_conts.OWNER_PAN] = StringField('Owners PAN card number', validators=[Regexp(Truck_conts.PAN_REGEX, message="Enter a valid PAN number")])
+    truck_owner_name = StringField('Owners name', validators=[Length(min=10)])
+    truck_owner_phone = StringField('Phone Number', validators=[Length(min=10, max=20)])
+    truck_owner_aadhaar = StringField('Owners Aadhaar number', validators=[Regexp(Truck_conts.AADHAAR_REGEX, message="Write a valid aadhaar number")])
+    truck_owner_pan = StringField('Owners PAN card number', validators=[Regexp(Truck_conts.PAN_REGEX, message="Enter a valid PAN number")])
 
-    locals()[Truck_conts.DRIVER_NAME] = StringField('Driver Name')
-    locals()[Truck_conts.DRIVER_PHONE] = StringField('Driver Phone number')
-    locals()[Truck_conts.DRIVER_AADHAAR] = StringField('Driver Aadhaar')
-    locals()[Truck_conts.DRIVER_LICENSE] = FileField('Driver Driving License')
+    truck_driver_name = StringField('Driver Name')
+    truck_driver_phone = StringField('Driver Phone number')
+    truck_driver_aadhaar = StringField('Driver Aadhaar')
+    truck_driver_license = FileField('Driver Driving License')
 
     available_date = DateField('Date Available')
+    destionation_preference = StringField('Prefered destination location')
+    request_load = SubmitField('Available for load requests')
     submit = SubmitField('Register Truck')
 
 class LoadRequestForm(FlaskForm):
@@ -94,18 +99,20 @@ class LoadRequestForm(FlaskForm):
     submit = SubmitField('Request Lorry')
 
 class LoadRegistrationForm(FlaskForm):
-    locals()[Load_conts.PICKUP_LOCATION] = StringField('Pickup Location', validators=[DataRequired()])
-    locals()[Load_conts.PICKUP_DATETIME] = DateField('Pickup date', validators=[DataRequired()])
-    locals()[Load_conts.PICKUP_CONTACT_NAME] = StringField('Full Name', validators=[Length(min=2, max=80)])
-    locals()[Load_conts.PICKUP_CONTACT_PHONE] = StringField('Phone Number', validators=[Length(min=10)])
+    pickup_location = StringField('Pickup Location', validators=[DataRequired()])
+    pickup_datetime = DateField('Pickup date', validators=[DataRequired()])
+    pickup_contact_name = StringField('Full Name', validators=[Length(min=2, max=80)])
+    pickup_contact_phone = StringField('Phone Number', validators=[Length(min=10)])
 
-    locals()[Load_conts.DROP_LOCATION] = StringField('Drop Location', validators=[DataRequired()])
-    locals()[Load_conts.DROP_DATETIME] = DateField('Drop date')
-    locals()[Load_conts.DROP_CONTACT_NAME] = StringField('Full Name', validators=[Length(min=2, max=80)])
-    locals()[Load_conts.DROP_CONTACT_PHONE] = StringField('Phone Number', validators=[DataRequired(), Length(min=10)])
+    drop_location = StringField('Drop Location', validators=[DataRequired()])
+    drop_datetime = DateField('Drop date')
+    drop_contact_name = StringField('Full Name', validators=[Length(min=2, max=80)])
+    drop_contact_phone = StringField('Phone Number', validators=[DataRequired(), Length(min=10)])
 
-    locals()[Load_conts.LOAD_WEIGHT] = IntegerField('Estimated Weight in tons', validators=[DataRequired()])
-    locals()[Truck_conts.VEHICLE_TYPE] = SelectField('Lorry type Needed', choices=Truck_conts.VEHICLE_TYPE_CHOICES, validators=[DataRequired()])
-    locals()[Load_conts.LOAD_DETAILS] = TextAreaField('Material Details', validators=[DataRequired()])
-    locals()[Load_conts.LOAD_TYPE] = SelectField('Type of Materials', choices = Load_conts.LOAD_TYPE_CHOICES, validators=[DataRequired()])
+    load_weight = IntegerField('Estimated Weight in tons', validators=[DataRequired()])
+    vehicle_type = SelectField('Lorry type Needed', choices=Truck_conts.VEHICLE_TYPE_CHOICES, validators=[DataRequired()])
+    load_details = TextAreaField('Material Details', validators=[DataRequired()])
+    load_type = SelectField('Type of Materials', choices=Load_conts.LOAD_TYPE_CHOICES, validators=[DataRequired()])
+
+    request_truck = SubmitField('Request Lorry')
     submit = SubmitField('Register the Material')

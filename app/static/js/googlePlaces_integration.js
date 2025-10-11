@@ -50,6 +50,22 @@ function fillInAddress(place) {
   }
 }
 
+function fillInCity(place) {
+  if (!place || !place.address_components) return '';
+
+  for (const component of place.address_components) {
+    if (component.types.includes('locality')) {
+      return component.long_name || component.short_name;
+    }
+
+    else if (component.types.includes('administrative_area_level_2')) {
+      return component.long_name || component.short_name;
+    }
+
+  return '';
+  }
+}
+
 async function initMap() {
   const {Autocomplete} = await APILoader.importLibrary('places');
 
@@ -69,7 +85,8 @@ async function initMap() {
           window.alert(`No details avaiable for input:'${place.name}'`);
           return;
         }
-        fillInAddress(place);
+        // fillInAddress(place);
+        inputEL.value = fillInCity(place);
       });
     }
   )

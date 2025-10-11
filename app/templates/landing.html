@@ -29,29 +29,29 @@
         <form 
         method="post" 
         class="p-4 bg-light rounded shadow">
-            {{ truck_request_form.hidden_tag() }}
+            {{ load_form.hidden_tag() }}
             <div 
             class="row g-3 align-items-center"><div 
             class="col-md-6">
                 <label class="form-label">Pickup Location</label>
-                {{ truck_request_form.pickup_location(class="form-control", placeholder="Vijayawada, Andhra Pradesh")}}</div>
+                {{ load_form.pickup_location(class="form-control", placeholder="Vijayawada, Andhra Pradesh")}}</div>
                 <div 
                 class="col-md-6">
                     <label class="form-label">Drop Location</label>
-                    {{ truck_request_form.drop_location(class_="form-control", placeholder="Hyderabad, Telangana") }}</div>
+                    {{ load_form.drop_location(class_="form-control", placeholder="Hyderabad, Telangana") }}</div>
                 <div 
                 class="col-md-6">
-                    <label class="form-label">Type of truck</label>
-                    {{ truck_request_form.vehicle_type(class_="form-control", placeholder="Cement, Grains, Steel, etc.") }}</div>
+                    <label class="form-label">Type of load</label>
+                    {{ load_form.vehicle_type(class_="form-control", placeholder="Cement, Grains, Steel, etc.") }}</div>
                 <div 
                 class="col-md-4">
                     <div class="col-auto"><label class="col-form-label">Estimated Weight</label></div>
                     <div 
                     class="row g-4 align-items-center">
-                        <div class="col-auto">{{ truck_request_form.load_weight(class_="form-control", placeholder="5")}}</div>
+                        <div class="col-auto">{{ load_form.load_weight(class_="form-control", placeholder="5")}}</div>
                         <div class="col-auto"><span id="weightHelpInline" class="form-text">Tons</span></div></div>
             </div>
-            <div class="col-12">{{ truck_request_form.submit(class_="btn btn-primary")}}</div>
+            <div class="col-12">{{ load_form.request_truck(class_="btn btn-primary")}}</div>
         </div></form>
     </div></section>
 
@@ -65,25 +65,25 @@
         <form 
         method="post" 
         class="p-4 bg-light rounded shadow ">
-            {{ load_request_form.hidden_tag() }}
+            {{ truck_form.hidden_tag() }}
             <div 
             class="row g-3"><div 
             class="col-md-4">
                 <label class="form-label">Available From Location</label>
-                {{ load_request_form.truck_current_location(class="form-control", placeholder="Guntur, Andhra Pradesh") }}</div>
+                {{ truck_form.truck_current_location(class="form-control", placeholder="Guntur, Andhra Pradesh") }}</div>
                 <div 
                 class="col-md-4">
                     <label class="form-label">Destination Preference</label>
-                    {{load_request_form.destination_location(class="form-control", placeholder="Chennai, Tamil Nadu")}}</div>
+                    {{truck_form.destionation_preference(class="form-control", placeholder="Chennai, Tamil Nadu")}}</div>
                 <div 
                 class="col-md-3">
                     <label class="form-label">Type of Lorry</label>
-                    {{load_request_form.vehicle_type(class="form-select")}}</div>
+                    {{truck_form.vehicle_type(class="form-select")}}</div>
                 <div 
                 class="col-md-3">
                     <label class="form-label">Max Load Capacity (tons)</label>
-                    {{load_request_form.vehicle_capacity(class="form-control")}}</div>
-                <div class="col-12">{{load_request_form.submit(class="btn btn-primary")}}</div>
+                    {{truck_form.vehicle_capacity(class="form-control")}}</div>
+                <div class="col-12">{{truck_form.request_load(class="btn btn-primary")}}</div>
         </div></form>
     </div></section>
 
@@ -110,23 +110,6 @@
           }
         }
 
-    const hourSelect = document.querySelector('[name="pickup_hour"]');
-    const minuteSelect = document.querySelector('[name="pickup_minute"]');
-    const hiddenTimeInput = document.querySelector('[name="pickup_time"]');
-
-    function updatePickupTime() {
-        const hour = hourSelect.value;
-        const minute = minuteSelect.value;
-        hiddenTimeInput.value = `${hour}:${minute}`;
-    }
-
-    hourSelect.addEventListener('change', updatePickupTime);
-    minuteSelect.addEventListener('change', updatePickupTime);
-
-    // Set default value on page load
-    updatePickupTime();
-
-
-      </script>
+    </script>
 
 {% endblock body %}
