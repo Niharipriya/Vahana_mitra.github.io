@@ -12,6 +12,6 @@ class="card-body">
         <strong>Contacts:</strong> {{load.pickup_contact_name or 'N/A'}} {{load.pickup_contact_phone or 'N/A'}} <br></p>
     <form 
     method="post" 
-    action="url_for('register.load')">
+    action="{{url_for('register.truck')}}">
         <button class="btn btn-primary w-100">book now</button></form>
- </div></div></div>
+</div></div></div>

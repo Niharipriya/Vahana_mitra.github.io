@@ -27,13 +27,14 @@ def autofill_fields(
     prefix: str,
     pending_form_data: dict,
     form: FlaskForm
-) -> FlaskForm: 
-    autofill_fields = {
+) -> dict[str, Any]: 
+    autofill = {
         name.removeprefix(prefix): data
         for name, data in pending_form_data.get('fields', {}).items()
-        if name.removeprefix(prefix) in form._fields
+        if name.removeprefix(prefix) in form._fields and data is not None
     }
-    return autofill_fields
+    print(f"Data from field autofill fields:{autofill}")
+    return autofill
 
 def _autofill_db_dict(
     input_data: dict[str, Any],
