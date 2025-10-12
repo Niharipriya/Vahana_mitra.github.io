@@ -8,7 +8,7 @@ from app.models import User
 
 class SignupForm(FlaskForm):
     locals()[User_conts.FULLNAME] = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=80)])
-    locals()[User_conts.PHONE] = StringField('Phone Number', validators=[DataRequired(), Length(min=10, max=12)])
+    locals()[User_conts.PHONE] = StringField('Phone Number', validators=[DataRequired(), Length(min=10)])
     locals()[User_conts.EMAIL] = EmailField('Email', validators=[DataRequired(), Email()])
     locals()[User_conts.PASSWORD] = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     submit = SubmitField('Signup')
@@ -22,14 +22,26 @@ class SignupForm(FlaskForm):
             raise ValidationError(f"Already have an account with number {field.data}")
 
 class LoginForm(FlaskForm):
-    locals()[User_conts.PHONE] = StringField('Phone Number', validators=[DataRequired(), Length(min=10, max=12)])
+    locals()[User_conts.PHONE] = StringField('Phone Number', validators=[DataRequired(), Length(min=10)])
     locals()[User_conts.EMAIL] = EmailField('Email', validators=[DataRequired(), Email()])
     locals()[User_conts.PASSWORD] = PasswordField('Password', validators=[DataRequired(), Length(min=8)])
     submit = SubmitField('Login')
 
     def validate_user_phone(self, field):
-        if User.find_by(User_conts.PHONE, field.data) is None:
-            raise ValidationError("Invalid Username")
+        # if User.find_by(User_conts.PHONE, field.data) is None:
+        #     raise ValidationError("Invalid Username")
+        """
+        Normalize and validate the phone number before form submission.
+        """
+        # Remove any non-digit characters (like +, spaces, hyphens)
+        digits = ''.join([c for c in field.data if c.isdigit()])
+        field.data = digits  # Save cleaned version back into form data
+
+        # Validate length — adjust to your country logic
+        if len(digits) < 10:
+            raise ValidationError('Phone number too short. Must have at least 10 digits.')
+        elif len(digits) > 15:
+            raise ValidationError('Phone number too long. Maximum allowed is 15 digits.')
 
 class TruckRequestForm(FlaskForm):
     locals()[Load_conts.PICKUP_LOCATION] = StringField('Pickup Location', validators=[DataRequired()]) 
