@@ -48,31 +48,45 @@
         </div>
     </div>
 
-    <h4 class="mb-3">Your Registered Trucks</h4>
-    <table class="table table-striped table-bordered">
-        <thead class="table-dark">
-            <tr>
-                <th>Owner</th>
-                <th>RTO Number</th>
-                <th>Availability</th>
-            </tr>
-        </thead>
-        <tbody>
-            {% for truck in trucks %}
-            <tr>
-                <td>{{ truck.truck_name }}</td>
-                <td>{{ truck.truck_details }}</td>
-                <td>
-                    {% if truck.availability %}
-                    <input type="checkbox" class="form-check-input" checked disabled>
-                    {% else %}
-                    <input type="checkbox" class="form-check-input" disabled>
-                    {% endif %}
-                </td>
-            </tr>
-            {% endfor %}
-        </tbody>
-    </table>
+    <h4 class="mb-3">Your Booked Loads</h4>
+<table class="table table-striped table-bordered">
+    <thead class="table-dark">
+        <tr>
+            <th>Pickup Location</th>
+            <th>Drop Location</th>
+            <th>Pickup Date & Time</th>
+            <th>Drop Date & Time</th>
+            <th>Load Type</th>
+            <th>Weight (tons)</th>
+            <th>Status</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for load in loads %}
+        <tr>
+            <td>{{ load.pickup_location }}</td>
+            <td>{{ load.drop_location }}</td>
+            <td>{{ load.pickup_datetime.strftime('%Y-%m-%d %H:%M') }}</td>
+            <td>{{ load.drop_datetime.strftime('%Y-%m-%d %H:%M') }}</td>
+            <td>{{ load.load_type }}</td>
+            <td>{{ load.load_weight }}</td>
+            <td>
+                {% if load.in_progress %}
+                    <span class="badge bg-warning">In Progress</span>
+                {% elif load.is_active %}
+                    <span class="badge bg-success">Active</span>
+                {% else %}
+                    <span class="badge bg-secondary">Inactive</span>
+                {% endif %}
+            </td>
+        </tr>
+        {% else %}
+        <tr>
+            <td colspan="7" class="text-center text-muted">No loads scheduled yet.</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 </div>
 
 <script>
