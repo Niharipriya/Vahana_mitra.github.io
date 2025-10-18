@@ -55,7 +55,7 @@ class TruckRegistrationForm(FlaskForm):
 
     locals()[Truck_conts.VEHICLE_REGISTRATION_NUMBER] = StringField(
         'Registration number', 
-        validators=[DataRequired(), Length(min=9, max=10), Regexp(Truck_conts.RTO_NUMBER_REGEX, message="Invalid RTO number")]
+        validators=[DataRequired(), Length(min=9, max=10)]
     )
     locals()[Truck_conts.VEHICLE_MODEL_NAME] = StringField(
         'Trucks Model', 
@@ -68,8 +68,8 @@ class TruckRegistrationForm(FlaskForm):
 
     locals()[Truck_conts.OWNER_NAME] = StringField('Owners name', validators=[Length(min=10)])
     locals()[Truck_conts.OWNER_PHONE] = StringField('Phone Number', validators=[Length(min=10, max=20)])
-    locals()[Truck_conts.OWNER_AADHAAR] = StringField('Owners Aadhaar number', validators=[Regexp(Truck_conts.AADHAAR_REGEX, message="Write a valid aadhaar number")])
-    locals()[Truck_conts.OWNER_PAN] = StringField('Owners PAN card number', validators=[Regexp(Truck_conts.PAN_REGEX, message="Enter a valid PAN number")])
+    locals()[Truck_conts.OWNER_AADHAAR] = StringField('Owners Aadhaar number', validators=[Length(min=10)])
+    locals()[Truck_conts.OWNER_PAN] = StringField('Owners PAN card number', validators=[Length(min=10)])
 
     locals()[Truck_conts.DRIVER_NAME] = StringField('Driver Name')
     locals()[Truck_conts.DRIVER_PHONE] = StringField('Driver Phone number')
