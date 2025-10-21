@@ -112,7 +112,7 @@
      ========================================================= */
      .hero-banner {
         background: linear-gradient(0deg, rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
-                    url(".../images/Vahana-Mitra.png") center/cover no-repeat;
+                    url("Vahana-Mitra.png") center/cover no-repeat;
         min-height: 100vh;
         display: flex;
         align-items: center;
@@ -324,6 +324,7 @@
   }
   
   .card h3 {
+    color: #ddd;
     font-weight: 700;
     font-size: 22px;
     margin-bottom: 12px;
