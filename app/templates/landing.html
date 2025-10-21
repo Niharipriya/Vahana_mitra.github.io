@@ -1,115 +1,188 @@
 {% extends 'base_page.html' %}
 
-<!-- <script src="https://maps.googleapis.com/maps/api/js?key={{GOOGLE_KEY}}&libraries=places&callback=initMap"></script> -->
 {% block head %}
-    <title>Vahana Mitra - Simplifying Transport</title>
+  <title>Vahana Mitra - Simplifying Transport</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/landing.css') }}">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Plus+Jakarta+Sans:wght@500;800&display=swap" rel="stylesheet">
 {% endblock head %}
 
 {% block body %}
-    <section>
-        <!-- <h1>Landing Page Content</h1> -->
-    </section>
-    
-    <section class="bg-primary text-white text-center py-5">
-        <div class="container">
-            <h1 class="display-4">Simplifying Transport Logistics Across India</h1>
-            <p class="lead mt-3">A lightweight, easy-to-use platform connecting lorry owners, brokers, and businesses to move goods efficiently across cities and states.</p>
-            <button id="lorrybutton" class="btn btn-outline-light btn-lg mt-4" onclick="showSection('lorry')">🚚 Book a Lorry</button>
-            <button id="materialbutton" class="btn btn-outline-light btn-lg mt-4 ms-2" onclick="showSection('material')">📦 Book a Material</button>
+
+<!-- ================= HEADER ================= -->
+<header class="header">
+  <div class="header-container">
+    <h1 class="logo">Vahana Mitra</h1>
+    <nav class="nav">
+      <a href="#home" class="nav-link">Home</a>
+      <a href="#about" class="nav-link">About</a>
+      <a href="#services" class="nav-link">Services</a>
+    </nav>
+    <div class="nav-actions">
+      <button class="btn login-btn">Login</button>
+      <button class="btn enquire-btn">Enquire Now <span class="arrow">➜</span></button>
+    </div>
+  </div>
+</header>
+
+<!-- ================= HERO SECTION ================= -->
+<section class="hero-banner" id="home">
+  <div class="hero-content">
+    <div class="hero-text">
+      <h2 class="hero-title">Simplifying Transport Logistics Across India</h2>
+      <p class="hero-subtitle">Connecting lorry owners, brokers, and businesses for efficient freight movement nationwide.</p>
+      <button id="lorrybutton" class="hero-btn" onclick="showSection('lorry')">🚚 Book a Lorry</button>
+      <button id="materialbutton" class="hero-btn outline" onclick="showSection('material')">📦 Book Material</button>
+    </div>
+
+    <div class="hero-image">
+      <img src="{{ url_for('static', filename='images/Vahana-Mitra.png') }}" alt="Vahana Mitra Truck" />
+    </div>
+  </div>
+</section>
+
+<!-- ================= BOOKING SECTION ================= -->
+<section id="booking" class="booking-section">
+  <div class="container">
+    <!-- ========== BOOK LORRY ========== -->
+    <div id="book-lorry">
+      <h2 class="section-title">🚛 Book a Lorry</h2>
+      <p>Enter your trip and lorry requirements. We'll match you with available lorries nearby.</p>
+
+      <form method="post" class="booking-form">
+        {{ load_form.hidden_tag() }}
+        <div class="form-row">
+          <div class="form-group">
+            <label>Pickup Location</label>
+            {{ load_form.pickup_location(class="form-control", placeholder="Vijayawada, Andhra Pradesh") }}
+          </div>
+          <div class="form-group">
+            <label>Drop Location</label>
+            {{ load_form.drop_location(class="form-control", placeholder="Hyderabad, Telangana") }}
+          </div>
         </div>
-    </section>
 
-<!-- easy to fill form to attract the user to our site than tell the user to signup or login  -->
-    <section 
-    id="book-lorry" 
-    class="py-5 bg-light"><div 
-    class="container">
-        <h2 class="mb-3"> 🚛 Book a Lorry</h2>
-        <p>Enter your trip and lorry requirements. We'll match you with available lorries nearby.</p>
-        <form 
-        method="post" 
-        class="p-4 bg-light rounded shadow">
-            {{ load_form.hidden_tag() }}
-            <div 
-            class="row g-3 align-items-center"><div 
-            class="col-md-6">
-                <label class="form-label">Pickup Location</label>
-                {{ load_form.pickup_location(class="form-control", placeholder="Vijayawada, Andhra Pradesh")}}</div>
-                <div 
-                class="col-md-6">
-                    <label class="form-label">Drop Location</label>
-                    {{ load_form.drop_location(class_="form-control", placeholder="Hyderabad, Telangana") }}</div>
-                <div 
-                class="col-md-6">
-                    <label class="form-label">Type of load</label>
-                    {{ load_form.vehicle_type(class_="form-control", placeholder="Cement, Grains, Steel, etc.") }}</div>
-                <div 
-                class="col-md-4">
-                    <div class="col-auto"><label class="col-form-label">Estimated Weight</label></div>
-                    <div 
-                    class="row g-4 align-items-center">
-                        <div class="col-auto">{{ load_form.load_weight(class_="form-control", placeholder="5")}}</div>
-                        <div class="col-auto"><span id="weightHelpInline" class="form-text">Tons</span></div></div>
-            </div>
-            <div class="col-12">{{ load_form.request_truck(class_="btn btn-primary")}}</div>
-        </div></form>
-    </div></section>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Type of Load</label>
+            {{ load_form.vehicle_type(class="form-control", placeholder="Cement, Grains, Steel, etc.") }}
+          </div>
+          <div class="form-group small">
+            <label>Estimated Weight (Tons)</label>
+            {{ load_form.load_weight(class="form-control", placeholder="5") }}
+          </div>
+        </div>
+        {{ load_form.request_truck(class="btn submit-btn") }}
+      </form>
+    </div>
 
-    <section 
-    id="book-material" 
-    class="py-5" 
-    style="display: none;" ><div 
-    class="container">
-        <h2 class="mb-3">📦 Book a Material to Transport</h2>
-        <p>Got an empty lorry? Register here to find matching loads for your route.</p>
-        <form 
-        method="post" 
-        class="p-4 bg-light rounded shadow ">
-            {{ truck_form.hidden_tag() }}
-            <div 
-            class="row g-3"><div 
-            class="col-md-4">
-                <label class="form-label">Available From Location</label>
-                {{ truck_form.truck_current_location(class="form-control", placeholder="Guntur, Andhra Pradesh") }}</div>
-                <div 
-                class="col-md-4">
-                    <label class="form-label">Destination Preference</label>
-                    {{truck_form.destionation_preference(class="form-control", placeholder="Chennai, Tamil Nadu")}}</div>
-                <div 
-                class="col-md-3">
-                    <label class="form-label">Type of Lorry</label>
-                    {{truck_form.vehicle_type(class="form-select")}}</div>
-                <div 
-                class="col-md-3">
-                    <label class="form-label">Max Load Capacity (tons)</label>
-                    {{truck_form.vehicle_capacity(class="form-control")}}</div>
-                <div class="col-12">{{truck_form.request_load(class="btn btn-primary")}}</div>
-        </div></form>
-    </div></section>
+    <!-- ========== BOOK MATERIAL ========== -->
+    <div id="book-material" style="display: none;">
+      <h2 class="section-title">📦 Book a Material to Transport</h2>
+      <p>Got an empty lorry? Register here to find matching loads for your route.</p>
 
-    <script>
-        function showSection(type) {
-          const lorryForm = document.getElementById("book-lorry");
-          const materialForm = document.getElementById("book-material");
-          const lorrybutton = document.getElementById("lorrybutton");
-          const materialbutton = document.getElementById("materialbutton");
-          if (type === 'lorry') {
-            lorryForm.style.display = 'block';
-            materialForm.style.display = 'none';
-            lorrybutton.style.backgroundColor = 'white';
-            lorrybutton.style.color='Black';
-            materialbutton.style.backgroundColor = 'transparent';
-            materialbutton.style.color='white';
-          } else if (type === 'material') {
-            lorryForm.style.display = 'none';
-            materialForm.style.display = 'block';
-            lorrybutton.style.backgroundColor = 'transparent';
-            lorrybutton.style.color='white';
-            materialbutton.style.backgroundColor = 'white';
-            materialbutton.style.color='Black';
-          }
-        }
+      <form method="post" class="booking-form">
+        {{ truck_form.hidden_tag() }}
+        <div class="form-row">
+          <div class="form-group">
+            <label>Available From Location</label>
+            {{ truck_form.truck_current_location(class="form-control", placeholder="Guntur, Andhra Pradesh") }}
+          </div>
+          <div class="form-group">
+            <label>Destination Preference</label>
+            {{ truck_form.destionation_preference(class="form-control", placeholder="Chennai, Tamil Nadu") }}
+          </div>
+        </div>
 
-    </script>
+        <div class="form-row">
+          <div class="form-group">
+            <label>Type of Lorry</label>
+            {{ truck_form.vehicle_type(class="form-select") }}
+          </div>
+          <div class="form-group small">
+            <label>Max Load Capacity (tons)</label>
+            {{ truck_form.vehicle_capacity(class="form-control") }}
+          </div>
+        </div>
+        {{ truck_form.request_load(class="btn submit-btn") }}
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ================= ABOUT US ================= -->
+<section id="about" class="about-us">
+  <h2 class="section-title">About Us</h2>
+  <p>Vahana Mitra bridges the gap between transporters and manufacturers by providing seamless logistics solutions across India.</p>
+  <p>We digitalize the trucking ecosystem, improve efficiency, and empower stakeholders with transparency and trust.</p>
+  <p class="highlight">Driving logistics innovation — together.</p>
+</section>
+
+<!-- ================= WHY CHOOSE US ================= -->
+<section id="services" class="why-choose-us">
+  <h2 class="section-title">Why Choose Us?</h2>
+  <div class="card-container">
+    <div class="card">
+      <div class="icon-box">🛡️</div>
+      <h3>Reliable & Secure</h3>
+      <p>Every transaction and booking is protected with our end-to-end secure systems.</p>
+    </div>
+    <div class="card">
+      <div class="icon-box">⏱️</div>
+      <h3>On-Time Delivery</h3>
+      <p>Our smart route optimization ensures every shipment arrives on time, every time.</p>
+    </div>
+    <div class="card">
+      <div class="icon-box">📞</div>
+      <h3>24/7 Support</h3>
+      <p>Get round-the-clock support for your shipments and logistics needs.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= HOW IT WORKS ================= -->
+<section class="how-it-works">
+  <div class="how-title">
+    <h2><span class="gray">How it</span> <span class="white">Works</span><span class="light-gray">.</span></h2>
+  </div>
+  <div class="steps">
+    <div class="step">
+      <h3>01</h3>
+      <h4>Register</h4>
+      <p>Create an account and get started with your logistics journey.</p>
+    </div>
+    <div class="step">
+      <h3>02</h3>
+      <h4>Book</h4>
+      <p>Book your lorry or material quickly and securely.</p>
+    </div>
+    <div class="step">
+      <h3>03</h3>
+      <h4>Track</h4>
+      <p>Monitor your shipment in real time until delivery.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SCRIPT ================= -->
+<script>
+  function showSection(type) {
+    const lorryForm = document.getElementById("book-lorry");
+    const materialForm = document.getElementById("book-material");
+    const lorrybutton = document.getElementById("lorrybutton");
+    const materialbutton = document.getElementById("materialbutton");
+
+    if (type === 'lorry') {
+      lorryForm.style.display = 'block';
+      materialForm.style.display = 'none';
+      lorrybutton.classList.add('active');
+      materialbutton.classList.remove('active');
+    } else {
+      lorryForm.style.display = 'none';
+      materialForm.style.display = 'block';
+      lorrybutton.classList.remove('active');
+      materialbutton.classList.add('active');
+    }
+  }
+</script>
 
 {% endblock body %}
