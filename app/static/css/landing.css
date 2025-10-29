@@ -1,0 +1,451 @@
+/* =========================================================
+   LANDING PAGE STYLESHEET - Vahana Mitra
+   Author: Nihari Priya
+   Description: Modern, responsive landing page for Vahana Mitra
+   ========================================================= */
+
+/* ===== RESET & BASE ===== */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+  
+  body {
+    font-family: 'Inter', sans-serif;
+    background-color: #000;
+    color: #fff;
+    line-height: 1.6;
+  }
+  
+  /* Utility classes */
+  .container {
+    width: 90%;
+    max-width: 1280px;
+    margin: 0 auto;
+  }
+  
+  .btn {
+    cursor: pointer;
+    border: none;
+    outline: none;
+    transition: all 0.3s ease;
+  }
+  
+  /* =========================================================
+     HEADER
+     ========================================================= */
+  .header {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 24px 0;
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+  }
+  
+  .header-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 90%;
+    max-width: 1248px;
+    margin: 0 auto;
+  }
+  
+  .logo {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 36px;
+    font-weight: 700;
+    color: #fff;
+  }
+  
+  .nav {
+    display: flex;
+    gap: 32px;
+  }
+  
+  .nav-link {
+    color: #fff;
+    font-weight: 500;
+    font-size: 16px;
+    text-decoration: none;
+  }
+  
+  .nav-link:hover {
+    color: #f8f8f8;
+    text-decoration: underline;
+  }
+  
+  .nav-actions {
+    display: flex;
+    gap: 12px;
+  }
+  
+  .login-btn {
+    background: transparent;
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 8px;
+  }
+  
+  .enquire-btn {
+    background: #fff;
+    color: #000;
+    padding: 10px 18px;
+    border-radius: 8px;
+    font-weight: 600;
+  }
+  
+  .enquire-btn:hover {
+    background: #ddd;
+  }
+  
+  /* =========================================================
+     HERO SECTION
+     ========================================================= */
+     .hero-banner {
+        background: linear-gradient(0deg, rgba(0,0,0,0.6), rgba(0,0,0,0.6)),
+                    url("Vahana-Mitra.png") center/cover no-repeat;
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        padding: 160px 80px 80px;
+      }
+            
+  
+  .hero-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 40px;
+    width: 100%;
+    max-width: 1280px;
+  }
+  
+  .hero-text {
+    max-width: 700px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+  }
+  
+  .hero-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 72px;
+    font-weight: 800;
+    line-height: 1.1;
+    color: #fff;
+  }
+  
+  .hero-subtitle {
+    font-size: 20px;
+    color: #ebebeb;
+    line-height: 1.5;
+  }
+  
+  .hero-btn {
+    background: #fff;
+    color: #000;
+    font-weight: 600;
+    font-size: 18px;
+    padding: 16px 24px;
+    border-radius: 50px;
+    margin-right: 16px;
+  }
+  
+  .hero-btn.outline {
+    background: transparent;
+    border: 1px solid #fff;
+    color: #fff;
+  }
+  
+  .hero-btn:hover {
+    opacity: 0.85;
+  }
+  
+  .hero-btn.active {
+    background: #fff;
+    color: #000;
+  }
+  
+  .hero-image img {
+    width: 480px;
+    height: auto;
+    border-radius: 8px;
+  }
+  
+  /* =========================================================
+     BOOKING SECTION
+     ========================================================= */
+  .booking-section {
+    padding: 100px 0;
+    background-color: #111;
+  }
+  
+  .section-title {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 48px;
+    font-weight: 800;
+    text-align: center;
+    margin-bottom: 24px;
+  }
+  
+  .booking-section p {
+    text-align: center;
+    color: #ccc;
+    margin-bottom: 40px;
+  }
+  
+  .booking-form {
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid #333;
+    border-radius: 16px;
+    padding: 40px;
+    max-width: 900px;
+    margin: 0 auto;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  }
+  
+  .form-row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 24px;
+    margin-bottom: 20px;
+  }
+  
+  .form-group {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+  }
+  
+  .form-group.small {
+    max-width: 250px;
+  }
+  
+  .form-label, label {
+    font-weight: 500;
+    color: #fff;
+    margin-bottom: 6px;
+  }
+  
+  .form-control, .form-select {
+    padding: 14px 16px;
+    border-radius: 8px;
+    border: 1px solid #c8c8c8;
+    background: #fff;
+    color: #000;
+    font-size: 16px;
+  }
+  
+  .submit-btn {
+    display: block;
+    width: 100%;
+    background: #fff;
+    color: #000;
+    padding: 16px;
+    font-weight: 600;
+    border-radius: 8px;
+    margin-top: 16px;
+  }
+  
+  .submit-btn:hover {
+    background: #ddd;
+  }
+  
+  /* =========================================================
+     ABOUT US SECTION
+     ========================================================= */
+  .about-us {
+    padding: 80px 20px;
+    background-color: #000;
+    text-align: center;
+  }
+  
+  .about-us p {
+    max-width: 900px;
+    margin: 0 auto 16px;
+    color: #e0e0e0;
+    font-size: 18px;
+  }
+  
+  .about-us .highlight {
+    color: #fff;
+    font-weight: 600;
+    margin-top: 20px;
+  }
+  
+  /* =========================================================
+     WHY CHOOSE US
+     ========================================================= */
+  .why-choose-us {
+    padding: 80px 20px;
+    background: #111;
+    text-align: center;
+  }
+  
+  .card-container {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 40px;
+    margin-top: 40px;
+  }
+  
+  .card {
+    background: #000;
+    border: 2px solid #343434;
+    border-radius: 16px;
+    padding: 32px;
+    width: 360px;
+    text-align: left;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.25);
+  }
+  
+  .icon-box {
+    background: #272727;
+    width: 64px;
+    height: 64px;
+    border-radius: 8px;
+    font-size: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: 16px;
+  }
+  
+  .card h3 {
+    color: #ddd;
+    font-weight: 700;
+    font-size: 22px;
+    margin-bottom: 12px;
+  }
+  
+  .card p {
+    color: #ddd;
+    font-size: 16px;
+    line-height: 1.4;
+  }
+  
+  /* =========================================================
+     HOW IT WORKS
+     ========================================================= */
+  .how-it-works {
+    padding: 80px 20px;
+    background-color: #000;
+    text-align: center;
+  }
+  
+  .how-title h2 {
+    font-family: 'Plus Jakarta Sans', sans-serif;
+    font-size: 48px;
+    font-weight: 700;
+  }
+  
+  .how-title .gray { color: #565656; }
+  .how-title .white { color: #fff; }
+  .how-title .light-gray { color: #616161; }
+  
+  .steps {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 40px;
+    margin-top: 40px;
+  }
+  
+  .step {
+    background: #fff;
+    color: #000;
+    border-radius: 16px;
+    padding: 32px;
+    width: 320px;
+    text-align: left;
+  }
+  
+  .step h3 {
+    font-size: 40px;
+    color: rgba(0,0,0,0.6);
+    margin-bottom: 8px;
+  }
+  
+  .step h4 {
+    font-size: 22px;
+    font-weight: 700;
+    margin-bottom: 8px;
+  }
+  
+  .step p {
+    color: #373737;
+    font-size: 16px;
+  }
+  
+  /* =========================================================
+     RESPONSIVE DESIGN
+     ========================================================= */
+  @media (max-width: 992px) {
+    .hero-title {
+      font-size: 56px;
+    }
+  
+    .hero-content {
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+  
+    .hero-image img {
+      width: 360px;
+    }
+  
+    .booking-form {
+      padding: 24px;
+    }
+  
+    .card-container, .steps {
+      flex-direction: column;
+      align-items: center;
+    }
+  }
+  
+  @media (max-width: 600px) {
+    .header-container {
+      flex-direction: column;
+      gap: 12px;
+    }
+  
+    .hero-title {
+      font-size: 42px;
+    }
+  
+    .hero-btn {
+      font-size: 16px;
+      padding: 12px 20px;
+    }
+  
+    .form-row {
+      flex-direction: column;
+    }
+  
+    .form-group.small {
+      max-width: 100%;
+    }
+  
+    .card {
+      width: 100%;
+    }
+  
+    .step {
+      width: 100%;
+    }
+  }
+  
