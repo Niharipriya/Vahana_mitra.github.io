@@ -46,8 +46,20 @@ class LoginForm(FlaskForm):
         if User.find_by(User_conts.EMAIL, field.data) is None:
             raise ValidationError("Invalid Email address")
     def validate_user_phone(self, field):
-        if User.find_by(User_conts.PHONE, field.data) is None:
-            raise ValidationError("Invalid Phone number")
+        # if User.find_by(User_conts.PHONE, field.data) is None:
+        #     raise ValidationError("Invalid Username")
+        """
+        Normalize and validate the phone number before form submission.
+        """
+        # Remove any non-digit characters (like +, spaces, hyphens)
+        digits = ''.join([c for c in field.data if c.isdigit()])
+        field.data = digits  # Save cleaned version back into form data
+
+        # Validate length — adjust to your country logic
+        if len(digits) < 10:
+            raise ValidationError('Phone number too short. Must have at least 10 digits.')
+        elif len(digits) > 15:
+            raise ValidationError('Phone number too long. Maximum allowed is 15 digits.')
 
 class TruckRequestForm(FlaskForm):
     locals()[Load_conts.PICKUP_LOCATION] = StringField('Pickup Location', validators=[DataRequired()]) 
@@ -60,11 +72,7 @@ class TruckRegistrationForm(FlaskForm):
     truck_current_location = StringField('Current location from ', validators=[DataRequired()]) #Auto GPS detection in future
     vehicle_registration_number = StringField(
         'Registration number', 
-        validators=[
-            DataRequired(), 
-            Length(min=9, max=10), 
-            Regexp(Truck_conts.RTO_NUMBER_REGEX, message="Invalid RTO number")
-        ]
+        validators=[DataRequired(), Length(min=9, max=10)]
     )
     vehicle_model_name = StringField(
         'Trucks Model', 
