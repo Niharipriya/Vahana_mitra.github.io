@@ -15,7 +15,7 @@ bp = Blueprint(
     template_folder= 'templates'
 )
 
-@bp.route('/<string:booking_type>')
+@bp.route('/<string:booking_type>', methods=['GET', 'POST'])
 @login_required
 def booking(booking_type: str):
     list_compatible_loads = []

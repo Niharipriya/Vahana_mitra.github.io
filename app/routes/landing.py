@@ -3,7 +3,8 @@ from flask import (
     render_template,
     flash, 
     session,
-    redirect, url_for, request
+    redirect, url_for, request, 
+    app
 )
 from flask_login import current_user
 
@@ -11,7 +12,7 @@ from app.models import Truck, Load
 from app.constants.session_keys import SessionKeys
 from app.constants.variable_constants import Truck_conts, Load_conts
 from app.form import TruckRegistrationForm, LoadRegistrationForm
-from app.utils import _redirect_save
+from app.utils import _redirect_save, make_admin_user, make_testing_data
 
 bp = Blueprint("landing", __name__, url_prefix="")
 
@@ -23,12 +24,14 @@ def index():
     session[SessionKeys.LOAD_PICKUP_LOCATION] = ''
 
     if truck_form.request_load.data:
+        session[SessionKeys.IN_PROGRESS] = True
         session[SessionKeys.BOOKING_TYPE] = Truck.__name__ #User is booking a load for there truck, i.e. entering there truck details 
         session[SessionKeys.TRUCK_CURRENT_LOCATION] = truck_form.truck_current_location.data
 
         return _redirect_save(truck_form)
 
     if load_form.request_truck.data:
+        session[SessionKeys.IN_PROGRESS] = True
         session[SessionKeys.BOOKING_TYPE] = Load.__name__ #User is Booking a Truck for there load, ie entering there load details 
         session[SessionKeys.LOAD_PICKUP_LOCATION] = load_form.pickup_location.data
 

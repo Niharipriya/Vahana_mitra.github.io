@@ -39,7 +39,7 @@ class UserAdminView(ModelView):
         load_count: Number of loads associated with the user
     """
     column_exclude_list = ('_password', "alternative_id")
-    # column_editable_list = ('fullname', 'email', 'phone', 'is_admin')
+    column_editable_list = ('fullname', 'email', 'phone', 'is_admin')
     form_excluded_columns = ('alternative_id', 'creation_time', 'update_time')
     form_extra_fields = {
         'password': PasswordField('Password')
@@ -113,7 +113,15 @@ class TruckAdminView(ModelView):
         'vehicle_capacity',
         'current_location',
         'is_verified',
-        'is_available'
+        'is_available', 
+        'truck_owner_name',
+        'truck_owner_phone',
+        'truck_owner_aadhaar',
+        'truck_owner_pan',
+        'truck_driver_name',
+        'truck_driver_phone',
+        'truck_driver_aadhaar',
+        'truck_driver_license',
     )
 
     # ---- Columns hidden from list or forms ----
@@ -138,14 +146,14 @@ class TruckAdminView(ModelView):
         'vehicle_capacity',
         'current_location',
         'vehicle_insurance',
-        'owner_name',
-        'owner_phone',
-        'owner_aadhaar',
-        'owner_pan',
-        'driver_name',
-        'driver_phone',
-        'driver_aadhaar',
-        'driver_license',
+        'truck_owner_name',
+        'truck_owner_phone',
+        'truck_owner_aadhaar',
+        'truck_owner_pan',
+        'truck_driver_name',
+        'truck_driver_phone',
+        'truck_driver_aadhaar',
+        'truck_driver_license',
         'is_verified',
         'is_available'
     )

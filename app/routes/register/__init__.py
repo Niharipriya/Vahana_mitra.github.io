@@ -40,11 +40,10 @@ def _handle_form_submission(
         db.session.commit()
 
         flash(success_message, "success")
-        session.clear()
         return redirect(redirect_url)
 
     except Exception as e:
-        db.session.rollback()
+        # db.session.rollback()
         flash("An error occurred while saving your data. Please try again.", "danger")
         print(f"[ERROR] Failed to submit {model_cls.__name__}: {e}")
         return redirect(request.url)

@@ -4,7 +4,7 @@ from app.models import Load, Truck  # Make sure this path is correct for your pr
 
 bp = Blueprint("dashboard", __name__, url_prefix="/dashboard")
 
-@bp.route("/")
+@bp.route("/", methods=['POST', 'GET'])
 @login_required
 def index():
     # Fetch loads that belong to the logged-in user

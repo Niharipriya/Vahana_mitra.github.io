@@ -101,16 +101,16 @@ class Truck(db.Model, ModelMixin):
     current_location: Mapped[str] = mapped_column(String, nullable=False, name=Truck_conts.CURRENT_LOCATION)
 
     # Owner details
-    owner_name: Mapped[str] = mapped_column(String, nullable=False, name=Truck_conts.OWNER_NAME)
-    owner_phone: Mapped[str] = mapped_column(String, nullable=False, name=Truck_conts.OWNER_PHONE)
-    owner_aadhaar: Mapped[str] = mapped_column(String, nullable=False, name=Truck_conts.OWNER_AADHAAR)
-    owner_pan: Mapped[str] = mapped_column(String, nullable=True, name=Truck_conts.OWNER_PAN)
+    truck_owner_name: Mapped[str] = mapped_column(String, nullable=False, name=Truck_conts.OWNER_NAME)
+    truck_owner_phone: Mapped[str] = mapped_column(String, nullable=False, name=Truck_conts.OWNER_PHONE)
+    truck_owner_aadhaar: Mapped[str] = mapped_column(String, nullable=False, name=Truck_conts.OWNER_AADHAAR)
+    truck_owner_pan: Mapped[str] = mapped_column(String, nullable=True, name=Truck_conts.OWNER_PAN)
 
     # Driver details
-    driver_name: Mapped[str] = mapped_column(String, nullable=True, name=Truck_conts.DRIVER_NAME)
-    driver_phone: Mapped[str] = mapped_column(String, nullable=True, name=Truck_conts.DRIVER_PHONE)
-    driver_aadhaar: Mapped[str] = mapped_column(String, nullable=True, name=Truck_conts.DRIVER_AADHAAR)
-    driver_license: Mapped[str] = mapped_column(String, nullable=True, name=Truck_conts.DRIVER_LICENSE)
+    truck_driver_name: Mapped[str] = mapped_column(String, nullable=True, name=Truck_conts.DRIVER_NAME)
+    truck_driver_phone: Mapped[str] = mapped_column(String, nullable=True, name=Truck_conts.DRIVER_PHONE)
+    truck_driver_aadhaar: Mapped[str] = mapped_column(String, nullable=True, name=Truck_conts.DRIVER_AADHAAR)
+    truck_driver_license: Mapped[str] = mapped_column(String, nullable=True, name=Truck_conts.DRIVER_LICENSE)
 
     # Status and documents
     is_verified: Mapped[bool] = mapped_column(Boolean, default=False)
