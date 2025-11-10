@@ -9,7 +9,6 @@ class="card-body">
         <strong>PickUp:</strong> {{load.pickup_location  or 'N/A'}} <br>
         <strong>Drop:</strong> {{load.drop_location or 'N/A'}} <br>
         <strong>Cost:</strong> {{load.cost or 'N/A'}}
-        <strong>Contacts:</strong> {{load.pickup_contact_name or 'N/A'}} {{load.pickup_contact_phone or 'N/A'}} <br></p>
     <form 
     method="post" 
     action="{{url_for('register.truck')}}">

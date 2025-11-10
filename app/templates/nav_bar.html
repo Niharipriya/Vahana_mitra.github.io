@@ -1,7 +1,7 @@
 <nav
 class="navbar navbar-expand-lg navbar-light bg-light shadow-sm"><div
 class="container-fluid">
-    <a class="navbar-brand" href="{{ url_for('landing.index') }}">HOME</a>
+  <a class="navbar-brand" href="{{ url_for('landing.index') }}">VahanaMitra</a>
 
     <button
     class="navbar-toggler d-lg-none"
@@ -20,7 +20,7 @@ class="container-fluid">
             <li
             class="nav-item"><a href="{{ url_for('dashboard.index') }}" class="nav-link">Dashboard</a></li>
             <li
-            class="nav-item"><a href="/" class="nav-link">Status</a></li>
+            class="nav-item"><a href="{{ url_for('register.truck')}}" class="nav-link">Truck Register</a>
         </ul>
 
         <ul

@@ -8,9 +8,7 @@ class="card-body">
     <p 
     class="card-text">
         <strong>capacity:</strong> {{ truck.vehicle_capacity or 'N/A'}} tons <br>
-        <strong>current location:</strong> {{ truck.truck_current_location or 'N/A'}} <br>
-        <strong>available to:</strong> {{ truck.available_locations or 'N/A'}} <br>
-        <strong>owner:</strong> {{ truck.truck_owner_name or 'N/A'}} ({{ truck.truck_owner_phone or 'N/A' }})<br></p>
+        <strong>current location:</strong> {{ truck.current_location or 'N/A'}} <br>
     <form 
     method="get" 
     action="{{ url_for('register.load') }}">
