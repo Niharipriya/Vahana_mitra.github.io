@@ -9,7 +9,7 @@ from app.constants.session_keys import SessionKeys
 from app.models import User
 
 
-def _redirect_save(form):
+def _redirect_save(form, url: str):
     session[SessionKeys.PENDING_FORM_DATA] = {
         "fields": {
             field.name: field.data
@@ -20,7 +20,7 @@ def _redirect_save(form):
     if not current_user.is_authenticated:
         flash("Please Login or Sigup to continue your booking process", "danger")
         return redirect(url_for("auth.signup"))
-    return redirect(f"/booking/{session[SessionKeys.BOOKING_TYPE]}")
+    return redirect(url)
 
 
 def autofill_fields(
@@ -171,4 +171,3 @@ def make_testing_data(db):
 
     db.session.commit()
     print("Finished populating testing data.")
-
