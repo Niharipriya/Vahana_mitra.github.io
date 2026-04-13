@@ -24,6 +24,8 @@ class Config:
     GOOGLE_KEY = os.getenv('GOOGLE_KEY')
     ADMIN_EMAIL = os.getenv('ADMIN_EMAIL')
     ADMIN_PASSWORD = os.getenv('ADMIN_PASSWORD')
+    OPENAI_API_KEY = os.getenv("OPENAI_API_KEY")
+    OPENAI_MODEL = os.getenv("OPENAI_MODEL", "gpt-5.4")
 
 class DevelopmentConfig(Config):
     DEBUG = True

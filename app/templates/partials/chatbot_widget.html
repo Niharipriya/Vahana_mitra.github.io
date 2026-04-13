@@ -1,0 +1,31 @@
+<div id="chatbot-container" style="position: fixed; bottom: 20px; right: 20px; width: 320px; z-index: 1050;">
+    <div class="card shadow">
+      <div class="card-header d-flex justify-content-between align-items-center">
+        <strong>Vahana Mitra Assistant</strong>
+        <button type="button" class="btn btn-sm btn-outline-secondary" id="chatbot-toggle">–</button>
+      </div>
+  
+      <div class="card-body" id="chatbot-body" style="height: 360px; overflow-y: auto; background: #f8f9fa;">
+        <div class="mb-2">
+          <div class="p-2 rounded bg-white border">
+            Hi, I can help you book a lorry, find a load, or guide you through signup and registration.
+          </div>
+        </div>
+      </div>
+  
+      <div class="card-footer">
+        <form id="chatbot-form" class="d-flex gap-2">
+          <input
+            type="text"
+            id="chatbot-input"
+            class="form-control"
+            placeholder="Type your message..."
+            autocomplete="off"
+          />
+          <button type="submit" class="btn btn-primary">Send</button>
+        </form>
+      </div>
+    </div>
+  </div>
+  
+  <script src="{{ url_for('static', filename='js/chatbot.js') }}"></script>

@@ -71,11 +71,11 @@ def create_app(
             )
             make_testing_data(db)
 
-    from .routes import landing, auth, booking, register, dashboard
+    from .routes import landing, auth, booking, register, dashboard, chatbot
     app.register_blueprint(landing.bp)
     app.register_blueprint(auth.bp)
     app.register_blueprint(booking.bp)
     app.register_blueprint(register.bp)
     app.register_blueprint(dashboard.bp)
-
+    app.register_blueprint(chatbot.bp)
     return app
