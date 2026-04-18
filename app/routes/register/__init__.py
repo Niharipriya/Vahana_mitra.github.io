@@ -1,7 +1,10 @@
+import logging
 from flask import (
     Blueprint, session, render_template,
     request, flash, redirect, url_for
 )
+
+logger = logging.getLogger(__name__)
 from flask_login import current_user, login_required
 from app.constants.session_keys import SessionKeys
 from app.form import LoadRegistrationForm, TruckRegistrationForm
@@ -43,9 +46,9 @@ def _handle_form_submission(
         return redirect(redirect_url)
 
     except Exception as e:
-        # db.session.rollback()
+        db.session.rollback()
         flash("An error occurred while saving your data. Please try again.", "danger")
-        print(f"[ERROR] Failed to submit {model_cls.__name__}: {e}")
+        logger.error("Failed to submit %s: %s", model_cls.__name__, e)
         return redirect(request.url)
 
 
@@ -72,7 +75,7 @@ def truck():
 
     elif request.method == 'POST':
         flash("You have filled the form incorrectly. Please recheck the fields.", 'danger')
-        print("[FORM ERRORS - TRUCK]", form.errors)
+        logger.warning("Truck form errors: %s", form.errors)
 
     return render_template(
         "truck_registration_form.html",
@@ -109,7 +112,7 @@ def load():
 
     elif request.method == 'POST':
         flash("You have filled the form incorrectly. Please recheck the fields.", 'danger')
-        print("[FORM ERRORS - LOAD]", form.errors)
+        logger.warning("Load form errors: %s", form.errors)
 
     return render_template(
         "load_registration_form.html",

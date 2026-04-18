@@ -1,4 +1,8 @@
-from flask import Flask 
+import logging
+from dotenv import load_dotenv
+load_dotenv()
+
+from flask import Flask
 from sqlalchemy import MetaData
 from flask_sqlalchemy import SQLAlchemy
 from flask_bcrypt import Bcrypt
@@ -6,11 +10,10 @@ from flask_login import LoginManager
 from flask_migrate import Migrate
 from flask_wtf.csrf import CSRFProtect
 from flask_admin import Admin
-from flask_admin.contrib.sqla import ModelView
+from flask_mail import Mail
 from config import DevelopmentConfig, TestingConfig, ProductionConfig
 
-from dotenv import load_dotenv
-load_dotenv()
+logger = logging.getLogger(__name__)
 
 convention = {
     "ix": 'ix_%(column_0_label)s',
@@ -25,7 +28,8 @@ db = SQLAlchemy(metadata = metadata)
 bcrypt = Bcrypt()
 migrate = Migrate()
 csrf = CSRFProtect()
-login_manager = LoginManager() 
+login_manager = LoginManager()
+mail = Mail()
 admin = Admin(template_mode='bootstrap4')
 
 def create_app(
@@ -47,6 +51,7 @@ def create_app(
     login_manager.init_app(app)
     migrate.init_app(app, db, render_as_batch= True)
     csrf.init_app(app)
+    mail.init_app(app)
     admin.init_app(app, index_view= AdminView())
 
     from .models import User, Truck, Load
@@ -59,7 +64,7 @@ def create_app(
         if app.config.get('TESTING_DATA'):
             db.create_all()
             if app.config.get('RESET'):
-                print("Resetting tables for testing...")
+                logger.info("Resetting tables for testing...")
                 db.session.query(Truck).delete()
                 db.session.query(Load).delete()
                 db.session.query(User).delete()

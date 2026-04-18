@@ -1,8 +1,11 @@
+import logging
 from flask import Blueprint, redirect, render_template, session, url_for
+
+logger = logging.getLogger(__name__)
 from flask_login import login_required
 
 from app.constants.session_keys import SessionKeys
-from app.models import Load, Truck
+from app.models import Truck
 
 bp = Blueprint("booking", __name__, url_prefix="/booking", template_folder="templates")
 
@@ -21,11 +24,11 @@ def booking(booking_type: str):
                 location=load_pickup_location
             )
 
-            print(f"""
-                Booking Type: {session[SessionKeys.BOOKING_TYPE]},
-                Truck Current Loaction: {session[SessionKeys.LOAD_PICKUP_LOCATION]},
-                List of Compatible Trucks: {list_compatible_trucks}
-            """)
+            logger.debug("Booking type: %s, pickup: %s, trucks found: %s",
+                session.get(SessionKeys.BOOKING_TYPE),
+                session.get(SessionKeys.LOAD_PICKUP_LOCATION),
+                list_compatible_trucks
+            )
             if not list_compatible_trucks:
                 return redirect(url_for("register.load"))
     # elif booking_type == 'Truck' and session.get(SessionKeys.TRUCK_CURRENT_LOCATION):

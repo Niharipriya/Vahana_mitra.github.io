@@ -3,7 +3,7 @@
 {% block body %}
 <div class="container mt-5">
     <h2 class="text-center">Welcome, {{ current_user.fullname }}</h2>
-    <p class="text-center text-muted">Email: {{ current_user.email }}</p>
+    <p class="text-center text-muted">Email: {{ current_user.email or 'Not provided' }}</p>
 
     <div class="text-center mb-4">
         <button id="lorrybutton" class="btn btn-outline-primary btn-lg mt-4" onclick="showSection('lorry')">🚚 Truck</button>

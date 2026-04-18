@@ -8,13 +8,16 @@ from flask import (
 )
 from flask_login import login_required, current_user, logout_user, login_user
 
-from app import login_manager, bcrypt, db
+import logging
+from app import login_manager, db
+from app.email_utils import send_verification_email, verify_token
+
+logger = logging.getLogger(__name__)
 from app.form import SignupForm, LoginForm
 from app.models import User
 from app.constants.session_keys import SessionKeys
 from app.constants.variable_constants import User_conts
 from app.utils import _autofill_db_dict
-from sqlalchemy import or_, and_
 
 
 bp = Blueprint(
@@ -35,18 +38,21 @@ def signup():
     if signup_form.validate_on_submit():
         # Clean up the phone before saving
         phone_raw = getattr(signup_form, User_conts.PHONE).data
-        clean_phone = ''.join([c for c in str(phone_raw) if c.isdigit()])
-        setattr(signup_form, User_conts.PHONE, clean_phone)
+        getattr(signup_form, User_conts.PHONE).data = ''.join([c for c in str(phone_raw) if c.isdigit()])
 
         user = _autofill_db_dict(input_data=signup_form.data, database_class=User)
         db.session.add(user)
         db.session.commit()
 
-        login_user(user)
-        flash(f'Account successfully created under {getattr(signup_form, User_conts.FULLNAME).data}', 'success')
-        if session[SessionKeys.IN_PROGRESS]:
-            return redirect(f'/booking/{session[SessionKeys.BOOKING_TYPE]}')
-        return redirect(url_for('landing.index'))
+        # Send verification email — user must click link before logging in
+        try:
+            send_verification_email(user.email)
+            flash('Account created! Please check your email to verify your account.', 'info')
+        except Exception as e:
+            logger.error("Failed to send verification email to %s: %s", user.email, e)
+            flash('Account created but we could not send a verification email. Contact support.', 'warning')
+
+        return redirect(url_for('auth.login'))
 
     return render_template(
         'signup.html',
@@ -57,17 +63,27 @@ def signup():
 def login():
     login_form = LoginForm(request.form)
     if login_form.validate_on_submit():
-        user: User = User.query.filter_by(email=login_form.user_email.data).first()
-        print(user)
+        email = login_form.user_email.data
+        phone = login_form.user_phone.data
+        user: User = (
+            User.query.filter_by(email=email).first() if email
+            else User.query.filter_by(phone=phone).first()
+        )
+        logger.debug("Login attempt for user: %s", user)
         if user:
-            if user.check_password(getattr(login_form, User_conts.PASSWORD).data):
-                flash(f"Welcome back, {user.fullname}", "success")
-                login_user(user)
-            else:
+            if not user.check_password(getattr(login_form, User_conts.PASSWORD).data):
                 flash("Invalid password", "danger")
-                return redirect(url_for("auth.login")) 
+                return redirect(url_for("auth.login"))
+
+            # Block login if email not verified yet
+            if not user.is_email_verified:
+                flash("Please verify your email before logging in. Check your inbox.", "warning")
+                return redirect(url_for("auth.login"))
+
+            login_user(user)
+            flash(f"Welcome back, {user.fullname}", "success")
             if session.get(SessionKeys.PENDING_FORM_DATA):
-                return redirect(f'/booking/{session[SessionKeys.BOOKING_TYPE]}')
+                return redirect(url_for('booking.booking', booking_type=session.get(SessionKeys.BOOKING_TYPE, 'Load')))
             return redirect(url_for('landing.index'))
 
         else:
@@ -75,7 +91,7 @@ def login():
             return redirect(url_for('auth.signup'))
 
     if request.method == 'POST':
-        print(login_form.errors)
+        logger.warning("Login form errors: %s", login_form.errors)
 
     return render_template(
         'login.html',
@@ -132,9 +148,66 @@ def login():
 
 #     # If form didn't validate (e.g., phone format)
 #     if request.method == "POST":
-#         print(login_form.errors)
+#         logger.warning("Login form errors: %s", login_form.errors)
 
 #     return render_template("login.html", login_form=login_form)
+
+@bp.route('/verify/<token>')
+def verify_email(token):
+    """
+    User clicks the link in their email → lands here.
+    We decode the token to get their email, find them in DB,
+    mark is_email_verified = True, then let them log in.
+    """
+    email = verify_token(token)
+
+    if email is None:
+        flash("This verification link has expired or is invalid. Please sign up again.", "danger")
+        return redirect(url_for("auth.signup"))
+
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        flash("No account found for this link.", "danger")
+        return redirect(url_for("auth.signup"))
+
+    if user.is_email_verified:
+        flash("Your email is already verified. Please log in.", "info")
+        return redirect(url_for("auth.login"))
+
+    user.is_email_verified = True
+    db.session.commit()
+    flash("Email verified successfully! You can now log in.", "success")
+    return redirect(url_for("auth.login"))
+
+
+@bp.route('/resend-verification')
+def resend_verification():
+    """
+    If user didn't get the email, they can request a new one.
+    """
+    email = request.args.get('email')
+    if not email:
+        flash("No email provided.", "danger")
+        return redirect(url_for("auth.login"))
+
+    user = User.query.filter_by(email=email).first()
+    if not user:
+        flash("No account found with that email.", "danger")
+        return redirect(url_for("auth.signup"))
+
+    if user.is_email_verified:
+        flash("Your email is already verified.", "info")
+        return redirect(url_for("auth.login"))
+
+    try:
+        send_verification_email(user.email)
+        flash("Verification email resent! Please check your inbox.", "success")
+    except Exception as e:
+        logger.error("Failed to resend verification email to %s: %s", user.email, e)
+        flash("Could not send email. Please try again later.", "danger")
+
+    return redirect(url_for("auth.login"))
+
 
 @bp.route('/logout')
 @login_required

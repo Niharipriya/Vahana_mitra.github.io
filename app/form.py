@@ -43,6 +43,8 @@ class LoginForm(FlaskForm):
         return True
 
     def validate_user_email(self, field):
+        if not field.data:
+            return
         if User.find_by(User_conts.EMAIL, field.data) is None:
             raise ValidationError("Invalid Email address")
     def validate_user_phone(self, field):
@@ -83,7 +85,7 @@ class TruckRegistrationForm(FlaskForm):
     vehicle_insurance = FileField('Vehicle Insurance')
     vehicle_permit = StringField('Vehicle permits')
 
-    truck_owner_name = StringField('Owners name', validators=[Length(min=10)])
+    truck_owner_name = StringField('Owners name', validators=[DataRequired(), Length(min=2)])
     truck_owner_phone = StringField('Phone Number', validators=[Length(min=10, max=20)])
     truck_owner_aadhaar = StringField('Owners Aadhaar number', validators=[Regexp(Truck_conts.AADHAAR_REGEX, message="Write a valid aadhaar number")])
     truck_owner_pan = StringField('Owners PAN card number', validators=[Regexp(Truck_conts.PAN_REGEX, message="Enter a valid PAN number")])
@@ -109,11 +111,11 @@ class LoadRequestForm(FlaskForm):
 class LoadRegistrationForm(FlaskForm):
     pickup_location = StringField('Pickup Location', validators=[DataRequired()])
     pickup_datetime = DateField('Pickup date', validators=[DataRequired()])
-    pickup_contact_name = StringField('Full Name', validators=[Length(min=2, max=80)])
+    pickup_contact_name = StringField('Full Name', validators=[DataRequired(), Length(min=2, max=80)])
     pickup_contact_phone = StringField('Phone Number', validators=[Length(min=10)])
 
     drop_location = StringField('Drop Location', validators=[DataRequired()])
-    drop_datetime = DateField('Drop date')
+    drop_datetime = DateField('Drop date', validators=[DataRequired()])
     drop_contact_name = StringField('Full Name', validators=[Length(min=2, max=80)])
     drop_contact_phone = StringField('Phone Number', validators=[DataRequired(), Length(min=10)])
 

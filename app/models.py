@@ -1,8 +1,7 @@
 from uuid import uuid4
-from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import String, DateTime, ForeignKey, Float, Boolean
 from sqlalchemy.orm import Mapped, mapped_column, relationship
-from datetime import datetime
+from datetime import datetime, timezone
 from flask_login import UserMixin
 from werkzeug.security import generate_password_hash, check_password_hash
 
@@ -58,8 +57,8 @@ class User(db.Model, UserMixin, ModelMixin):
     phone: Mapped[str] = mapped_column(nullable=True, unique=True, index= True, name=User_conts.PHONE)
 
     # Audit fields
-    creation_time: Mapped[datetime] = mapped_column(default=datetime.utcnow, name=User_conts.CREATED_TIME)
-    update_time: Mapped[datetime] = mapped_column(default=datetime.utcnow, onupdate=datetime.utcnow, name=User_conts.UPDATED_TIME)
+    creation_time: Mapped[datetime] = mapped_column(default=lambda: datetime.now(timezone.utc), name=User_conts.CREATED_TIME)
+    update_time: Mapped[datetime] = mapped_column(default=lambda: datetime.now(timezone.utc), onupdate=lambda: datetime.now(timezone.utc), name=User_conts.UPDATED_TIME)
 
     # Relationships
     truck = relationship('Truck', backref='owner', lazy=True, cascade='all, delete-orphan')
@@ -67,6 +66,7 @@ class User(db.Model, UserMixin, ModelMixin):
 
     alternative_id: Mapped[str] = mapped_column(String, default=uuid4().hex, index= True)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, server_default='false')
+    is_email_verified: Mapped[bool] = mapped_column(Boolean, default=False, nullable=False, server_default='false')
 
     @property
     def password(self):

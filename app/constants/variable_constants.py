@@ -39,7 +39,7 @@ class Truck_conts:
     VEHICLE_MODEL_NAME: str = 'vehicle_model_name'
     VEHICLE_TYPE: str = 'vehicle_type'
     VEHICLE_CAPACITY: str = 'vehicle_capacity'
-    VEHICLE_INSURANCE: str = 'vheicle_insurance' 
+    VEHICLE_INSURANCE: str = 'vehicle_insurance'
     VEHICLE_PERMIT: str = 'vehicle_permit'
 
     # Truck Owner Information
@@ -51,7 +51,7 @@ class Truck_conts:
     # Truck Driver Information
     DRIVER_NAME: str = 'truck_driver_name'
     DRIVER_PHONE: str = 'truck_driver_phone'
-    DRIVER_AADHAAR: str = 'truck_driver_aadhar'
+    DRIVER_AADHAAR: str = 'truck_driver_aadhaar'
     DRIVER_LICENSE: str = 'truck_driver_license'
 
 class Load_conts:

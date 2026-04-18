@@ -1,3 +1,4 @@
+import logging
 from flask import session, flash, redirect, url_for
 from flask_login import current_user
 from flask_wtf import FlaskForm
@@ -7,6 +8,8 @@ from typing import Any, Type
 
 from app.constants.session_keys import SessionKeys
 from app.models import User
+
+logger = logging.getLogger(__name__)
 
 
 def _redirect_save(form, url: str):
@@ -31,7 +34,7 @@ def autofill_fields(
         for name, data in pending_form_data.get("fields", {}).items()
         if name.removeprefix(prefix) in form._fields and data is not None
     }
-    print(f"Data from field autofill fields:{autofill}")
+    logger.debug("Autofill fields resolved: %s", autofill)
     return autofill
 
 
@@ -83,16 +86,16 @@ def make_admin_user(admin_email, admin_password, db):
             )
             db.session.add(admin_user)
             db.session.commit()
-            print(f"Admin user created with email: {admin_email}")
+            logger.info("Admin user created with email: %s", admin_email)
         else:
-            print(f"Admin user already exists with email: {admin_email}")
+            logger.info("Admin user already exists with email: %s", admin_email)
     else:
-        print("ADMIN_EMAIL environment variable not set. Cannot create admin user.")
+        logger.warning("ADMIN_EMAIL environment variable not set. Cannot create admin user.")
 
 
 # function to populate testing data
 def make_testing_data(db):
-    print("Populating testing data...")
+    logger.info("Populating testing data...")
     import json
     from .models import Truck, Load, User
 
@@ -107,7 +110,7 @@ def make_testing_data(db):
         # check by ID only
         user = User.query.filter_by(id=user_id).first()
         if user:
-            print(f"user:{user_id} already exists (email: {user.email}).")
+            logger.info("user:%s already exists (email: %s).", user_id, user.email)
             return user
         else:
             user = User(
@@ -119,7 +122,7 @@ def make_testing_data(db):
             )
             db.session.add(user)
             db.session.flush()  # ensures ID assignment if autoincrement
-            print(f"✅ Created user {user_id} ({email})")
+            logger.info("Created user %s (%s)", user_id, email)
             return user
 
     for truck_data in truck_testing_data:
@@ -130,14 +133,10 @@ def make_testing_data(db):
             vehicle_registration_number=truck_data["vehicle_registration_number"],
         ).first()
         if existing_truck:
-            print(
-                f"Truck with registration number {truck_data['vehicle_registration_number']} for user_id {user.id} already exists. Skipping."
-            )
+            logger.info("Truck %s for user_id %s already exists. Skipping.", truck_data['vehicle_registration_number'], user.id)
             continue
         else:
-            print(
-                f"Truck created with registration number {truck_data['vehicle_registration_number']} for user_id {user.id}."
-            )
+            logger.info("Truck %s created for user_id %s.", truck_data['vehicle_registration_number'], user.id)
             truck = Truck(**truck_data)
             db.session.add(truck)
 
@@ -158,16 +157,12 @@ def make_testing_data(db):
             user_id=user.id, pickup_contact_name=load_data["pickup_contact_name"]
         ).first()
         if existing_load:
-            print(
-                f"Load with pickup contact name {load_data['pickup_contact_name']} for user_id {load_data['user_id']} already exists. Skipping."
-            )
+            logger.info("Load '%s' for user_id %s already exists. Skipping.", load_data['pickup_contact_name'], load_data['user_id'])
             continue
         else:
-            print(
-                f"Load created with pickup contact name {load_data['pickup_contact_name']} for user_id {load_data['user_id']}."
-            )
+            logger.info("Load '%s' created for user_id %s.", load_data['pickup_contact_name'], load_data['user_id'])
             load = Load(**load_data)
             db.session.add(load)
 
     db.session.commit()
-    print("Finished populating testing data.")
+    logger.info("Finished populating testing data.")

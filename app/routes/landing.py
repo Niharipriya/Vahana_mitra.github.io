@@ -1,3 +1,4 @@
+import logging
 from flask import (
     Blueprint,
     render_template,
@@ -5,10 +6,12 @@ from flask import (
     request,
 )
 
-from app.models import Truck, Load
+logger = logging.getLogger(__name__)
+
+from app.models import Load
 from app.constants.session_keys import SessionKeys
 from app.form import TruckRegistrationForm, LoadRegistrationForm
-from app.utils import _redirect_save, make_admin_user, make_testing_data
+from app.utils import _redirect_save
 
 bp = Blueprint("landing", __name__, url_prefix="")
 
@@ -43,7 +46,7 @@ def index():
         )
 
     if request.method == "POST":
-        print(f"Form errors: {truck_form.errors} {load_form.errors}")
+        logger.warning("Landing form errors: truck=%s load=%s", truck_form.errors, load_form.errors)
 
     return render_template("landing.html", truck_form=truck_form, load_form=load_form)
 
